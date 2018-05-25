@@ -277,7 +277,7 @@ class LatexFormatter(Formatter):
         """
         cp = self.commandprefix
         styles = []
-        for name, definition in self.cmd2def.iteritems():
+        for name, definition in self.cmd2def.items():
             styles.append(r'\def\%s@tok@%s{%s}' % (cp, name, definition))
         return STYLE_TEMPLATE % {'cp': self.commandprefix,
                                  'styles': '\n'.join(styles)}
@@ -308,7 +308,7 @@ class LatexFormatter(Formatter):
                 if self.texcomments:
                     # Try to guess comment starting lexeme and escape it ...
                     start = value[0:1]
-                    for i in xrange(1, len(value)):
+                    for i in range(1, len(value)):
                         if start[0] != value[i]:
                             break
                         start += value[i]

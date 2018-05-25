@@ -36,7 +36,7 @@ class expose(object):
         self.cls = cls
 
     def __call__(self, funct):
-        fname = funct.func_name
+        fname = funct.__name__
         def parentmeth(*args, **kwargs):
             self = args[0]
             return getattr(self.GetPanel(), fname)(*args[1:], **kwargs)
@@ -50,9 +50,9 @@ class expose(object):
 
 class ECBaseDlg(wx.Dialog):
     """Editra Control Library Base Dialog Class"""
-    def __init__(self, parent, id=wx.ID_ANY, title=u"",
+    def __init__(self, parent, id=wx.ID_ANY, title="",
                  pos=wx.DefaultPosition, size=wx.DefaultSize, 
-                 style=wx.DEFAULT_DIALOG_STYLE, name=u"ECBaseDialog"):
+                 style=wx.DEFAULT_DIALOG_STYLE, name="ECBaseDialog"):
         super(ECBaseDlg, self).__init__(parent, id, title, pos,
                                         size, style, name)
 

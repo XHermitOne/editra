@@ -42,12 +42,12 @@ class ExtensionRegisterTest(unittest.TestCase):
         self.assertTrue('myXml' in self.reg[synreg.LANG_XML])
         curr.append('myXml')
         curr.sort()
-        self.assertEquals(self.reg[synreg.LANG_XML], curr)
+        self.assertEqual(self.reg[synreg.LANG_XML], curr)
 
         # Test against adding duplicates
         self.assertTrue('xml' in self.reg[synreg.LANG_XML])
         self.reg.Associate(synreg.LANG_XML, 'xml')
-        self.assertEquals(self.reg[synreg.LANG_XML].count('xml'), 1)
+        self.assertEqual(self.reg[synreg.LANG_XML].count('xml'), 1)
 
     def testDisassociate(self):
         """Test removing an association"""
@@ -62,10 +62,10 @@ class ExtensionRegisterTest(unittest.TestCase):
     def testFileTypeFromExt(self):
         """Test getting the filetype identifier from a given extension"""
         self.assertTrue('cpp' in self.reg[synreg.LANG_CPP])
-        self.assertEquals(self.reg.FileTypeFromExt('cpp'), synreg.LANG_CPP)
+        self.assertEqual(self.reg.FileTypeFromExt('cpp'), synreg.LANG_CPP)
 
         # Test that non-existant returns LANG_TEXT
-        self.assertEquals(self.reg.FileTypeFromExt('fake_Exent'), synreg.LANG_TXT)
+        self.assertEqual(self.reg.FileTypeFromExt('fake_Exent'), synreg.LANG_TXT)
 
     def testGetAllExtensions(self):
         self.assertTrue(isinstance(self.reg.GetAllExtensions(), list))
@@ -75,9 +75,9 @@ class ExtensionRegisterTest(unittest.TestCase):
         d = list(self.reg[synreg.LANG_C]) # force list copy
         self.reg.Associate(synreg.LANG_C, 'NEW_C')
         self.assertTrue('NEW_C' in self.reg[synreg.LANG_C])
-        self.assertNotEquals(d, self.reg[synreg.LANG_C])
+        self.assertNotEqual(d, self.reg[synreg.LANG_C])
         self.reg.LoadDefault()
-        self.assertEquals(d, self.reg[synreg.LANG_C])
+        self.assertEqual(d, self.reg[synreg.LANG_C])
 
     # TODO:
 #    def testLoadFromConfig(self):
@@ -99,4 +99,4 @@ class ExtensionRegisterTest(unittest.TestCase):
         ext = self.reg.GetAllExtensions()
         self.assertTrue(isinstance(ext, list))
         for item in ext:
-            self.assertTrue(isinstance(item, basestring))
+            self.assertTrue(isinstance(item, str))

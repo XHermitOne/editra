@@ -23,8 +23,8 @@ import wx
 import wx.stc as stc
 
 # Local Imports
-import synglob
-import syndata
+from . import synglob
+from . import syndata
 
 #-----------------------------------------------------------------------------#
 
@@ -129,7 +129,7 @@ class SyntaxData(syndata.SyntaxDataBase):
 
     def GetCommentPattern(self):
         """Returns a list of characters used to comment a block of code """
-        return [u'#']
+        return ['#']
 
 #---- Syntax Modules Internal Functions ----#
 def KeywordString(option=0):
@@ -140,7 +140,7 @@ def KeywordString(option=0):
     if option == synglob.ID_LANG_PERL:
         return PERL_KW[1]
     else:
-        return u''
+        return ''
 
 #---- End Syntax Modules Internal Functions ----#
 

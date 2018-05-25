@@ -60,7 +60,7 @@ def ExceptionHook(exctype, value, trace):
     ftrace = TestErrorDialog.FormatTrace(exctype, value, trace)
 
     # Ensure that error gets raised to console as well
-    print ftrace
+    print(ftrace)
 
     # If abort has been set and we get here again do a more forcefull shutdown
     if TestErrorDialog.ABORT:
@@ -124,7 +124,7 @@ class TestLog:
         pass
 
     def write(self, msg):
-        print msg
+        print(msg)
 
 #----------------------------------------------------------------------
 

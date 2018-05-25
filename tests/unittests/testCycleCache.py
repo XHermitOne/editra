@@ -45,14 +45,14 @@ class CycleCacheTest(unittest.TestCase):
         self.cache.PutItem("hello2")
         self.cache.PutItem("hello3")
         self.cache.PutItem("hello4")
-        self.assertEquals(self.cache.GetNext(), "hello4")
-        self.assertEquals(self.cache.GetNext(), "hello3")
-        self.assertEquals(self.cache.GetNext(), "hello2")
-        self.assertEquals(self.cache.GetNext(), "hello1")
-        self.assertEquals(self.cache.GetNext(), "hello")
-        self.assertEquals(self.cache.GetNext(), "hello4")
-        self.assertEquals(self.cache.GetNext(), "hello3")
-        self.assertEquals(self.cache.GetNext(), "hello2")
+        self.assertEqual(self.cache.GetNext(), "hello4")
+        self.assertEqual(self.cache.GetNext(), "hello3")
+        self.assertEqual(self.cache.GetNext(), "hello2")
+        self.assertEqual(self.cache.GetNext(), "hello1")
+        self.assertEqual(self.cache.GetNext(), "hello")
+        self.assertEqual(self.cache.GetNext(), "hello4")
+        self.assertEqual(self.cache.GetNext(), "hello3")
+        self.assertEqual(self.cache.GetNext(), "hello2")
 
     def testPeek(self):
         """Test peeking in the cache"""
@@ -60,8 +60,8 @@ class CycleCacheTest(unittest.TestCase):
         self.cache.PutItem("hello")
         self.cache.PutItem("hello1")
         self.cache.PutItem("hello2")
-        self.assertEquals(self.cache.PeekNext(), "hello2")
-        self.assertEquals(self.cache.PeekPrev(), "hello")
+        self.assertEqual(self.cache.PeekNext(), "hello2")
+        self.assertEqual(self.cache.PeekPrev(), "hello")
 
     def testPutItem(self):
         """Test putting items in the cache"""
@@ -82,7 +82,7 @@ class CycleCacheTest(unittest.TestCase):
         self.cache.PutItem("hello1")
         self.cache.PutItem("hello2")
         self.cache.PutItem("hello3")
-        self.assertEquals(self.cache.GetNext(), "hello3")
-        self.assertEquals(self.cache.GetNext(), "hello2")
+        self.assertEqual(self.cache.GetNext(), "hello3")
+        self.assertEqual(self.cache.GetNext(), "hello2")
         self.cache.Reset()
-        self.assertEquals(self.cache.GetNext(), "hello3")
+        self.assertEqual(self.cache.GetNext(), "hello3")

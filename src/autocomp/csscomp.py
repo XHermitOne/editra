@@ -22,7 +22,7 @@ import wx
 import wx.stc
 
 # Local Imports
-import completer
+from . import completer
 
 #--------------------------------------------------------------------------#
 
@@ -31,8 +31,8 @@ RE_LINK_PSEUDO = re.compile("a:(link|visited|active|hover|focus)*")
 RE_CSS_COMMENT = re.compile("\/\*[^*]*\*+([^/][^*]*\*+)*\/")
 RE_CSS_BLOCK = re.compile("\{[^}]*\}")
 
-PSUEDO_SYMBOLS = completer.CreateSymbols([ u'active', u'focus', u'hover', 
-                                           u'link', u'visited' ],
+PSUEDO_SYMBOLS = completer.CreateSymbols([ 'active', 'focus', 'hover', 
+                                           'link', 'visited' ],
                                          )
 
 #--------------------------------------------------------------------------#
@@ -56,7 +56,7 @@ class Completer(completer.BaseCompleter):
         """
         buff = self.GetBuffer()
         keywords = buff.GetKeywords()
-        if command in [None, u'']:
+        if command in [None, '']:
             return completer.CreateSymbols(keywords, completer.TYPE_UNKNOWN)
 
         cpos = buff.GetCurrentPos()
@@ -69,23 +69,23 @@ class Completer(completer.BaseCompleter):
             return PSUEDO_SYMBOLS
 
         # Give some help on some common properties
-        if tmp.endswith(u':'):
-            word = GetWordLeft(tmp.rstrip().rstrip(u':'))
+        if tmp.endswith(':'):
+            word = GetWordLeft(tmp.rstrip().rstrip(':'))
             comps = PROP_OPTS.get(word, list())
             comps = list(set(comps))
             comps.sort()
             return completer.CreateSymbols(comps, completer.TYPE_PROPERTY)
 
         # Look for if we are completing a tag class
-        if tmp.endswith(u'.'):
+        if tmp.endswith('.'):
             classes = list()
             if not buff.IsString(cpos):
                 txt = buff.GetText()
-                txt = RE_CSS_COMMENT.sub(u'', txt)
-                txt = RE_CSS_BLOCK.sub(u' ', txt)
+                txt = RE_CSS_COMMENT.sub('', txt)
+                txt = RE_CSS_BLOCK.sub(' ', txt)
                 for token in txt.split():
-                    if u'.' in token:
-                        classes.append(token.split(u'.', 1)[-1])
+                    if '.' in token:
+                        classes.append(token.split('.', 1)[-1])
 
                 classes = list(set(classes))
                 classes.sort()
@@ -95,10 +95,10 @@ class Completer(completer.BaseCompleter):
 
     def GetCallTip(self, command):
         """Returns the formated calltip string for the command."""
-        if command == u'url':
-            return u'url(\'../path\')'
+        if command == 'url':
+            return 'url(\'../path\')'
         else:
-            return u''
+            return ''
 
     def ShouldCheck(self, cpos):
         """Should completions be attempted
@@ -122,9 +122,9 @@ def IsPsuedoClass(cmd, line):
     @return: bool
 
     """
-    if cmd.endswith(u':'):
+    if cmd.endswith(':'):
         token = line.split()[-1]
-        pieces = token.split(u":")
+        pieces = token.split(":")
         if pieces[0] == 'a' or pieces[0].startswith('a.'):
             return True
     return False
@@ -137,33 +137,33 @@ def GetWordLeft(line):
     """
     for idx in range(1, len(line)+1):
         ch = line[idx*-1]
-        if ch.isspace() or ch in u'{;':
+        if ch.isspace() or ch in '{;':
             return line[-1*idx:].strip()
     else:
-        return u''
+        return ''
 
 #--------------------------------------------------------------------------#
 
 # Properties to provide some input help on
-PROP_OPTS = { u'border-style' : [u'none', u'hidden', u'dotted', u'dashed',
-                                 u'solid', u'double', u'groove', u'ridge',
-                                 u'inset', u'outset'],
-              u'float' : [u'left', u'right', u'none'],
-              u'font-style' : [u'normal', u'italic', u'oblique'],
-              u'font-weight' : [u'normal', u'bold', u'lighter', u'bolder'],
-              u'list-style-type' : [u'none', u'disc', u'circle', u'square',
-                                    u'decimal', u'decimal-leading-zero',
-                                    u'lower-roman', u'upper-roman',
-                                    u'lower-alpha', u'upper-alpha',
-                                    u'lower-greek', u'lower-latin', u'hebrew',
-                                    u'armenian', u'georgian', u'cjk-ideographic',
-                                    u'hiragana', u'katakana',
-                                    u'hiragana-iroha', u'katakana-iroha'],
-              u'text-decoration' : [u'none', u'underline', u'line-through',
-                                    u'overline', u'blink'],
-              u'text-align' : [u'left', u'right', u'center', u'justify'],
-              u'vertical-align' : [u'baseline', u'sub', u'super', u'top',
-                                   u'text-top', u'middle', u'bottom',
-                                   u'text-bottom', ]
+PROP_OPTS = { 'border-style' : ['none', 'hidden', 'dotted', 'dashed',
+                                 'solid', 'double', 'groove', 'ridge',
+                                 'inset', 'outset'],
+              'float' : ['left', 'right', 'none'],
+              'font-style' : ['normal', 'italic', 'oblique'],
+              'font-weight' : ['normal', 'bold', 'lighter', 'bolder'],
+              'list-style-type' : ['none', 'disc', 'circle', 'square',
+                                    'decimal', 'decimal-leading-zero',
+                                    'lower-roman', 'upper-roman',
+                                    'lower-alpha', 'upper-alpha',
+                                    'lower-greek', 'lower-latin', 'hebrew',
+                                    'armenian', 'georgian', 'cjk-ideographic',
+                                    'hiragana', 'katakana',
+                                    'hiragana-iroha', 'katakana-iroha'],
+              'text-decoration' : ['none', 'underline', 'line-through',
+                                    'overline', 'blink'],
+              'text-align' : ['left', 'right', 'center', 'justify'],
+              'vertical-align' : ['baseline', 'sub', 'super', 'top',
+                                   'text-top', 'middle', 'bottom',
+                                   'text-bottom', ]
               }
 

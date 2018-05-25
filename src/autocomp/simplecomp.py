@@ -21,7 +21,7 @@ import string
 import wx.stc as stc
 
 # Local Imports
-import completer
+from . import completer
 
 #--------------------------------------------------------------------------#
 
@@ -47,12 +47,9 @@ class Completer(completer.BaseCompleter):
         """
         bf = self.GetBuffer()
         # A list of Symbol(keyword, TYPE_UNKNOWN)
-        kwlst = map(
-            lambda kw: completer.Symbol(kw, completer.TYPE_UNKNOWN),
-            bf.GetKeywords()
-        )
+        kwlst = [completer.Symbol(kw, completer.TYPE_UNKNOWN) for kw in bf.GetKeywords()]
 
-        if command in (None, u''):
+        if command in (None, ''):
             return kwlst
 
         fillups = self.GetAutoCompFillups()
@@ -75,7 +72,7 @@ class Completer(completer.BaseCompleter):
             idx += 1
         ls2 = ls[:idx]
         ls2.reverse()
-        command = u"".join(ls2)
+        command = "".join(ls2)
 
         # Available completions so far
         wordsNear = []

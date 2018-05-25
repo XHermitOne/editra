@@ -52,7 +52,7 @@ __all__ = [ 'CONFIG', 'SB_INFO', 'VERSION', 'PROG_NAME', 'ID_NEW', 'ID_OPEN',
 # externally without needing to import anything else.  It's imported
 # here with a * until there isn't anyplace left that expects to find
 # these values in this module.
-from info import *
+from .info import *
 
 #---- End Project Info ----#
 
@@ -62,7 +62,7 @@ import wx
 _ = wx.GetTranslation
 
 #---- WX Compatibility Hacks ----#
-import wxcompat
+from . import wxcompat
 
 #---- Configuration Locations ----#
 # Values set when main loads

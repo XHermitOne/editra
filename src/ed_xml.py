@@ -19,10 +19,10 @@ __revision__ = "$Revision: 72624 $"
 # Imports
 import types
 from xml.dom import minidom
-import extern.dexml as dexml
-from extern.dexml.fields import *
+from . import extern.dexml as dexml
+from .extern.dexml.fields import *
 
-import util
+from . import util
 
 #-----------------------------------------------------------------------------#
 
@@ -46,7 +46,7 @@ class EdXml(dexml.Model):
             txt = self.render()
             txt = minidom.parseString(txt).toprettyxml()
             txt = txt.replace('\t', '   ') # DeTabify
-        except UnicodeEncodeError, err:
+        except UnicodeEncodeError as err:
             util.Log("[EdXml][err] GetPrettyXml %s" % err)
         return txt
 
@@ -58,7 +58,7 @@ class EdXml(dexml.Model):
         xstr = ""
         try:
             xstr = self.render()
-        except UnicodeEncodeError, err:
+        except UnicodeEncodeError as err:
             util.Log("[EdXml][err] GetXml %s" % err)
         return xstr
 
@@ -71,7 +71,7 @@ class EdXml(dexml.Model):
         suceeded = True
         try:
             xmlstr = self.PrettyXml
-            if isinstance(xmlstr, types.UnicodeType):
+            if isinstance(xmlstr, str):
                 xmlstr = xmlstr.encode('utf-8')
             handle = open(path, 'wb')
             handle.write(xmlstr)

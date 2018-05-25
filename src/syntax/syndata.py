@@ -25,7 +25,7 @@ import collections
 import wx.stc as stc
 
 # Local Imports
-import synglob
+from . import synglob
 
 #-----------------------------------------------------------------------------#
 

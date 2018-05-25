@@ -77,7 +77,7 @@ class FileInfoDlg(wx.MiniFrame):
                                ctime=time.asctime(time.localtime(fstat[stat.ST_CTIME])),
                                size=CalcSize(fstat[stat.ST_SIZE]),
                                perm=permstr)
-        except Exception, msg:
+        except Exception as msg:
             self.__DoErrorLayout(str(msg))
         else:
             self.__DoLayout()
@@ -229,7 +229,7 @@ class FileInfoDlg(wx.MiniFrame):
         if part > 1:
             split = lbl_len / part
             pieces = list()
-            for chunk in xrange(part):
+            for chunk in range(part):
                 if chunk == part - 1:
                     pieces.append(lbl[chunk * split:])
                 else:

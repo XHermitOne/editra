@@ -52,12 +52,12 @@ MODULE     = 1
 _ = wx.GetTranslation
 #-----------------------------------------------------------------------------#
 # Imports
-import synglob
-import syndata
-import synxml
+from . import synglob
+from . import syndata
+from . import synxml
 
 # Needed by other modules that use this api
-from synextreg import ExtensionRegister, GetFileExtensions, RegisterNewLangId
+from .synextreg import ExtensionRegister, GetFileExtensions, RegisterNewLangId
 
 #-----------------------------------------------------------------------------#
 
@@ -153,7 +153,7 @@ class SyntaxMgr(object):
             try:
                 self._loaded[modname] = __import__(modname, globals(), 
                                                    locals(), [''])
-            except ImportError, msg:
+            except ImportError as msg:
                 return False
         return True
 
@@ -213,7 +213,7 @@ class SyntaxMgr(object):
 
         """
         for fname in os.listdir(path):
-            if fname.endswith(u".edxml"):
+            if fname.endswith(".edxml"):
                 fpath = os.path.join(path, fname)
                 modeh = synxml.LoadHandler(fpath)
 
@@ -269,7 +269,7 @@ class SynExtensionDelegate(syndata.SyntaxDataBase):
         keywords = self._xml.GetKeywords()
         rwords = list()
         for sid, words in keywords:
-            rwords.append((sid, u" ".join(words)))
+            rwords.append((sid, " ".join(words)))
         return rwords
 
     def GetProperties(self):
@@ -307,7 +307,7 @@ def GenLexerMenu():
     for key in synglob.LANG_MAP:
         f_types[key] = synglob.LANG_MAP[key][LANG_ID]
     f_order = list(f_types)
-    f_order.sort(key=unicode.lower)
+    f_order.sort(key=str.lower)
 
     for lang in f_order:
         lex_menu.Append(f_types[lang], lang, 
@@ -322,20 +322,20 @@ def GenFileFilters():
     extreg = ExtensionRegister()
     # Convert extension list into a formatted string
     f_dict = dict()
-    for key, val in extreg.iteritems():
+    for key, val in extreg.items():
         val.sort()
         if key.lower() == 'makefile':
             continue
 
-        f_dict[key] = u";*." + u";*.".join(val)
+        f_dict[key] = ";*." + ";*.".join(val)
 
     # Build the final list of properly formatted strings
     filters = list()
     for key in f_dict:
-        tmp = u" (%s)|%s|" % (f_dict[key][1:], f_dict[key][1:])
+        tmp = " (%s)|%s|" % (f_dict[key][1:], f_dict[key][1:])
         filters.append(key + tmp)
-    filters.sort(key=unicode.lower)
-    filters.insert(0, u"All Files (*)|*|")
+    filters.sort(key=str.lower)
+    filters.insert(0, "All Files (*)|*|")
     filters[-1] = filters[-1][:-1] # IMPORTANT trim last '|' from item in list
     return filters
 
@@ -344,8 +344,8 @@ def GetLexerList():
     @return: list of strings
 
     """ 
-    f_types = synglob.LANG_MAP.keys()
-    f_types.sort(key=unicode.lower)
+    f_types = list(synglob.LANG_MAP.keys())
+    f_types.sort(key=str.lower)
     return f_types
 
 #---- Syntax id set ----#
@@ -378,7 +378,7 @@ def SyntaxNames():
     for item in dir(synglob):
         if item.startswith("LANG_"):
             val = getattr(synglob, item)
-            if isinstance(val, basestring):
+            if isinstance(val, str):
                 syn_list.append(val)
     return syn_list
 
@@ -392,7 +392,7 @@ def GetExtFromId(ext_id):
     """
     extreg = ExtensionRegister()
     ftype = synglob.GetDescriptionFromId(ext_id)
-    rval = u''
+    rval = ''
     if len(extreg[ftype]):
         rval = extreg[ftype][0]
     return rval
@@ -432,7 +432,7 @@ def _RegisterExtensionHandler(xml_obj):
 
     # Register file extensions with extension register
     ExtensionRegister().Associate(xml_obj.GetLanguage(),
-                                  u" ".join(xml_obj.FileExtensions))
+                                  " ".join(xml_obj.FileExtensions))
 
     # Update static syntax id list
     if rid not in SYNTAX_IDS:

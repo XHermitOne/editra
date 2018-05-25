@@ -21,7 +21,7 @@ import os
 import sys
 import wx
 
-import IconFile
+from . import IconFile
 
 # Put local package on the path
 #sys.path.insert(0, os.path.abspath('../../src'))
@@ -76,7 +76,7 @@ class TestLog:
         pass
 
     def write(self, msg):
-        print msg
+        print(msg)
 
 #----------------------------------------------------------------------
 

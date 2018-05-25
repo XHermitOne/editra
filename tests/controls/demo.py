@@ -59,7 +59,7 @@ class EclibDemoApp(wx.App):
 
 class EclibDemoFrame(wx.Frame):
     """Demo Main Window"""
-    def __init__(self, title=u""):
+    def __init__(self, title=""):
         super(EclibDemoFrame, self).__init__(None, title=title, size=(850, 550))
 
         # Attributes
@@ -254,7 +254,7 @@ class TestLog:
         pass
 
     def write(self, msg):
-        print msg
+        print(msg)
 
 #-----------------------------------------------------------------------------#
 
@@ -323,7 +323,7 @@ def FindDemoModules(path):
 
 def Main():
     app = EclibDemoApp(False)
-    print wx.version()
+    print(wx.version())
     app.MainLoop()
 
 #-----------------------------------------------------------------------------#

@@ -71,10 +71,10 @@ import shutil
 import wx
 
 # Editra Libraries
-import ed_glob
-from ed_txt import EncodeString
-import util
-from profiler import CalcVersionValue, Profile_Get, Profile_Set
+from . import ed_glob
+from .ed_txt import EncodeString
+from . import util
+from .profiler import CalcVersionValue, Profile_Get, Profile_Set
 
 # Try to use the system version of pkg_resources if available else fall
 # back to the bundled version. Mostly for binary versions of Editra.
@@ -82,7 +82,7 @@ try:
     import pkg_resources
 except ImportError:
     try:
-        from extern import pkg_resources
+        from .extern import pkg_resources
     except ImportError:
         pkg_resources = None
 
@@ -129,7 +129,7 @@ class ExtensionPoint(property):
         """
         component = wx.GetApp().GetPluginManager()
         extensions = PluginMeta._registry.get(self.interface, [])
-        return filter(None, [component[cls] for cls in extensions])
+        return [_f for _f in [component[cls] for cls in extensions] if _f]
 
 #-----------------------------------------------------------------------------#
 
@@ -173,9 +173,8 @@ class PluginMeta(type):
 
 #-----------------------------------------------------------------------------#
 
-class Plugin(object):
+class Plugin(object, metaclass=PluginMeta):
     """Base class for all plugin type objects"""
-    __metaclass__ = PluginMeta
     __name__ = 'EdPlugin'
 
     def __new__(cls, pluginmgr):
@@ -273,7 +272,7 @@ class PluginData(object):
     @see: L{Plugin}
 
     """
-    def __init__(self, name=u'', descript=u'', author=u'', ver=u''):
+    def __init__(self, name='', descript='', author='', ver=''):
         """Create the plugin data object
         @keyword name: Name of the plugin
         @keyword descript: Short description of plugin
@@ -370,11 +369,11 @@ class PluginData(object):
         @postcondition: Author attribute is set to new value
 
         """
-        if not isinstance(author, basestring):
+        if not isinstance(author, str):
             try:
                 author = str(author)
             except (ValueError, TypeError):
-                author = u''
+                author = ''
         self._author = author
 
     def SetClass(self, cls):
@@ -386,11 +385,11 @@ class PluginData(object):
 
     def SetDescription(self, descript):
         """@return: Plugins description string"""
-        if not isinstance(descript, basestring):
+        if not isinstance(descript, str):
             try:
                 descript = str(descript)
             except (ValueError, TypeError):
-                descript = u''
+                descript = ''
         self._description = descript
 
     def SetDist(self, distro):
@@ -413,11 +412,11 @@ class PluginData(object):
         @postcondition: Plugins name string is set
 
         """
-        if not isinstance(name, basestring):
+        if not isinstance(name, str):
             try:
                 name = str(name)
             except (ValueError, TypeError):
-                name = u''
+                name = ''
         self._name = name
 
     def SetVersion(self, ver):
@@ -426,11 +425,11 @@ class PluginData(object):
         @postcondition: Plugins version attribute is set to new value
 
         """
-        if not isinstance(ver, basestring):
+        if not isinstance(ver, str):
             try:
                 ver = str(ver)
             except (ValueError, TypeError):
-                ver = u''
+                ver = ''
         self._version = ver
 
 #-----------------------------------------------------------------------------#
@@ -520,7 +519,7 @@ class PluginManager(object):
                 self.LOG("[pluginmgr][err] %s Not Registered" % cls.__name__)
             try:
                 plugin = cls(self)
-            except (AttributeError, TypeError), msg:
+            except (AttributeError, TypeError) as msg:
                 self.LOG("[pluginmgr][err] Unable in initialize plugin")
                 self.LOG("[pluginmgr][err] %s" % str(msg))
 
@@ -559,7 +558,7 @@ class PluginManager(object):
 
             try:
                 env = pkg_resources.Environment(path)
-            except UnicodeDecodeError, msg:
+            except UnicodeDecodeError as msg:
                 self.LOG("[pluginmgr][err] %s" % msg)
         else:
             self.LOG("[pluginmgr][warn] setuptools is not installed")
@@ -634,7 +633,7 @@ class PluginManager(object):
 
         """
         plugins = dict()
-        for pdata in self._pdata.values():
+        for pdata in list(self._pdata.values()):
             plugins[pdata.GetClass()] = pdata.GetInstance()
         return plugins
 
@@ -644,7 +643,7 @@ class PluginManager(object):
         @return: Distrobution
 
         """
-        for pdata in self._pdata.values():
+        for pdata in list(self._pdata.values()):
             if pname.lower() == pdata.GetName().lower():
                 return pdata.GetDist()
         else:
@@ -693,7 +692,7 @@ class PluginManager(object):
                     else:
                         self.LOG("[pluginmgr][info] Skip reloading: %s" % name)
                         continue
-                except Exception, msg:
+                except Exception as msg:
                     self.LOG("[pluginmgr][err] Couldn't Load %s: %s" % (name, msg))
                 else:
                     try:
@@ -760,12 +759,12 @@ class PluginManager(object):
         reading = True
         for line in reader.readlines():
             data = line.strip()
-            if len(data) and data[0] == u"#":
+            if len(data) and data[0] == "#":
                 continue
 
-            data = data.split(u"=")
+            data = data.split("=")
             if len(data) == 2:
-                config[data[0].strip()] = data[1].strip().lower() == u"true"
+                config[data[0].strip()] = data[1].strip().lower() == "true"
             else:
                 continue
 
@@ -781,7 +780,7 @@ class PluginManager(object):
 
         """
         plugins = [ plugin.GetInstance().__module__
-                    for plugin in self._pdata.values() ]
+                    for plugin in list(self._pdata.values()) ]
 
         config = dict()
         for item in self._config:
@@ -850,7 +849,7 @@ class PluginManager(object):
                         on the configuration data.
 
         """
-        for pdata in self._pdata.values():
+        for pdata in list(self._pdata.values()):
             plugin = pdata.GetClass()
             if self._config.get(plugin.__module__):
                 self._enabled[plugin] = True

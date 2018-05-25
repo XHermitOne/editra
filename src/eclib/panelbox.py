@@ -55,7 +55,7 @@ class PanelBox(scrolled.ScrolledPanel):
     """Scrolled container window for managing and displaying PanelBox items"""
     def __init__(self, parent, id=wx.ID_ANY, pos=wx.DefaultPosition,
                  size=wx.DefaultSize, style=wx.HSCROLL|wx.VSCROLL,
-                 name=u"PanelBox"):
+                 name="PanelBox"):
         super(PanelBox, self).__init__(parent, id, pos, size, style, name)
 
         # Attributes
@@ -222,7 +222,7 @@ class PanelBox(scrolled.ScrolledPanel):
             self._items.insert(index, item)
             self._sizer.Insert(index, item, 0, wx.EXPAND)
         else:
-            raise IndexError, "Index %d: out of range" % index
+            raise IndexError("Index %d: out of range" % index)
 
     def Remove(self, index):
         """Remove an item from the list
@@ -234,7 +234,7 @@ class PanelBox(scrolled.ScrolledPanel):
             self._sizer.Remove(item)
             self.Layout()
         else:
-            raise IndexError, "Index %d: out of range" % index
+            raise IndexError("Index %d: out of range" % index)
 
     def RemoveAll(self):
         """Remove all items from the list"""
@@ -257,7 +257,7 @@ class PanelBox(scrolled.ScrolledPanel):
             item.SetSelection(select)
             self._last_sel = idx
         else:
-            raise IndexError, "Index out of range: %d > %d" (idx, len(self._items))
+            raise IndexError("Index out of range: %d > %d" (idx, len(self._items)))
 
 #--------------------------------------------------------------------------#
 
@@ -370,7 +370,7 @@ class PanelBoxItem(PanelBoxItemBase):
     +-------------------------+
 
     """
-    def __init__(self, parent, bmp=None, label=u'', sub=None):
+    def __init__(self, parent, bmp=None, label='', sub=None):
         """Create teh PanelBoxItem
         @param parent: L{PanelBox}
         @keyword bmp: wx.Bitmap

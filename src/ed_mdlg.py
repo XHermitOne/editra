@@ -23,12 +23,12 @@ __revision__ = "$Revision: 66817 $"
 # Imports
 import wx
 import wx.stc
-from extern.embeddedimage import PyEmbeddedImage
+from .extern.embeddedimage import PyEmbeddedImage
 
 # Editra Library
-import ed_glob
-import util
-import eclib
+from . import ed_glob
+from . import util
+from . import eclib
 
 #--------------------------------------------------------------------------#
 # Globals
@@ -129,7 +129,7 @@ class EdFileInfoDlg(eclib.FileInfoDlg):
 
 class EdFormatEOLDlg(eclib.ChoiceDialog):
     """Dialog for selecting EOL format"""
-    def __init__(self, parent, msg=u'', title=u'', selection=0):
+    def __init__(self, parent, msg='', title='', selection=0):
         """Create the dialog
         @keyword selection: default selection (wx.stc.STC_EOL_*)
 

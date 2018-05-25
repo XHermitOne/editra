@@ -22,9 +22,9 @@ __revision__ = "$Revision: 68798 $"
 import wx.stc as stc
 
 # Local Imports
-import synglob
-import syndata
-import _html
+from . import synglob
+from . import syndata
+from . import _html
 
 #-----------------------------------------------------------------------------#
 
@@ -48,7 +48,7 @@ class SyntaxData(syndata.SyntaxDataBase):
     def GetKeywords(self):
         """Returns Specified Keywords List """
         sgml = _html.KeywordString(synglob.ID_LANG_SGML)
-        return [(5, XML_KEYWORDS + u" " + sgml)]
+        return [(5, XML_KEYWORDS + " " + sgml)]
 
     def GetSyntaxSpec(self):
         """Syntax Specifications """
@@ -60,4 +60,4 @@ class SyntaxData(syndata.SyntaxDataBase):
 
     def GetCommentPattern(self):
         """Returns a list of characters used to comment a block of code """
-        return [u'<!--', u'-->']
+        return ['<!--', '-->']

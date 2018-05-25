@@ -21,8 +21,8 @@ __all__ = ['SOAP12Message',]
 
 #-----------------------------------------------------------------------------#
 # imports
-import urllib2
-import httplib
+import urllib.request, urllib.error, urllib.parse
+import http.client
 
 #-----------------------------------------------------------------------------#
 _SOAP_TPL = """<?xml version=\"1.0\" encoding=\"utf-8\"?>
@@ -67,7 +67,7 @@ class SOAP12Message(object):
         self._request = request
         self._msg = msg
         self._action = action
-        self._http = httplib.HTTP(self._host, 80)
+        self._http = http.client.HTTP(self._host, 80)
 
     @property
     def MessageBody(self):

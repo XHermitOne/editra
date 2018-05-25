@@ -37,6 +37,6 @@ class TxtUtilTest(unittest.TestCase):
 
     def testIsUnicode(self):
         """Test checking if a string is unicode or not"""
-        self.assertTrue(ebmlib.IsUnicode(u"HELLO"))
+        self.assertTrue(ebmlib.IsUnicode("HELLO"))
         self.assertFalse(ebmlib.IsUnicode("Hello"))
 

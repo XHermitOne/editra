@@ -72,7 +72,7 @@ class MethodInvocationEvent(wx.PyEvent):
     def process(self):
         try:
             self.result = self.func(*self.args, **self.kwds)
-        except Exception, e:
+        except Exception as e:
             self.exception = e
         self.blocker.release()
 

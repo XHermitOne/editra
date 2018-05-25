@@ -22,10 +22,10 @@ __revision__ = "$Revision: 68798 $"
 import wx.stc as stc
 
 # Local Imports
-import synglob
-import syndata
-import _html
-from _cpp import AutoIndenter
+from . import synglob
+from . import syndata
+from . import _html
+from ._cpp import AutoIndenter
 
 #-----------------------------------------------------------------------------#
 
@@ -435,7 +435,7 @@ class SyntaxData(syndata.SyntaxDataBase):
         @note: assuming pure php code for comment character(s)
 
         """
-        return [u'//']
+        return ['//']
 
 #---- Syntax Modules Internal Functions ----#
 def KeywordString(option=0):

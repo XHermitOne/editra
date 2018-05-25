@@ -21,7 +21,7 @@ __all__ = [ 'ThreadPool', ]
 #-----------------------------------------------------------------------------#
 # Imports
 import threading
-import Queue
+import queue
 
 #-----------------------------------------------------------------------------#
 
@@ -40,7 +40,7 @@ class ThreadPool(object):
 
         # Attributes
         self._poolsize = tcount
-        self._jobs = Queue.Queue(qsize)
+        self._jobs = queue.Queue(qsize)
         self._threads = [ _WorkerThread(self._jobs) for t in range(self._poolsize) ]
 
     ThreadCount = property(lambda self: self._poolsize)
@@ -85,7 +85,7 @@ class _WorkerThread(threading.Thread):
             funct, args, kwargs = self._jobs.get()
             try:
                 funct(*args, **kwargs)
-            except Exception, msg:
+            except Exception as msg:
                 pass # TODO add error to result data?
             finally:
                 self._jobs.task_done()
@@ -97,14 +97,14 @@ if __name__ == '__main__':
     import time
     import random
     def Job(id_, length):
-        print "JOB: %d, begin" % id_
+        print("JOB: %d, begin" % id_)
         time.sleep(length)
-        print "JOB: %d, end" % id_
+        print("JOB: %d, end" % id_)
 
-    print "Start Jobs"
+    print("Start Jobs")
     for x in range(8):
         pool.QueueJob(Job, x, random.randint(1, 20))
-    print "All Jobs Queued"
+    print("All Jobs Queued")
 
     pool.Shutdown() # blocks till pool is shutdown
-    print "All Done!"
+    print("All Done!")

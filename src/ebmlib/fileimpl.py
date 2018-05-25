@@ -24,14 +24,14 @@ import os
 import sys
 
 # Editra Business Model Imports
-import txtutil
-import fileutil
+from . import txtutil
+from . import fileutil
 
 #--------------------------------------------------------------------------#
 
 class FileObjectImpl(object):
     """File Object Interface implementation base class"""
-    def __init__(self, path=u'', modtime=0):
+    def __init__(self, path='', modtime=0):
         super(FileObjectImpl, self).__init__()
 
         # Attributes
@@ -89,8 +89,8 @@ class FileObjectImpl(object):
 
         try:
             file_h = open(self._path, mode)
-        except (IOError, OSError), msg:
-            self.SetLastError(unicode(msg))
+        except (IOError, OSError) as msg:
+            self.SetLastError(str(msg))
             return False
         else:
             self._handle = file_h
@@ -125,10 +125,10 @@ class FileObjectImpl(object):
         @return: err traceback or None
 
         """
-        errstr = u"None"
+        errstr = "None"
         if self.last_err:
             if not txtutil.IsUnicode(self.last_err):
-                errstr = unicode(self.last_err)
+                errstr = str(self.last_err)
             else:
                 errstr = self.last_err
         return errstr
@@ -175,7 +175,7 @@ class FileObjectImpl(object):
         """Reset all file attributes"""
         self._handle = None
         self.open = False
-        self._path = u''
+        self._path = ''
         self._modtime = 0
         self.last_err = None
 
@@ -207,7 +207,7 @@ class FileObjectImpl(object):
         @return: string (file contents)
 
         """
-        txt = u''
+        txt = ''
         if self.DoOpen('rb'):
             try:
                 txt = self._handle.read()

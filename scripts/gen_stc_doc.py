@@ -58,7 +58,7 @@ LEXMAP = { 'BASH'     : ['SH',],
 class Title(object):
     """Represents a title tag"""
     def __init__(self, title, mode):
-        assert isinstance(title, basestring)
+        assert isinstance(title, str)
         object.__init__(self)
 
         # Attributes
@@ -75,7 +75,7 @@ class Title(object):
 class LexerLabel(object):
     """Represents a lexer id label"""
     def __init__(self, lexer, mode):
-        assert isinstance(lexer, basestring)
+        assert isinstance(lexer, str)
         object.__init__(self)
 
         # Attributes
@@ -179,7 +179,7 @@ class Intro(object):
 class SubSection(object):
     """Represents a subsection for a given language type"""
     def __init__(self, lang, lex, mode):
-        assert isinstance(lang, basestring)
+        assert isinstance(lang, str)
         object.__init__(self)
 
         # Attributes
@@ -245,7 +245,7 @@ def generateOutput(mode):
     """
     lexers = collectLexers()
     langs = deriveLanguageNames(lexers)
-    lang2lex = zip(langs, lexers)
+    lang2lex = list(zip(langs, lexers))
     output = [Intro(mode), Index([lang.title() for lang in langs], mode),]
     for lang, lex in lang2lex:
         sub = SubSection(lang, lex, mode)

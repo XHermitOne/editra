@@ -40,45 +40,45 @@ class SyntaxExtRegTest(unittest.TestCase):
 
     def testUnknownValue(self):
         val = self.reg['SomeFakeUnknownValue']
-        self.assertTrue(val == u'txt')
+        self.assertTrue(val == 'txt')
 
     def testSetItem(self):
         self.assertRaises(TypeError, self.reg.__setitem__, 'test', 1)
 
     def testSerialize(self):
         ser = str(self.reg)
-        self.assertTrue(isinstance(ser, basestring))
+        self.assertTrue(isinstance(ser, str))
         for line in ser.split(os.linesep):
             self.assertTrue("=" in line)
 
     def testAssociate(self):
         self.reg.Associate(synextreg.LANG_TXT, "foo")
         ftype = self.reg.FileTypeFromExt("foo")
-        self.assertEquals(ftype, synextreg.LANG_TXT)
+        self.assertEqual(ftype, synextreg.LANG_TXT)
         # An unknown extension should fall back to type Text
         ftype = self.reg.FileTypeFromExt("UNKNOWN_EXTENSION")
-        self.assertEquals(ftype, synextreg.LANG_TXT)
+        self.assertEqual(ftype, synextreg.LANG_TXT)
 
     def testDisassociate(self):
         ftype = self.reg.FileTypeFromExt("pyw")
-        self.assertEquals(ftype, synextreg.LANG_PYTHON)
+        self.assertEqual(ftype, synextreg.LANG_PYTHON)
         self.reg.Disassociate(synextreg.LANG_PYTHON, "pyw")
         ftype = self.reg.FileTypeFromExt("pyw")
-        self.assertEquals(ftype, synextreg.LANG_TXT)
+        self.assertEqual(ftype, synextreg.LANG_TXT)
 
     def testFileTypeFromExt(self):
         ftype = self.reg.FileTypeFromExt("cpp")
-        self.assertEquals(ftype, synextreg.LANG_CPP)
+        self.assertEqual(ftype, synextreg.LANG_CPP)
         ftype = self.reg.FileTypeFromExt("py")
-        self.assertEquals(ftype, synextreg.LANG_PYTHON)
+        self.assertEqual(ftype, synextreg.LANG_PYTHON)
         ftype = self.reg.FileTypeFromExt("html")
-        self.assertEquals(ftype, synextreg.LANG_HTML)
+        self.assertEqual(ftype, synextreg.LANG_HTML)
 
     def testGetAllExtensions(self):
         exts = self.reg.GetAllExtensions()
         self.assertTrue(isinstance(exts, list))
         for ext in exts:
-            self.assertTrue(isinstance(ext, basestring), "Type Fail: %s" % ext)
+            self.assertTrue(isinstance(ext, str), "Type Fail: %s" % ext)
 
     def testLoadDefault(self):
         self.reg.Associate(synextreg.LANG_CPP, "foo")

@@ -62,7 +62,7 @@ class EdIpcTest(unittest.TestCase):
         f2.value = "filetwo.txt"
         xmlobj.filelist = [f1, f2]
         serialized = xmlobj.GetXml()
-        self.assertTrue(isinstance(serialized, basestring))
+        self.assertTrue(isinstance(serialized, str))
 
         newobj = ed_ipc.IPCCommand.parse(serialized)
         flist = newobj.filelist
@@ -72,7 +72,7 @@ class EdIpcTest(unittest.TestCase):
         args = newobj.arglist
         for a in xmlobj.arglist:
             self.assertTrue(a.name in [a2.name for a2 in args])
-            self.assertTrue(unicode(a.value) in [a3.value for a3 in args])
+            self.assertTrue(str(a.value) in [a3.value for a3 in args])
 
     def testSendCommands(self):
         command = ed_ipc.IPCCommand()

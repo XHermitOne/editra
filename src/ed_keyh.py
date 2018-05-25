@@ -25,12 +25,12 @@ import wx
 import wx.stc
 
 # Editra Libraries
-import ed_event
-import ed_glob
-import ed_basestc
-import ed_stc
+from . import ed_event
+from . import ed_glob
+from . import ed_basestc
+from . import ed_stc
 import string
-import ed_vim
+from . import ed_vim
 
 #-------------------------------------------------------------------------#
 # Use this base class to derive any new keyhandlers from. The keyhandler is
@@ -61,7 +61,7 @@ class KeyHandler(object):
         @return: string
 
         """
-        return u'NULL'
+        return 'NULL'
 
     def PreProcessKey(self, key_code, ctrldown=False,
                       cmddown=False, shiftdown=False, altdown=False):
@@ -102,17 +102,17 @@ class ViKeyHandler(KeyHandler):
     NORMAL, \
     INSERT, \
     VISUAL, \
-        = range(3)
+        = list(range(3))
 
     def __init__(self, stc, use_normal_default=False):
         super(ViKeyHandler, self).__init__(stc)
 
         # Attributes
         self.mode = 0
-        self.last = u''
-        self.last_find = u''
+        self.last = ''
+        self.last_find = ''
         self.commander = ed_vim.EditraCommander(self)
-        self.buffer = u''
+        self.buffer = ''
 
         # Insert mode by default
         if use_normal_default:
@@ -126,19 +126,19 @@ class ViKeyHandler(KeyHandler):
         #          blockcaret methods.
         self.STC.SetLineCaret()
         self.BlockMode = False
-        self.last = self.cmdcache = u''
+        self.last = self.cmdcache = ''
         super(ViKeyHandler, self).ClearMode()
 
     def GetHandlerName(self):
         """Get the name of this handler"""
-        return u'VI'
+        return 'VI'
 
     def _SetMode(self, newmode, msg):
         """Set the keyhandlers mode
         @param newmode: New mode name to change to
 
         """
-        self.buffer = u'' # Clear buffer from last mode
+        self.buffer = '' # Clear buffer from last mode
         self.mode = newmode
         # Update status bar
         evt = ed_event.StatusEvent(ed_event.edEVT_STATUS, self.stc.GetId(),
@@ -150,7 +150,7 @@ class ViKeyHandler(KeyHandler):
         self.stc.SetLineCaret()
         self.stc.SetOvertype(False)
         self.BlockMode = False
-        self._SetMode(ViKeyHandler.INSERT, u"INSERT")
+        self._SetMode(ViKeyHandler.INSERT, "INSERT")
 
     def ReplaceMode(self):
         """Change to replace mode
@@ -159,7 +159,7 @@ class ViKeyHandler(KeyHandler):
         """
         self.stc.SetLineCaret()
         self.stc.SetOvertype(True)
-        self._SetMode(ViKeyHandler.INSERT, u"REPLACE")
+        self._SetMode(ViKeyHandler.INSERT, "REPLACE")
 
     def NormalMode(self):
         """Change to normal (command) mode"""
@@ -171,14 +171,14 @@ class ViKeyHandler(KeyHandler):
         self.BlockMode = True
         self.commander.Deselect()
         self.commander.InsertRepetition()
-        self._SetMode(ViKeyHandler.NORMAL, u'NORMAL')
+        self._SetMode(ViKeyHandler.NORMAL, 'NORMAL')
 
     def VisualMode(self):
         """Change to visual (selection) mode"""
         self.stc.SetBlockCaret()
         self.BlockMode = True
         self.stc.SetOvertype(False)
-        self._SetMode(ViKeyHandler.VISUAL, u'VISUAL')
+        self._SetMode(ViKeyHandler.VISUAL, 'VISUAL')
         self.commander.StartSelection()
 
     def IsInsertMode(self):
@@ -250,7 +250,7 @@ class ViKeyHandler(KeyHandler):
             if self.stc.GetTopLevelParent():
                 evt = ed_event.StatusEvent(ed_event.edEVT_STATUS,
                                            self.stc.GetId(),
-                                           u"NORMAL %s" % self.buffer,
+                                           "NORMAL %s" % self.buffer,
                                            ed_glob.SB_BUFF)
                 wx.PostEvent(self.stc.GetTopLevelParent(), evt)
 
@@ -263,12 +263,12 @@ class ViKeyHandler(KeyHandler):
 
     def _ProcessKey(self, key_code):
         """The real processing of keys"""
-        char = unichr(key_code)
+        char = chr(key_code)
         if self.IsNormalMode() or self.IsVisualMode():
             self.buffer += char
             if ed_vim.Parse(self.buffer, self.commander):
                 # command was handled (or invalid) so clear buffer
-                self.buffer = u''
+                self.buffer = ''
 
             if self.IsVisualMode():
                 self.commander.ExtendSelection()

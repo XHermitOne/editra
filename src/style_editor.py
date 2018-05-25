@@ -27,15 +27,15 @@ import glob
 import wx
 
 # Editra Imports
-import ed_glob
-from profiler import Profile_Get, Profile_Set
-import ed_basestc
-from ed_style import StyleItem
-import util
-import syntax.syntax as syntax
-import eclib
-import ebmlib
-import ed_basewin
+from . import ed_glob
+from .profiler import Profile_Get, Profile_Set
+from . import ed_basestc
+from .ed_style import StyleItem
+from . import util
+from . import syntax.syntax as syntax
+from . import eclib
+from . import ebmlib
+from . import ed_basewin
 
 # Function Aliases
 _ = wx.GetTranslation
@@ -183,7 +183,7 @@ class StyleEditorBox(ed_basewin.EdBaseCtrlBox):
         # Attributes
         self._prevTheme = None
         ctrlbar = self.CreateControlBar(wx.TOP)
-        ss_lst = util.GetResourceFiles(u'styles', get_all=True, title=False)
+        ss_lst = util.GetResourceFiles('styles', get_all=True, title=False)
         ss_lst = [sheet for sheet in ss_lst if not sheet.startswith('.')]
         self._style_ch = wx.Choice(ctrlbar, ed_glob.ID_PREF_SYNTHEME,
                                    choices=sorted(ss_lst))
@@ -199,7 +199,7 @@ class StyleEditorBox(ed_basewin.EdBaseCtrlBox):
                                          bmp=bmp, style=eclib.PB_STYLE_NOBG)
 
         # Setup
-        ss_lbl = wx.StaticText(ctrlbar, label=_("Style Theme") + u": ")
+        ss_lbl = wx.StaticText(ctrlbar, label=_("Style Theme") + ": ")
         ctrlbar.AddControl(ss_lbl, wx.ALIGN_LEFT)
         self.StyleTheme = Profile_Get('SYNTHEME', 'str')
         ctrlbar.AddControl(self._style_ch, wx.ALIGN_LEFT)
@@ -277,7 +277,7 @@ class StyleEditorBox(ed_basewin.EdBaseCtrlBox):
 
     def RefreshStyleSheets(self):
         """Update the list of style sheets"""
-        ss_lst = util.GetResourceFiles(u'styles', get_all=True, title=False)
+        ss_lst = util.GetResourceFiles('styles', get_all=True, title=False)
         ss_lst = [sname for sname in ss_lst if not sname.startswith('.')]
         self.SyntaxSheets = ss_lst
 
@@ -293,7 +293,7 @@ class StyleEditorBox(ed_basewin.EdBaseCtrlBox):
             if not os.path.exists(user_config):
                 try:
                     os.mkdir(user_config)
-                except (OSError, IOError), msg:
+                except (OSError, IOError) as msg:
                     util.Log("[style_editor][err] %s" % msg)
                 else:
                     ed_glob.CONFIG['STYLES_DIR'] = user_config
@@ -305,7 +305,7 @@ class StyleEditorBox(ed_basewin.EdBaseCtrlBox):
         if self.WriteStyleSheet(sheet_path):
             # Update Style Sheet Control
             self.RefreshStyleSheets()
-            sheet = u".".join(os.path.basename(sheet_path).split(u'.')[:-1])
+            sheet = ".".join(os.path.basename(sheet_path).split('.')[:-1])
             self.StyleTheme = sheet
             self.Window.ResetTransientStyleData()
             util.Log("[style_editor][info] Successfully exported: %s" % sheet)
@@ -348,7 +348,7 @@ class StyleEditorBox(ed_basewin.EdBaseCtrlBox):
             writer = util.GetFileWriter(path)
             writer.write(self.Window.GenerateStyleSheet())
             writer.close()
-        except (AttributeError, IOError), msg:
+        except (AttributeError, IOError) as msg:
             util.Log('[style_editor][err] Failed to export style sheet')
             util.Log('[style_editor][err] %s' % msg)
             bOk = False
@@ -377,12 +377,12 @@ class StyleEditorBox(ed_basewin.EdBaseCtrlBox):
             path = self.GetStyleSheetPath(self.StyleTheme)
             try:
                 os.remove(path)
-            except OSError, msg:
+            except OSError as msg:
                 wx.MessageBox(_("Failed to delete style sheet:\nError:\n%s") % msg,
                               style=wx.OK|wx.CENTER|wx.ICON_ERROR)
             else:
                 self.RefreshStyleSheets()
-                self.StyleTheme = u"Default" # select the default style
+                self.StyleTheme = "Default" # select the default style
                 self.DoChangeStyleSheet(self.StyleTheme)
         else:
             evt.Skip()
@@ -435,7 +435,7 @@ class StyleEditorPanel(wx.Panel):
         self.preview.OpenPreviewFile('cpp')
 
         # Setup
-        self.StyleTags = self.styles_orig.keys()
+        self.StyleTags = list(self.styles_orig.keys())
         self.__DoLayout()
         self.EnableSettings(False)
 
@@ -524,22 +524,22 @@ class StyleEditorPanel(wx.Panel):
                 if ival is None or ival == ditem.GetNamedAttr(attr):
                     continue
 
-                stage1 = ''.join((stage1, attr, u':',
-                                  ival.replace(',', ' '), u';'))
+                stage1 = ''.join((stage1, attr, ':',
+                                  ival.replace(',', ' '), ';'))
 
             # Add any modifiers to the modifier tag
             modifiers = item.GetModifiers()
             if len(modifiers):
-                stage1 += (u"modifiers:" + modifiers + u";").replace(',', ' ')
+                stage1 += ("modifiers:" + modifiers + ";").replace(',', ' ')
 
             # If the StyleItem had any set attributes add it to the stylesheet
             if len(stage1):
-                sty_sheet.append(tag + u" {\n")
-                stage2 = u"\t\t" + stage1[0:-1].replace(u";", u";\n\t\t") + u";"
+                sty_sheet.append(tag + " {\n")
+                stage2 = "\t\t" + stage1[0:-1].replace(";", ";\n\t\t") + ";"
                 sty_sheet.append(stage2)
-                sty_sheet.append(u"\n}\n\n")
+                sty_sheet.append("\n}\n\n")
 
-        return u"".join(sty_sheet)
+        return "".join(sty_sheet)
 
     def ResetTransientStyleData(self):
         """Reset the transient style data to mark the changes as not dirty"""
@@ -563,7 +563,7 @@ class StyleEditorPanel(wx.Panel):
         @param syntax_data: syntax data set to configure panel from
 
         """
-        val_str = unicode(syntax_data)
+        val_str = str(syntax_data)
         val_map = { ID_FORE_COLOR : syntax_data.GetFore(),
                     ID_BACK_COLOR : syntax_data.GetBack(),
                     ID_BOLD       : "bold" in val_str,
@@ -576,9 +576,9 @@ class StyleEditorPanel(wx.Panel):
 
         # Fall back to defaults for color values
         # that we may not be able to understand
-        if u"#" not in val_map[ID_FORE_COLOR]:
+        if "#" not in val_map[ID_FORE_COLOR]:
             val_map[ID_FORE_COLOR] = self.prebuff.GetDefaultForeColour(as_hex=True)
-        if u"#" not in val_map[ID_BACK_COLOR]:
+        if "#" not in val_map[ID_BACK_COLOR]:
             val_map[ID_BACK_COLOR] = self.prebuff.GetDefaultBackColour(as_hex=True)
 
         for sid in SETTINGS_IDS:
@@ -614,14 +614,14 @@ class StyleEditorPanel(wx.Panel):
             return False
 
         # Update the value of the modified tag
-        val_map = { ID_FONT       : u"face",
-                    ID_FONT_SIZE  : u"size",
-                    ID_BOLD       : u"bold",
-                    ID_EOL        : u"eol",
-                    ID_ITALIC     : u"italic",
-                    ID_ULINE      : u"underline",
-                    ID_FORE_COLOR : u"fore",
-                    ID_BACK_COLOR : u"back"
+        val_map = { ID_FONT       : "face",
+                    ID_FONT_SIZE  : "size",
+                    ID_BOLD       : "bold",
+                    ID_EOL        : "eol",
+                    ID_ITALIC     : "italic",
+                    ID_ULINE      : "underline",
+                    ID_FORE_COLOR : "fore",
+                    ID_BACK_COLOR : "back"
                   }
 
         if id_ in [ ID_FONT, ID_FONT_SIZE, ID_FORE_COLOR, ID_BACK_COLOR ]:
@@ -668,7 +668,7 @@ class StyleEditorPanel(wx.Panel):
 
         """
         tag = evt.GetEventObject().GetStringSelection()
-        if tag != u"" and tag in self.styles_new:
+        if tag != "" and tag in self.styles_new:
             self.UpdateSettingsPane(self.styles_new[tag])
             self.EnableSettings()
         else:
@@ -720,7 +720,7 @@ class SettingsPanel(wx.Panel):
 
         # Setup Left hand side with Style Tag List
         ss_v = wx.BoxSizer(wx.VERTICAL)
-        style_lbl = wx.StaticText(self, label=_("Style Tags") + u": ")
+        style_lbl = wx.StaticText(self, label=_("Style Tags") + ": ")
         ss_v.AddMany([(style_lbl, 0, wx.ALIGN_LEFT),
                       (self._tag_list, 1, wx.EXPAND)])
         hsizer.Add(ss_v, 0, wx.EXPAND|wx.ALL, 5)
@@ -739,7 +739,7 @@ class SettingsPanel(wx.Panel):
 
         # Foreground
         fground_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        fground_lbl = wx.StaticText(self, label=_("Foreground") + u": ")
+        fground_lbl = wx.StaticText(self, label=_("Foreground") + ": ")
         fground_sel = eclib.ColorSetter(self, ID_FORE_COLOR, wx.BLACK)
         fground_sizer.AddMany([((5, 5)),
                                (fground_lbl, 0, wx.ALIGN_CENTER_VERTICAL),
@@ -751,7 +751,7 @@ class SettingsPanel(wx.Panel):
 
         # Background
         bground_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        bground_lbl = wx.StaticText(self, label=_("Background") + u": ")
+        bground_lbl = wx.StaticText(self, label=_("Background") + ": ")
         bground_sel = eclib.ColorSetter(self, ID_BACK_COLOR, wx.WHITE)
         bground_sizer.AddMany([((5, 5)),
                                (bground_lbl, 0, wx.ALIGN_CENTER_VERTICAL),
@@ -783,14 +783,14 @@ class SettingsPanel(wx.Panel):
 
         # Font Face Name
         fsizer = wx.BoxSizer(wx.HORIZONTAL)
-        flbl = wx.StaticText(self, label=_("Font") + u": ")
+        flbl = wx.StaticText(self, label=_("Font") + ": ")
         fontenum = wx.FontEnumerator()
         if wx.Platform == '__WXMAC__':
             # FixedWidthOnly Asserts on wxMac
             fontenum.EnumerateFacenames(fixedWidthOnly=False)
         else:
             fontenum.EnumerateFacenames(fixedWidthOnly=True)
-        font_lst = [u"%(primary)s", u"%(secondary)s"]
+        font_lst = ["%(primary)s", "%(secondary)s"]
         font_lst.extend(sorted(fontenum.GetFacenames()))
         fchoice = wx.Choice(self, ID_FONT, choices=font_lst)
         fsizer.AddMany([((5, 5), 0), (flbl, 0, wx.ALIGN_CENTER_VERTICAL),
@@ -799,9 +799,9 @@ class SettingsPanel(wx.Panel):
 
         # Font Size
         fsize_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        fsize_lbl = wx.StaticText(self, label=_("Size") + u": ")
-        fsizes = [u"%(size)d", u"%(size2)d"]
-        fsizes.extend([ unicode(x) for x in range(4, 21) ])
+        fsize_lbl = wx.StaticText(self, label=_("Size") + ": ")
+        fsizes = ["%(size)d", "%(size2)d"]
+        fsizes.extend([ str(x) for x in range(4, 21) ])
         fs_choice = wx.Choice(self, ID_FONT_SIZE, choices=fsizes)
         fsize_sizer.AddMany([((5, 5), 0),
                              (fsize_lbl, 0, wx.ALIGN_CENTER_VERTICAL),
@@ -849,11 +849,11 @@ class PreviewPanel(ed_basewin.EdBaseCtrlBox):
         cbar = self.CreateControlBar(wx.TOP)
 
         # Setup the ControlBar's controls
-        lexer_lbl = wx.StaticText(cbar, label=_("Preview File") + u": ")
+        lexer_lbl = wx.StaticText(cbar, label=_("Preview File") + ": ")
         lexer_lst = wx.Choice(cbar, ed_glob.ID_LEXER,
                               choices=syntax.GetLexerList())
         lexer_lst.SetToolTip(wx.ToolTip(_("Set the preview file type")))
-        lexer_lst.SetStringSelection(u"CPP")
+        lexer_lst.SetStringSelection("CPP")
         cbar.AddControl(lexer_lbl)
         cbar.AddControl(lexer_lst)
 
@@ -878,7 +878,7 @@ class PreviewPanel(ed_basewin.EdBaseCtrlBox):
         @param file_lbl: name of file to open in test data directory
 
         """
-        fname = file_lbl.replace(u" ", u"_").replace(u"/", u"_").lower()
+        fname = file_lbl.replace(" ", "_").replace("/", "_").lower()
         fname = fname.replace('#', 'sharp')
         try:
             fname = glob.glob(ed_glob.CONFIG['TEST_DIR'] + fname + ".*")[0]

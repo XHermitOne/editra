@@ -24,21 +24,21 @@ import glob
 import wx
 
 # Editra Libraries
-import ed_glob
-from profiler import Profile_Get, Profile_Set
-import ed_editv
-import syntax.synglob as synglob
-import syntax.syntax as syntax
-import ed_search
-import util
-import ed_msg
-import ed_txt
-import ed_mdlg
-import ed_session
-import ebmlib
-import eclib
-from extern import aui
-import ed_book
+from . import ed_glob
+from .profiler import Profile_Get, Profile_Set
+from . import ed_editv
+from . import syntax.synglob as synglob
+from . import syntax.syntax as syntax
+from . import ed_search
+from . import util
+from . import ed_msg
+from . import ed_txt
+from . import ed_mdlg
+from . import ed_session
+from . import ebmlib
+from . import eclib
+from .extern import aui
+from . import ed_book
 
 #--------------------------------------------------------------------------#
 # Globals
@@ -74,7 +74,7 @@ class EdPages(ed_book.EdBaseBook):
         self._searchctrl = ed_search.SearchController(self, self.GetCurrentCtrl)
         self._searchctrl.SetLookinChoices(Profile_Get('SEARCH_LOC',
                                                       default=list()))
-        self._searchctrl.SetFileFilters(Profile_Get('SEARCH_FILTER', default=u''))
+        self._searchctrl.SetFileFilters(Profile_Get('SEARCH_FILTER', default=''))
 
         self.pg_num = -1              # Track new pages (aka untitled docs)
         self.mdown = -1
@@ -84,7 +84,7 @@ class EdPages(ed_book.EdBaseBook):
         self._menu = ebmlib.ContextMenuManager()
 
         # Setup Tab Navigator
-        ed_icon = ed_glob.CONFIG['SYSPIX_DIR'] + u"editra.png"
+        ed_icon = ed_glob.CONFIG['SYSPIX_DIR'] + "editra.png"
         bmp = wx.Bitmap(ed_icon, wx.BITMAP_TYPE_PNG)
         if bmp.IsOk():
             self.SetNavigatorIcon(bmp)
@@ -211,7 +211,7 @@ class EdPages(ed_book.EdBaseBook):
             mdlg = wx.MessageDialog(self,
                                     _("File is already open in an existing "
                                       "page.\nDo you wish to open it again?"),
-                                    _("Open File") + u"?",
+                                    _("Open File") + "?",
                                     wx.YES_NO | wx.NO_DEFAULT | \
                                     wx.ICON_INFORMATION)
             result = mdlg.ShowModal()
@@ -225,7 +225,7 @@ class EdPages(ed_book.EdBaseBook):
 
         return result == wx.ID_YES
 
-    def AddPage(self, page, text=u'', select=True, imgId=-1):
+    def AddPage(self, page, text='', select=True, imgId=-1):
         """Add a page to the notebook"""
         bNewPage = False
         if not len(text):
@@ -328,7 +328,7 @@ class EdPages(ed_book.EdBaseBook):
 
         session = Profile_Get('LAST_SESSION')
         # Compatibility with older session data
-        if not isinstance(session, basestring) or not len(session):
+        if not isinstance(session, str) or not len(session):
             mgr = ed_session.EdSessionMgr()
             session = mgr.DefaultSession
             Profile_Set('LAST_SESSION', session)
@@ -347,7 +347,7 @@ class EdPages(ed_book.EdBaseBook):
             mgr = ed_session.EdSessionMgr()
             flist = self.GetFileNames()
             bSaved = mgr.SaveSession(session, flist)
-        except Exception, msg:
+        except Exception as msg:
             self.LOG("[ed_pages][err] SaveSession error %s" % msg)
         return None
 
@@ -363,7 +363,7 @@ class EdPages(ed_book.EdBaseBook):
         flist = list()
         try:
             flist = mgr.LoadSession(session)
-        except Exception, msg:
+        except Exception as msg:
             self._ses_load = False
             errdict = dict(sessionname=session, error=msg)
             return (_("Session Load Error"),
@@ -392,7 +392,7 @@ class EdPages(ed_book.EdBaseBook):
         if missingfns:
             rmsg = (_("Missing session files"),
                     _("Some files in saved session could not be found on disk:\n")+
-                    u'\n'.join(missingfns))
+                    '\n'.join(missingfns))
             self._ses_load = False
             return rmsg
 
@@ -610,7 +610,7 @@ class EdPages(ed_book.EdBaseBook):
         else:
             evt.Skip()
 
-    def OpenDocPointer(self, ptr, doc, title=u''):
+    def OpenDocPointer(self, ptr, doc, title=''):
         """Open a page using an stc document poiner
         @param ptr: EdEditorView document Pointer
         @param doc: EdFile instance
@@ -736,7 +736,7 @@ class EdPages(ed_book.EdBaseBook):
             new_pg = True
             if self.GetPageCount():
                 if self.control.GetModify() or self.control.GetLength() or \
-                   self.control.GetFileName() != u'':
+                   self.control.GetFileName() != '':
                     control = ed_editv.EdEditorView(self, wx.ID_ANY)
                     control.Hide()
                 else:
@@ -751,7 +751,7 @@ class EdPages(ed_book.EdBaseBook):
             if os.path.exists(path2file):
                 try:
                     result = control.LoadFile(path2file)
-                except Exception, msg:
+                except Exception as msg:
                     self.LOG("[ed_pages][err] Failed to open file %s\n" % path2file)
                     self.LOG("[ed_pages][err] %s" % msg)
 
@@ -859,7 +859,7 @@ class EdPages(ed_book.EdBaseBook):
         @param fname: file path (string)
 
         """
-        for page in xrange(self.GetPageCount()):
+        for page in range(self.GetPageCount()):
             ctrl = self.GetPage(page)
             if fname == ctrl.GetFileName():
                 self.ChangePage(page)
@@ -879,7 +879,7 @@ class EdPages(ed_book.EdBaseBook):
         except Exception:
             txt = ''
 
-        if not txt or txt[0] != u"*":
+        if not txt or txt[0] != "*":
             return txt
         return txt[1:]
 
@@ -907,7 +907,7 @@ class EdPages(ed_book.EdBaseBook):
                 bReadOnly = self.GetPageImage(index) == self._index[ed_glob.ID_READONLY]
             else:
                 self.LOG("[ed_pages][warn] ImageIsReadOnly: Bad index: %d" % index)
-        except Exception, msg:
+        except Exception as msg:
             # TODO: investigate possible upstream issue
             self.LOG("[ed_pages][err] ImageIsReadOnly: %s" % msg)
         return bReadOnly
@@ -928,7 +928,7 @@ class EdPages(ed_book.EdBaseBook):
                  notebook.
 
         """
-        pages = [self.GetPage(page) for page in xrange(self.GetPageCount())]
+        pages = [self.GetPage(page) for page in range(self.GetPageCount())]
         return [page for page in pages if page.GetName() == "EditraTextCtrl"]
 
     def HasFileOpen(self, fpath):
@@ -1252,7 +1252,7 @@ class EdPages(ed_book.EdBaseBook):
                 pg_num = self.GetSelection()
                 title = self.GetPageText(pg_num)
                 if self.control.GetModify():
-                    title = u"*" + title
+                    title = "*" + title
 
                 # Only Update if the text has changed
                 if title != super(EdPages, self).GetPageText(pg_num):
@@ -1266,7 +1266,7 @@ class EdPages(ed_book.EdBaseBook):
                     if control.Id == evt.Id:
                         title = self.GetPageText(page)
                         if control.GetModify():
-                            title = u"*" + title
+                            title = "*" + title
                         if title != super(EdPages, self).GetPageText(page):
                             self.SetPageText(page, title)
         except wx.PyDeadObjectError:

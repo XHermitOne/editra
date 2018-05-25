@@ -35,7 +35,7 @@ class EdTabBase(object):
         super(EdTabBase, self).__init__()
 
         # Attributes
-        self._lbl = u''
+        self._lbl = ''
         self._idx = -1
 
     @property
@@ -73,7 +73,7 @@ class EdTabBase(object):
         @return: (unicode) string
 
         """
-        raise NotImplementedError, "GetName Must be implemented!!"
+        raise NotImplementedError("GetName Must be implemented!!")
 
     def GetTabImage(self):
         """Get the Bitmap to use for the tab
@@ -94,7 +94,7 @@ class EdTabBase(object):
         @return: (unicode) string
 
         """
-        return u''
+        return ''
 
     def CanCloseTab(self):
         """Called when checking if tab can be closed or not

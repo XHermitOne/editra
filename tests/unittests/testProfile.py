@@ -40,8 +40,8 @@ class ProfileTest(unittest.TestCase):
     def OnConfigMsg(self, msg):
         mtype = msg.GetType()
         mdata = msg.GetData()
-        self.assertEquals(mtype[-1], 'test') 
-        self.assertEquals(mdata, "TEST VALUE")
+        self.assertEqual(mtype[-1], 'test') 
+        self.assertEqual(mdata, "TEST VALUE")
 
     #---- Begin Test Cases ----#
 
@@ -65,13 +65,13 @@ class ProfileTest(unittest.TestCase):
         self._profile.LoadDefaults()
 
         # Try retrieving some values from it
-        self.assertEquals(self._profile.Get('EDGE'), profiler._DEFAULTS['EDGE'])
+        self.assertEqual(self._profile.Get('EDGE'), profiler._DEFAULTS['EDGE'])
 
         # Test a value that doesn't exist
         self.assertTrue(self._profile.Get('FAKEKEYTOFETCH') is None)
 
         # Test fallback value
-        self.assertEquals(self._profile.Get('FAKEKEYTOFETCH', default="hello"), "hello")
+        self.assertEqual(self._profile.Get('FAKEKEYTOFETCH', default="hello"), "hello")
 
     def testChangeValue(self):
         """Test changing an existing profile value."""
@@ -105,7 +105,7 @@ class ProfileTest(unittest.TestCase):
         self._profile.Set('UNIQUEVALUE', 'MYVALUE!!')
         new_profile = profiler.Profile()
         val = new_profile.Get('UNIQUEVALUE')
-        self.assertEquals(val, 'MYVALUE!!')
+        self.assertEqual(val, 'MYVALUE!!')
         self.assertTrue(self._profile is new_profile)
 
     def testWrite(self):

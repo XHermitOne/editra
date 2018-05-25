@@ -27,8 +27,8 @@ from pygments.token import Token, Text, Comment, Operator, \
 import re
 
 # Local Imports
-import synglob
-import syndata
+from . import synglob
+from . import syndata
 
 #-----------------------------------------------------------------------------#
 # Style Id's
@@ -45,7 +45,7 @@ STC_XTEXT_FEATURE, \
 STC_XTEXT_CROSSREF, \
 STC_XTEXT_PACKAGE, \
 STC_XTEXT_KEYWORD, \
-STC_XTEXT_KEYWORD_PSEUDO = range(13)
+STC_XTEXT_KEYWORD_PSEUDO = list(range(13))
 
 #-----------------------------------------------------------------------------#
 
@@ -97,7 +97,7 @@ class SyntaxData(syndata.SyntaxDataBase):
 
     def GetCommentPattern(self):
         """Returns a list of characters used to comment a block of code """
-        return [u"//"]
+        return ["//"]
 
 #-----------------------------------------------------------------------------#
 # Features
@@ -129,7 +129,7 @@ def AutoIndenter(estc, pos, ichar):
     @return: string
 
     """
-    rtxt = u''
+    rtxt = ''
     line = estc.GetCurrentLine()
     spos = estc.PositionFromLine(line)
     text = estc.GetTextRange(spos, pos)
@@ -147,15 +147,15 @@ def AutoIndenter(estc, pos, ichar):
         return
 
     indent = estc.GetLineIndentation(line)
-    if ichar == u"\t":
+    if ichar == "\t":
         tabw = estc.GetTabWidth()
     else:
         tabw = estc.GetIndent()
 
     i_space = indent / tabw
-    end_spaces = ((indent - (tabw * i_space)) * u" ")
+    end_spaces = ((indent - (tabw * i_space)) * " ")
 
-    if text.endswith(u":"):
+    if text.endswith(":"):
         i_space += 1
 
     rtxt = eolch + ichar * i_space + end_spaces
@@ -258,4 +258,4 @@ if __name__=='__main__':
     for index, token, txt in lexer.get_tokens_unprocessed(text):
         if token is Token.EndOfLine:
             line += 1
-        print line, token, txt
+        print(line, token, txt)

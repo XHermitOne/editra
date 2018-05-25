@@ -34,29 +34,29 @@ class SynGlobTest(unittest.TestCase):
     def testGetDescriptionFromId(self):
         """Test GetDescriptionFromId"""
         desc = synglob.GetDescriptionFromId(synglob.ID_LANG_PYTHON)
-        self.assertEquals(desc, synglob.LANG_PYTHON)
+        self.assertEqual(desc, synglob.LANG_PYTHON)
 
         desc = synglob.GetDescriptionFromId(synglob.ID_LANG_JAVA)
-        self.assertEquals(desc, synglob.LANG_JAVA)
+        self.assertEqual(desc, synglob.LANG_JAVA)
 
         # Test that some unknown id's always return Plain Text
         desc = synglob.GetDescriptionFromId(0)
-        self.assertEquals(desc, synglob.LANG_TXT)
+        self.assertEqual(desc, synglob.LANG_TXT)
 
         desc = synglob.GetDescriptionFromId(100)
-        self.assertEquals(desc, synglob.LANG_TXT)
+        self.assertEqual(desc, synglob.LANG_TXT)
 
     def testGetIdFromDescription(self):
         """Get getting a language id from its description string"""
-        id_ = synglob.GetIdFromDescription(u"Python")
-        self.assertEquals(id_, synglob.ID_LANG_PYTHON)
+        id_ = synglob.GetIdFromDescription("Python")
+        self.assertEqual(id_, synglob.ID_LANG_PYTHON)
 
-        id_ = synglob.GetIdFromDescription(u"python")
-        self.assertEquals(id_, synglob.ID_LANG_PYTHON)
+        id_ = synglob.GetIdFromDescription("python")
+        self.assertEqual(id_, synglob.ID_LANG_PYTHON)
 
-        id_ = synglob.GetIdFromDescription(u"C")
-        self.assertEquals(id_, synglob.ID_LANG_C)
+        id_ = synglob.GetIdFromDescription("C")
+        self.assertEqual(id_, synglob.ID_LANG_C)
 
-        id_ = synglob.GetIdFromDescription(u"SomeFakeLang")
-        self.assertEquals(id_, synglob.ID_LANG_TXT)
+        id_ = synglob.GetIdFromDescription("SomeFakeLang")
+        self.assertEqual(id_, synglob.ID_LANG_TXT)
 

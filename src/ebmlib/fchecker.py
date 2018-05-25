@@ -27,8 +27,8 @@ import os
 
 class FileTypeChecker(object):
     """File type checker and recognizer"""
-    TXTCHARS = ''.join(map(chr, [7, 8, 9, 10, 12, 13, 27] + range(0x20, 0x100)))
-    ALLBYTES = ''.join(map(chr, range(256)))
+    TXTCHARS = ''.join(map(chr, [7, 8, 9, 10, 12, 13, 27] + list(range(0x20, 0x100))))
+    ALLBYTES = ''.join(map(chr, list(range(256))))
 
     def __init__(self, preread=4096):
         """Create the FileTypeChecker

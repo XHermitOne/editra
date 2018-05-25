@@ -90,7 +90,7 @@ import wx
 import wx.lib.newevent
 
 # Local Imports
-from eclutil import *
+from .eclutil import *
 
 #-----------------------------------------------------------------------------#
 # Button States

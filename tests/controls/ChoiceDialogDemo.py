@@ -21,7 +21,7 @@ import os
 import sys
 import wx
 
-import IconFile
+from . import IconFile
 
 # Put local package on the path
 #sys.path.insert(0, os.path.abspath('../../src'))
@@ -63,7 +63,7 @@ class TestPanel(wx.Panel):
                        default="m", style=wx.OK|wx.CANCEL|wx.ICON_WARNING)
         elif e_obj == self.chNumber:
             dlg = eclib.ChoiceDialog(None, msg="Choose an number",
-                       title="Number Dialog", choices=map(unicode, range(20)),
+                       title="Number Dialog", choices=list(map(str, list(range(20)))),
                        default="3", style=wx.OK|wx.CANCEL|wx.ICON_WARNING)
 
         if dlg is not None:
@@ -84,7 +84,7 @@ class TestLog:
         pass
 
     def write(self, msg):
-        print msg
+        print(msg)
 
 #----------------------------------------------------------------------
 

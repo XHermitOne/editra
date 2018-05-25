@@ -22,9 +22,9 @@ __revision__ = "$Revision:  $"
 import wx.stc as stc
 
 # Local imports
-import synglob
-import syndata
-import _cpp
+from . import synglob
+from . import syndata
+from . import _cpp
 
 #-----------------------------------------------------------------------------#
 
@@ -65,4 +65,4 @@ class SyntaxData(syndata.SyntaxDataBase):
 
     def GetCommentPattern(self):
         """Return comment pattern for OOC"""
-        return [u'//']
+        return ['//']

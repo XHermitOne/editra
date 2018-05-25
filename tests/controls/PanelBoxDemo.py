@@ -26,7 +26,7 @@ import wx
 import eclib as eclib
 
 # Local imports
-import IconFile
+from . import IconFile
 
 #-----------------------------------------------------------------------------#
 
@@ -100,7 +100,7 @@ class TestLog:
         pass
 
     def write(self, msg):
-        print msg
+        print(msg)
 
 #----------------------------------------------------------------------
 

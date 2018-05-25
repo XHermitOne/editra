@@ -24,19 +24,19 @@ __all__ = [ 'InfoBar', 'INFOBAR_INFO', 'INFOBAR_WARN', 'INFOBAR_ERROR' ]
 import wx
 
 # Local Imports
-import eclutil
+from . import eclutil
 
 #-----------------------------------------------------------------------------#
 
 INFOBAR_INFO, \
 INFOBAR_WARN, \
-INFOBAR_ERROR = range(3)
+INFOBAR_ERROR = list(range(3))
 
 #-----------------------------------------------------------------------------#
 
 class InfoBar(wx.PyPanel):
     """Information popup panel"""
-    def __init__(self, parent, title=u"", message=u"",
+    def __init__(self, parent, title="", message="",
                  msgType=INFOBAR_INFO,
                  style=wx.TAB_TRAVERSAL|wx.NO_BORDER):
         """Create the InfoBar"""
@@ -140,7 +140,7 @@ class InfoBar(wx.PyPanel):
         self._UpdateParent()
         self.Refresh()
 
-    def ShowMessage(self, title=u"", message=u"", msgType=INFOBAR_INFO):
+    def ShowMessage(self, title="", message="", msgType=INFOBAR_INFO):
         """Update the message and show the bar"""
         self.Title.SetLabel(title)
         self.Message.SetLabel(message)

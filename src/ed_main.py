@@ -27,28 +27,28 @@ import time
 import wx
 
 # Editra Libraries
-from ed_glob import *
-import util
-import profiler
-import ed_toolbar
-import ed_mpane
-import ed_event
-import ed_msg
-import ed_menu
-import ed_print
-import ed_shelf
-import ed_statbar
-import ed_mdlg
-import prefdlg
-import syntax.syntax as syntax
-import generator
-import plugin
-import ed_fmgr
-import perspective as viewmgr
-import ed_session
-import iface
-import ebmlib
-import eclib
+from .ed_glob import *
+from . import util
+from . import profiler
+from . import ed_toolbar
+from . import ed_mpane
+from . import ed_event
+from . import ed_msg
+from . import ed_menu
+from . import ed_print
+from . import ed_shelf
+from . import ed_statbar
+from . import ed_mdlg
+from . import prefdlg
+from . import syntax.syntax as syntax
+from . import generator
+from . import plugin
+from . import ed_fmgr
+from . import perspective as viewmgr
+from . import ed_session
+from . import iface
+from . import ebmlib
+from . import eclib
 
 # Function Aliases
 _ = wx.GetTranslation
@@ -80,7 +80,7 @@ class MainWindow(wx.Frame, viewmgr.PerspectiveManager):
         self._loaded = False
         self._initialized = False # for GTK OnActivate HACK
         self._mlock = ebmlib.CallLock()
-        self._last_save = u''
+        self._last_save = ''
         self.LOG = wx.GetApp().GetLog()
         self._exiting = False
         self._handlers = dict(menu=list(), ui=list())
@@ -298,7 +298,7 @@ class MainWindow(wx.Frame, viewmgr.PerspectiveManager):
         #       and set it when its created.
         wx.CallAfter(self.InitWindowAlpha)
 
-    __name__ = u"MainWindow"
+    __name__ = "MainWindow"
 
     def OnDestroy(self, evt):
         """Disconnect Message Handlers"""
@@ -410,7 +410,7 @@ class MainWindow(wx.Frame, viewmgr.PerspectiveManager):
         else:
             self._handlers['ui'].append((menu_id, handler))
 
-    def DoOpen(self, evt, fname=u'', lnum=-1):
+    def DoOpen(self, evt, fname='', lnum=-1):
         """ Do the work of opening a file and placing it
         in a new notebook page.
         @keyword fname: can be optionally specified to open
@@ -547,7 +547,7 @@ class MainWindow(wx.Frame, viewmgr.PerspectiveManager):
             if len(hist_list) > size:
                 hist_list = hist_list[:size]
             self.filehistory.History = hist_list
-        except (Exception, wx.PyAssertionError), msg:
+        except (Exception, wx.PyAssertionError) as msg:
             self.LOG("[ed_main][err] Filehistory load failed: %s" % msg)
 
     def OnNew(self, evt):
@@ -618,7 +618,7 @@ class MainWindow(wx.Frame, viewmgr.PerspectiveManager):
 
         """
         fname = ebmlib.GetFileName(buf.GetFileName())
-        if fname != u'':
+        if fname != '':
             fpath = buf.GetFileName()
             result = buf.SaveFile(fpath)
             self._last_save = fpath
@@ -659,7 +659,7 @@ class MainWindow(wx.Frame, viewmgr.PerspectiveManager):
             evt.Skip()
             return
 
-    def OnSaveAs(self, evt, title=u'', page=None):
+    def OnSaveAs(self, evt, title='', page=None):
         """Save File Using a new/different name
         @param evt: wx.MenuEvent
 
@@ -669,7 +669,7 @@ class MainWindow(wx.Frame, viewmgr.PerspectiveManager):
         else:
             ctrl = self.nb.GetCurrentCtrl()
 
-        if title == u'':
+        if title == '':
             title = os.path.split(ctrl.GetFileName())[1]
 
         sdir = ctrl.GetFileName()
@@ -678,8 +678,8 @@ class MainWindow(wx.Frame, viewmgr.PerspectiveManager):
 
         dlg = wx.FileDialog(self, _("Choose a Save Location"),
                             os.path.dirname(sdir),
-                            title.lstrip(u"*"),
-                            u''.join(syntax.GenFileFilters()),
+                            title.lstrip("*"),
+                            ''.join(syntax.GenFileFilters()),
                             wx.SAVE | wx.OVERWRITE_PROMPT)
 
         if ebmlib.LockCall(self._mlock, dlg.ShowModal) == wx.ID_OK:
@@ -761,9 +761,9 @@ class MainWindow(wx.Frame, viewmgr.PerspectiveManager):
     def DoSaveSessionAs(self):
         """Prompt the user to save the current session"""
         mgr = ed_session.EdSessionMgr()
-        cses = _PGET('LAST_SESSION', default=u"")
+        cses = _PGET('LAST_SESSION', default="")
         if cses == mgr.DefaultSession:
-            cses = u""
+            cses = ""
         fname = ebmlib.LockCall(self._mlock, wx.GetTextFromUser, 
                                 (_("Session Name"), _("Save Session"), cses))
         fname = fname.strip()
@@ -1077,7 +1077,7 @@ class MainWindow(wx.Frame, viewmgr.PerspectiveManager):
 
         """
         if evt.Id == ID_STYLE_EDIT:
-            import style_editor
+            from . import style_editor
             dlg = style_editor.StyleEditor(self)
             dlg.CenterOnParent()
             ebmlib.LockCall(self._mlock, dlg.ShowModal)
@@ -1091,7 +1091,7 @@ class MainWindow(wx.Frame, viewmgr.PerspectiveManager):
 
         """
         if evt.Id == ID_PLUGMGR:
-            import plugdlg
+            from . import plugdlg
             win = wx.GetApp().GetWindowInstance(plugdlg.PluginDialog)
             if win is not None:
                 win.Raise()
@@ -1275,7 +1275,7 @@ class MainWindow(wx.Frame, viewmgr.PerspectiveManager):
             self._paneNavi.Destroy()
             self._paneNavi = None
 
-            if isinstance(sel, basestring):
+            if isinstance(sel, str):
                 paneInfo = self.PanelMgr.GetPane(sel)
                 if paneInfo.IsOk():
                     if not paneInfo.IsShown():
@@ -1528,14 +1528,14 @@ class MainWindow(wx.Frame, viewmgr.PerspectiveManager):
 
     SetStatusText = PushStatusText
 
-    def SetTitle(self, title=u''):
+    def SetTitle(self, title=''):
         """Sets the windows title
         @param title: The text to tag on to the default frame title
 
         """
-        name = u"%s v%s" % (PROG_NAME, VERSION)
+        name = "%s v%s" % (PROG_NAME, VERSION)
         if len(title):
-            name = u" - " + name
+            name = " - " + name
         super(MainWindow, self).SetTitle(title + name)
 
     def SetupToolBar(self):
@@ -1628,7 +1628,7 @@ class MainWindowAddOn(plugin.Plugin):
         for observer in self.observers:
             try:
                 observer.PlugIt(window)
-            except Exception, msg:
+            except Exception as msg:
                 util.Log("[ed_main][err] MainWindowAddOn.Init: %s" % msg)
 
     def GetEventHandlers(self, ui_evt=False):
@@ -1649,7 +1649,7 @@ class MainWindowAddOn(plugin.Plugin):
                     if hasattr(observer, 'GetMenuHandlers'):
                         items = observer.GetMenuHandlers()
                         assert isinstance(items, list), "Must be a list()!"
-            except Exception, msg:
+            except Exception as msg:
                 util.Log("[ed_main][err] MainWindowAddOn.GetEventHandlers: %s" % str(msg))
                 continue
 

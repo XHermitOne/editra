@@ -44,20 +44,20 @@ class StyleMgrTest(unittest.TestCase):
         """Test that a dictionary of blank and null items are returned"""
         blank = self.mgr.BlankStyleDictionary()
         self.assertTrue(isinstance(blank, dict), "No dictionary returned")
-        self.assertEquals(sorted(blank.keys()), sorted(self.dd.keys()),
+        self.assertEqual(sorted(blank.keys()), sorted(self.dd.keys()),
                           "Blank dictionary is missing some keys")
 
         # Check that all the items are blank and the same
-        for key, item in blank.iteritems():
+        for key, item in blank.items():
             if not item.IsNull():
-                self.assertEquals(sorted(item.GetAsList()), sorted(self.bstr),
+                self.assertEqual(sorted(item.GetAsList()), sorted(self.bstr),
                                   "%s != %s" % (str(item.GetAsList()), self.bstr)) 
 
     # TODO add more tests for checking after changing style sheets
     def testGetCurrentStyleSetName(self):
         """Test getting the name of the current style set"""
         name = self.mgr.GetCurrentStyleSetName()
-        self.assertEquals(name, "default")
+        self.assertEqual(name, "default")
 
     def testGetItemByName(self):
         """Test retrieving a StyleItem by name from the manager"""
@@ -69,7 +69,7 @@ class StyleMgrTest(unittest.TestCase):
         self.assertFalse(fake.IsOk(), "The fake tag is not empty: %s" % str(fake))
 
         # Check that retrieving the same item twice returns the same value
-        self.assertEquals(ditem, self.mgr.GetItemByName("default_style"),
+        self.assertEqual(ditem, self.mgr.GetItemByName("default_style"),
                           "Retrieving same item twice yields different results")
 
     def testGetDefaultBackColour(self):
@@ -80,9 +80,9 @@ class StyleMgrTest(unittest.TestCase):
 
         # Check hex string retrieval
         cstr = self.mgr.GetDefaultBackColour(as_hex=True)
-        self.assertTrue(isinstance(cstr, basestring), "as_hex Failed")
+        self.assertTrue(isinstance(cstr, str), "as_hex Failed")
         cstr2 = color.GetAsString(wx.C2S_HTML_SYNTAX).lower()
-        self.assertEquals(cstr.lower(), cstr2,
+        self.assertEqual(cstr.lower(), cstr2,
                           "as_hex:%s != color:%s" % (cstr.lower(), cstr2))
 
     def testGetDefaultFont(self):
@@ -91,7 +91,7 @@ class StyleMgrTest(unittest.TestCase):
         self.assertTrue(font.IsOk(), "Font is not OK")
 
         ditem = self.mgr.GetItemByName("default_style")
-        self.assertEquals(font.GetFaceName().lower(), ditem.GetFace().lower(),
+        self.assertEqual(font.GetFaceName().lower(), ditem.GetFace().lower(),
                           "%s != %s" % (font.GetFaceName(), ditem.GetFace()))
 
     def testGetDefaultForeColour(self):
@@ -102,9 +102,9 @@ class StyleMgrTest(unittest.TestCase):
 
         # Check hex string retrieval
         cstr = self.mgr.GetDefaultForeColour(as_hex=True)
-        self.assertTrue(isinstance(cstr, basestring), "as_hex Failed")
+        self.assertTrue(isinstance(cstr, str), "as_hex Failed")
         cstr2 = color.GetAsString(wx.C2S_HTML_SYNTAX).lower()
-        self.assertEquals(cstr.lower(), cstr2,
+        self.assertEqual(cstr.lower(), cstr2,
                           "as_hex:%s != color:%s" % (cstr.lower(), cstr2))
 
     def testGetFontDictionary(self):
@@ -119,14 +119,14 @@ class StyleMgrTest(unittest.TestCase):
         """Test retrieval of a given style spec string"""
         for style in ('default_style', 'comment_style', 'string_style'):
             spec = self.mgr.GetStyleByName(style)
-            self.assertTrue(isinstance(spec, basestring),
+            self.assertTrue(isinstance(spec, str),
                             "GetStyleByName returned a %s" % str(type(spec)))
             self.assertTrue(len(spec), "Style %s is empty" % style)
             self.assertTrue('modifiers:' not in spec,
                             "Modifers attr in final spec")
 
         fake = self.mgr.GetStyleByName("fakestyletag")
-        self.assertEquals(fake, wx.EmptyString)
+        self.assertEqual(fake, wx.EmptyString)
 
     def testGetStyleFont(self):
         """Test getting the font objects for the current styles primary and
@@ -166,12 +166,12 @@ class StyleMgrTest(unittest.TestCase):
         self.mgr.SetStyleFont(wx.SMALL_FONT, primary=True)
         font = self.mgr.GetStyleFont(primary=True)
         nset = font.GetNativeFontInfo()
-        self.assertEquals(native_s, nset.ToString())
+        self.assertEqual(native_s, nset.ToString())
 
         self.mgr.SetStyleFont(wx.SMALL_FONT, primary=False)
         font = self.mgr.GetStyleFont(primary=False)
         nset = font.GetNativeFontInfo()
-        self.assertEquals(native_s, nset.ToString())
+        self.assertEqual(native_s, nset.ToString())
 
     def testSetStyleTag(self):
         """Test setting of individual style tags"""
@@ -181,7 +181,7 @@ class StyleMgrTest(unittest.TestCase):
         self.assertTrue(self.mgr.SetStyleTag('default_style', item),
                         "Failed to set default style")
         citem = self.mgr.GetItemByName('default_style')
-        self.assertEquals(citem, item,
+        self.assertEqual(citem, item,
                           "SetStyleTag incorrectly set the data\n"
                           "%s != %s" % (citem, item))
         self.assertFalse(self.mgr.SetStyleTag('default_style', self.bstr),
@@ -192,23 +192,23 @@ class StyleMgrTest(unittest.TestCase):
         # Test valid style sheet
         data = common.GetFileContents(self.stylesheet)
         styledict = self.mgr.ParseStyleData(data)
-        for tag, item in styledict.iteritems():
-            self.assertTrue(isinstance(tag, types.UnicodeType), "%s Is not Unicode!" % tag)
+        for tag, item in styledict.items():
+            self.assertTrue(isinstance(tag, str), "%s Is not Unicode!" % tag)
             self.assertTrue(isinstance(item, ed_style.StyleItem))
         # Test loading sheet with malformed data
         sheet_path = common.GetDataFilePath('incorrect_syntax.ess')
         data = common.GetFileContents(sheet_path)
         styledict2 = self.mgr.ParseStyleData(data)
         self.assertTrue(len(styledict) > len(styledict2))
-        for tag, item in styledict2.iteritems():
-            self.assertTrue(isinstance(tag, types.UnicodeType), "%s Is not Unicode!" % tag)
+        for tag, item in styledict2.items():
+            self.assertTrue(isinstance(tag, str), "%s Is not Unicode!" % tag)
             self.assertTrue(isinstance(item, ed_style.StyleItem))
         # Test stylesheet that is all on one line
         sheet_path = common.GetDataFilePath('one_liner.ess')
         data = common.GetFileContents(sheet_path)
         styledict3 = self.mgr.ParseStyleData(data)
-        for tag, item in styledict3.iteritems():
-            self.assertTrue(isinstance(tag, types.UnicodeType), "%s Is not Unicode!" % tag)
+        for tag, item in styledict3.items():
+            self.assertTrue(isinstance(tag, str), "%s Is not Unicode!" % tag)
             self.assertTrue(isinstance(item, ed_style.StyleItem))
 
     def testPackStyleSet(self):
@@ -232,7 +232,7 @@ class StyleMgrTest(unittest.TestCase):
         data = common.GetFileContents(sheet_path)
         styledict = self.mgr.ParseStyleData(data)
         styledict = self.mgr.PackStyleSet(styledict)
-        for tag, item in styledict.iteritems():
+        for tag, item in styledict.items():
             self.doValidateColourAttrs(tag, item)
 
     def doValidateColourAttrs(self, tag, item):
@@ -241,7 +241,7 @@ class StyleMgrTest(unittest.TestCase):
             try:
                 int(item.GetFore()[1:], 16)
                 int(item.GetBack()[1:], 16)
-            except Exception, msg:
+            except Exception as msg:
                 self.assertFalse(True, "Bad data in style item: %s:%s" % (tag,item))
 
     def testValidateBuiltinStyleSheets(self):
@@ -252,7 +252,7 @@ class StyleMgrTest(unittest.TestCase):
             data = common.GetFileContents(sheet)
             styledict = self.mgr.ParseStyleData(data)
             styledict = self.mgr.PackStyleSet(styledict)
-            for tag, item in styledict.iteritems():
+            for tag, item in styledict.items():
                 self.doValidateColourAttrs(tag, item)
                 mods = item.GetModifierList()
                 if len(mods):

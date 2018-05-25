@@ -27,7 +27,7 @@ __all__ = ["ColorSetter", "ColorSetterEvent",
 import wx
 import wx.lib.colourselect as csel
 
-from eclutil import HexToRGB, Freezer
+from .eclutil import HexToRGB, Freezer
 
 #-----------------------------------------------------------------------------#
 # Globals
@@ -123,7 +123,7 @@ class ColorSetter(wx.Panel):
             valid = '#' + valid
             self._txt.SetValue(valid)
             self._txt.SetInsertionPoint(cpos)
-            valid = valid + (u'0' * (6 - len(valid)))
+            valid = valid + ('0' * (6 - len(valid)))
             self._cbtn.SetValue(HexToRGB(valid))
 
     def _DoLayout(self):
@@ -161,7 +161,7 @@ class ColorSetter(wx.Panel):
         """
         e_val = evt.GetValue()[0:3]
         red, green, blue = (hex(val)[2:].upper() for val in e_val)
-        hex_str = u"#%s%s%s" % (red.zfill(2), green.zfill(2), blue.zfill(2))
+        hex_str = "#%s%s%s" % (red.zfill(2), green.zfill(2), blue.zfill(2))
         self._txt.SetValue(hex_str)
         self._cbtn.SetValue(wx.Colour(*e_val))
         self.__PostEvent()
@@ -186,13 +186,13 @@ class ColorSetter(wx.Panel):
             evt.Skip()
             return
 
-        key = unichr(code)
+        key = chr(code)
         if (key.isdigit() and evt.ShiftDown()) or \
            evt.AltDown() or evt.MetaDown():
             return
 
         if key in HEX_CHARS and \
-           (len(self._txt.GetValue().lstrip(u"#")) < 6 or \
+           (len(self._txt.GetValue().lstrip("#")) < 6 or \
             self._txt.GetStringSelection()):
             evt.Skip()
 
@@ -212,7 +212,7 @@ class ColorSetter(wx.Panel):
         self._cbtn.SetValue(colour)
         self._preval = colour
         red, green, blue = (hex(val)[2:].zfill(2).upper() for val in colour[0:3])
-        hex_str = u"#%s%s%s" % (red, green, blue)
+        hex_str = "#%s%s%s" % (red, green, blue)
         self._txt.SetValue(hex_str)
 
 #-----------------------------------------------------------------------------#

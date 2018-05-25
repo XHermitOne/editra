@@ -25,7 +25,7 @@ import os
 import wx
 
 # Local Imports
-import txtutil
+from . import txtutil
 
 #-----------------------------------------------------------------------------#
 

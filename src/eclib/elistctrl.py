@@ -31,7 +31,7 @@ import wx
 import wx.lib.mixins.listctrl as listmix
 
 # Local Imports
-import elistmix
+from . import elistmix
 
 #--------------------------------------------------------------------------#
 

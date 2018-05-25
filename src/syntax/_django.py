@@ -24,8 +24,8 @@ from pygments.token import Token
 from pygments.lexers import get_lexer_by_name
 
 #Local Imports
-import synglob
-import syndata
+from . import synglob
+from . import syndata
 
 #-----------------------------------------------------------------------------#
 # Style Id's
@@ -41,7 +41,7 @@ STC_DJANGO_PREPROCESSOR, \
 STC_DJANGO_ATTRIBUTE, \
 STC_DJANGO_TAG, \
 STC_DJANGO_BUILTIN, \
-STC_DJANGO_KEYWORD = range(12)
+STC_DJANGO_KEYWORD = list(range(12))
 
 #-----------------------------------------------------------------------------#
 
@@ -84,7 +84,7 @@ class SyntaxData(syndata.SyntaxDataBase):
 
     def GetCommentPattern(self):
         """Returns a list of characters used to comment a block of code """
-        return [u"#",]
+        return ["#",]
 
 #-----------------------------------------------------------------------------#
 
@@ -111,7 +111,7 @@ def StyleText(stc, start, end):
     for token, txt in lexer.get_tokens(doctxt):
 #        print token, txt
         style = TOKEN_MAP.get(token, STC_DJANGO_DEFAULT)
-        if style == STC_DJANGO_PREPROCESSOR and txt.startswith(u'#'):
+        if style == STC_DJANGO_PREPROCESSOR and txt.startswith('#'):
             style = STC_DJANGO_COMMENT
 #        elif style == STC_DJANGO_STRING and txt[-1] not in '"\'':
 #            style = STC_DJANGO_STRINGEOL

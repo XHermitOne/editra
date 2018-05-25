@@ -24,13 +24,13 @@ import wx
 import wx.stc
 
 # Editra Libraries
-import ed_glob
-import util
-import ed_msg
-import ed_menu
-from syntax.synglob import GetDescriptionFromId
-from eclib import ProgressStatusBar, EncodingDialog
-from extern.decorlib import anythread
+from . import ed_glob
+from . import util
+from . import ed_msg
+from . import ed_menu
+from .syntax.synglob import GetDescriptionFromId
+from .eclib import ProgressStatusBar, EncodingDialog
+from .extern.decorlib import anythread
 
 #--------------------------------------------------------------------------#
  
@@ -58,14 +58,14 @@ class EdStatBar(ProgressStatusBar):
         # Setup
         self.SetFieldsCount(6) # Info, vi stuff, line/progress
         self.SetStatusWidths([-1, 90, 40, 40, 40, 155])
-        self._eolmenu.Append(ed_glob.ID_EOL_MAC, u"CR",
-                             _("Change line endings to %s") % u"CR",
+        self._eolmenu.Append(ed_glob.ID_EOL_MAC, "CR",
+                             _("Change line endings to %s") % "CR",
                              kind=wx.ITEM_CHECK)
-        self._eolmenu.Append(ed_glob.ID_EOL_WIN, u"CRLF",
-                             _("Change line endings to %s") % u"CRLF",
+        self._eolmenu.Append(ed_glob.ID_EOL_WIN, "CRLF",
+                             _("Change line endings to %s") % "CRLF",
                              kind=wx.ITEM_CHECK)
-        self._eolmenu.Append(ed_glob.ID_EOL_UNIX, u"LF",
-                             _("Change line endings to %s") % u"LF",
+        self._eolmenu.Append(ed_glob.ID_EOL_UNIX, "LF",
+                             _("Change line endings to %s") % "LF",
                              kind=wx.ITEM_CHECK)
 
         # Event Handlers
@@ -106,18 +106,23 @@ class EdStatBar(ProgressStatusBar):
             super(EdStatBar, self).SetStatusText(txt, field)
             self.AdjustFieldWidths()
 
-            if field == ed_glob.SB_INFO and txt != u'':
+            if field == ed_glob.SB_INFO and txt != '':
                 # Start the expiration countdown
                 if self._cleanup_timer.IsRunning():
                     self._cleanup_timer.Stop()
                 self._cleanup_timer.Start(10000, True)
-        except wx.PyDeadObjectError, wx.PyAssertionError:
+        except wx.PyDeadObjectError as xxx_todo_changeme:
+            # Getting some odd assertion errors on wxMac so just trap
+            # and ignore them for now
+            # glyphCount == (text.length()+1)" failed at graphics.cpp(2048)
+            # in GetPartialTextExtents()
+            wx.PyAssertionError = xxx_todo_changeme
             # Getting some odd assertion errors on wxMac so just trap
             # and ignore them for now
             # glyphCount == (text.length()+1)" failed at graphics.cpp(2048)
             # in GetPartialTextExtents()
             pass
-        except TypeError, err:
+        except TypeError as err:
             self._log("[edstatbar][err] Bad status message: %s" % str(txt))
             self._log("[edstatbar][err] %s" % err)
 
@@ -158,7 +163,7 @@ class EdStatBar(ProgressStatusBar):
 
         """
         if evt.GetId() == EdStatBar.ID_CLEANUP_TIMER:
-            wx.CallAfter(self.__SetStatusText, u'', ed_glob.SB_INFO)
+            wx.CallAfter(self.__SetStatusText, '', ed_glob.SB_INFO)
         else:
             evt.Skip()
 
@@ -254,7 +259,7 @@ class EdStatBar(ProgressStatusBar):
         """
         self.UpdateFields()
         if msg.GetType() == ed_msg.EDMSG_UI_NB_CHANGED:
-            wx.CallAfter(self.__SetStatusText, u'', ed_glob.SB_INFO)
+            wx.CallAfter(self.__SetStatusText, '', ed_glob.SB_INFO)
 
     @anythread
     def DoUpdateText(self, msg):
@@ -314,9 +319,9 @@ class EdStatBar(ProgressStatusBar):
                          GetDescriptionFromId(cbuff.GetLangId()),
                          ed_glob.SB_LEXER)
 
-            eol = { wx.stc.STC_EOL_CR : u"CR",
-                    wx.stc.STC_EOL_LF : u"LF",
-                    wx.stc.STC_EOL_CRLF : u"CRLF" }
+            eol = { wx.stc.STC_EOL_CR : "CR",
+                    wx.stc.STC_EOL_LF : "LF",
+                    wx.stc.STC_EOL_CRLF : "CRLF" }
             wx.CallAfter(self.__SetStatusText,
                          eol[cbuff.GetEOLMode()],
                          ed_glob.SB_EOL)

@@ -24,14 +24,14 @@ import wx
 import codecs
 import encodings as enclib
 import locale
-from StringIO import StringIO
+from io import StringIO
 
 # Local Imports
-from util import Log
-from profiler import Profile_Get
-import ed_msg
-import ebmlib
-import ed_thread
+from .util import Log
+from .profiler import Profile_Get
+from . import ed_msg
+from . import ebmlib
+from . import ed_thread
 
 #--------------------------------------------------------------------------#
 # Globals
@@ -80,7 +80,7 @@ class EdFile(ebmlib.FileObjectImpl):
     """
     _Checker = ebmlib.FileTypeChecker()
 
-    def __init__(self, path=u'', modtime=0):
+    def __init__(self, path='', modtime=0):
         """Create the file wrapper object
         @keyword path: the absolute path to the file
         @keyword modtime: file modification time
@@ -164,7 +164,7 @@ class EdFile(ebmlib.FileObjectImpl):
         assert self.encoding is not None, "Encoding Not Set!"
 
         bytes_value = self.__buffer.getvalue()
-        ustr = u""
+        ustr = ""
         try:
             if not self._fuzzy_enc or not EdFile._Checker.IsBinaryBytes(bytes_value):
                 if self.bom is not None:
@@ -196,10 +196,10 @@ class EdFile(ebmlib.FileObjectImpl):
                 # Binary data was read
                 Log("[ed_txt][info] Binary bytes where read")
                 ustr = self._HandleRawBytes(bytes_value)
-        except (UnicodeDecodeError, LookupError), msg:
+        except (UnicodeDecodeError, LookupError) as msg:
             Log("[ed_txt][err] Error while reading with %s" % self.encoding)
             Log("[ed_txt][err] %s" % msg)
-            self.SetLastError(unicode(msg))
+            self.SetLastError(str(msg))
             self.Close()
             # Decoding failed so convert to raw bytes for display
             ustr = self._HandleRawBytes(bytes_value)
@@ -304,14 +304,14 @@ class EdFile(ebmlib.FileObjectImpl):
                 self.encoding = enc
                 self.__buffer.seek(0)
                 self.ClearLastError()
-            except LookupError, msg:
+            except LookupError as msg:
                 Log("[ed_txt][err] Invalid encoding: %s" % enc)
                 Log("[ed_txt][err] %s" % msg)
-                self.SetLastError(unicode(msg))
-            except UnicodeEncodeError, msg:
+                self.SetLastError(str(msg))
+            except UnicodeEncodeError as msg:
                 Log("[ed_txt][err] Failed to encode text with %s" % enc)
                 Log("[ed_txt][err] %s" % msg)
-                self.SetLastError(unicode(msg))
+                self.SetLastError(str(msg))
             else:
                 break
         else:
@@ -411,7 +411,7 @@ class EdFile(ebmlib.FileObjectImpl):
             return txt
         else:
             Log("[ed_txt][err] Read Error: %s" % self.GetLastError())
-            raise ReadError, self.GetLastError()
+            raise ReadError(self.GetLastError())
 
     def ReadAsync(self, control):
         """Read the file asynchronously on a separate thread
@@ -459,10 +459,10 @@ class EdFile(ebmlib.FileObjectImpl):
                         yield buffered_data.getvalue()
                         buffered_data.close()
                         buffered_data = StringIO()
-            except Exception, msg:
+            except Exception as msg:
                 Log("[ed_txt][err] Error while reading with %s" % self.Encoding)
                 Log("[ed_txt][err] %s" % msg)
-                self.SetLastError(unicode(msg))
+                self.SetLastError(str(msg))
                 self.Close()
                 if self._magic['comment']:
                     self._magic['bad'] = True
@@ -470,7 +470,7 @@ class EdFile(ebmlib.FileObjectImpl):
             Log("[ed_txt][info] Decoded %s with %s" % (self.Path, self.Encoding))
             self.SetModTime(ebmlib.GetFileModTime(self.Path))
         else:
-            raise ReadError, self.GetLastError()
+            raise ReadError(self.GetLastError())
 
     def RemoveModifiedCallback(self, callback):
         """Remove a registered callback
@@ -559,7 +559,7 @@ class EdFile(ebmlib.FileObjectImpl):
                 Log("[ed_txt][info] %s was written successfully" % self.Path)
             else:
                 self._ResetBuffer()
-                raise WriteError, self.GetLastError()
+                raise WriteError(self.GetLastError())
 
         Log("[ed_txt][info] Write - Complete: %s - Time: %d" % 
             (self.Path, time.time() - ctime))
@@ -709,7 +709,7 @@ def DecodeString(string, encoding=None):
     if not ebmlib.IsUnicode(string):
         try:
             rtxt = string.decode(encoding)
-        except Exception, msg:
+        except Exception as msg:
             Log("[ed_txt][err] DecodeString with %s failed" % encoding)
             Log("[ed_txt][err] %s" % msg)
             rtxt = string
@@ -752,7 +752,7 @@ def FallbackReader(fname):
         for enc in GetEncodings():
             try:
                 txt = byte_str.decode(enc)
-            except Exception, msg:
+            except Exception as msg:
                 continue
             else:
                 return (enc, txt)
@@ -775,7 +775,7 @@ def GuessEncoding(fname, sample):
                         continue
                     else:
                         return enc
-        except Exception, msg:
+        except Exception as msg:
             continue
     return None
 

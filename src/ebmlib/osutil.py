@@ -72,17 +72,17 @@ def GetWindowsDrives():
     try:
         dletters = list()
         bmask = ctypes.windll.kernel32.GetLogicalDrives()
-        for dletter in u"ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+        for dletter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
             if bmask & 1:
                 dletters.append(dletter)
             bmask >>= 1
 
         for dletter in dletters:
-            dname = dletter + u":\\"
+            dname = dletter + ":\\"
             dtype = GetWindowsDriveType(dname)
             if type(dtype) != GenericDrive:
                 drives.append(dtype)
-    except Exception, err:
+    except Exception as err:
         pass
     return drives
 

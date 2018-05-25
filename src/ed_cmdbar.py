@@ -29,20 +29,20 @@ import re
 import wx
 
 # Local Imports
-import util
-import ed_glob
-import ed_search
-import ed_event
-import ed_msg
-import ebmlib
-import eclib
-import ed_basewin
-from profiler import Profile_Get
+from . import util
+from . import ed_glob
+from . import ed_search
+from . import ed_event
+from . import ed_msg
+from . import ebmlib
+from . import eclib
+from . import ed_basewin
+from .profiler import Profile_Get
 
 _ = wx.GetTranslation
 #--------------------------------------------------------------------------#
 # Close Button Bitmap
-from extern.embeddedimage import PyEmbeddedImage
+from .extern.embeddedimage import PyEmbeddedImage
 
 XButton = PyEmbeddedImage(
     "iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAIAAACQKrqGAAAAA3NCSVQICAjb4U/gAAAB6UlE"
@@ -213,7 +213,7 @@ class CommandBarBase(ed_basewin.EdBaseCtrlBar,
         @param state: dict(ctrl_name=bool)
 
         """
-        for name, show in state.iteritems():
+        for name, show in state.items():
             self.ShowControl(name, show)
         self.Layout()
 
@@ -290,7 +290,7 @@ class SearchBar(CommandBarBase):
         self._sctrl = self.MainControl.GetSearchController()
 
         # Setup
-        f_lbl = wx.StaticText(self, label=_("Find") + u": ")
+        f_lbl = wx.StaticText(self, label=_("Find") + ": ")
         t_bmp = wx.ArtProvider.GetBitmap(str(ed_glob.ID_DOWN), wx.ART_MENU)
         next_btn = eclib.PlateButton(self, ID_SEARCH_NEXT, _("Next"),
                                      t_bmp, style=eclib.PB_STYLE_NOBG,
@@ -650,16 +650,16 @@ class CommandExecuter(eclib.CommandEntryBase):
         if cmd in ['x', 'ZZ']:
             cmd = 'wq'
 
-        if cmd.startswith(u'w'):
+        if cmd.startswith('w'):
             frame.OnSave(wx.MenuEvent(wx.wxEVT_COMMAND_MENU_SELECTED,
                                                      ed_glob.ID_SAVE))
             if self.RE_WGO_BUFFER.match(cmd):
                 self.GoBuffer(cmd[1:])
             elif cmd == 'wq':
                 self.Quit()
-        elif cmd.startswith(u'e '):
+        elif cmd.startswith('e '):
             self.EditCommand(cmd)
-        elif cmd.rstrip() == u'e!':
+        elif cmd.rstrip() == 'e!':
             ctrl = frame.nb.GetCurrentCtrl()
             ctrl.RevertToSaved()
         elif self.RE_GO_WIN.match(cmd):
@@ -751,7 +751,7 @@ class CommandExecuter(eclib.CommandEntryBase):
         pid = self.GetTopLevelParent().GetId()
         widx = 0
         win = 0
-        for nwin in xrange(len(wins)):
+        for nwin in range(len(wins)):
             if pid == wins[nwin].GetId():
                 widx = pid
                 win = nwin
@@ -829,7 +829,7 @@ class CommandExecuter(eclib.CommandEntryBase):
         else:
             return
 
-        cmd = cmd.replace(cstr, u'', 1).strip()
+        cmd = cmd.replace(cstr, '', 1).strip()
         paths = self.GetPaths(cmd, cstr == 'e ')
         self._popup.SetChoices(paths)
         if len(paths):
@@ -909,7 +909,7 @@ class CommandExecuter(eclib.CommandEntryBase):
         val = self.GetValue()
         cwd_info = ""
         if val.strip() in ['cwd', 'e', 'cd']:
-            cwd_info = "   " + _(u"cwd: ") + self._curdir
+            cwd_info = "   " + _("cwd: ") + self._curdir
         self.Parent.info_lbl.SetLabel(cwd_info)
         if self._popup.IsShown():
             if not len(val):
@@ -1001,7 +1001,7 @@ class LineCtrl(eclib.CommandEntryBase):
         @keyword size: Control Size (tuple)
 
         """
-        super(LineCtrl, self).__init__(parent, id_, u"", size=size,
+        super(LineCtrl, self).__init__(parent, id_, "", size=size,
                                        style=wx.TE_PROCESS_ENTER,
                                        validator=util.IntValidator(0, 65535))
 
@@ -1234,8 +1234,8 @@ class PopupList(wx.MiniFrame, PopupListBase):
 
         """
         cmd = cmd_ex.GetValue()
-        cmd = cmd.split(u' ', 1)[0]
-        xpos = cmd_ex.GetTextExtent(cmd + u' ')[0]
+        cmd = cmd.split(' ', 1)[0]
+        xpos = cmd_ex.GetTextExtent(cmd + ' ')[0]
         pos = cmd_ex.GetScreenPosition().Get()
         csize = cmd_ex.GetSize()
         self.SetPosition((pos[0] + xpos, pos[1] + csize[1]))
@@ -1279,7 +1279,7 @@ class PopupWinList(wx.PopupWindow, PopupListBase):
 
         """
         cmd = cmd_ex.GetValue()
-        cmd = cmd.split(u' ', 1)[0]
+        cmd = cmd.split(' ', 1)[0]
         pos = cmd_ex.GetScreenPosition().Get()
         csize = cmd_ex.GetSize()
         xpos = cmd_ex.GetTextExtent(cmd)[0]

@@ -21,17 +21,17 @@ __revision__ = "$Revision: 68798 $"
 import wx.stc as stc
 
 # Local Imports
-import synglob
-import syndata
+from . import synglob
+from . import syndata
 
 #-----------------------------------------------------------------------------#
 
 # Indenter keywords
-INDENT_KW = (u"body", u"branch", u"class", u"cue", u"def", u"else", u"except", 
-             u"expect", u"finally", u"for", u"if", u"invariant", u"namespace",
-             u"on" u"post", u"shared", u"success", u"test", u"try", u"while")
+INDENT_KW = ("body", "branch", "class", "cue", "def", "else", "except", 
+             "expect", "finally", "for", "if", "invariant", "namespace",
+             "on" "post", "shared", "success", "test", "try", "while")
 
-UNINDENT_KW = (u"return", u"raise", u"break", u"continue", u"pass")
+UNINDENT_KW = ("return", "raise", "break", "continue", "pass")
 
 # Cobra Keywords
 KEYWORDS = ("abstract adds all and any as assert base be body bool branch "
@@ -94,7 +94,7 @@ class SyntaxData(syndata.SyntaxDataBase):
 
     def GetCommentPattern(self):
         """Returns a list of characters used to comment a block of code """
-        return [u'#', ]
+        return ['#', ]
 
 #-----------------------------------------------------------------------------#
 
@@ -122,26 +122,26 @@ def AutoIndenter(estc, pos, ichar):
         return
 
     indent = estc.GetLineIndentation(line)
-    if ichar == u"\t":
+    if ichar == "\t":
         tabw = estc.GetTabWidth()
     else:
         tabw = estc.GetIndent()
 
     i_space = indent / tabw
-    end_spaces = ((indent - (tabw * i_space)) * u" ")
+    end_spaces = ((indent - (tabw * i_space)) * " ")
 
-    tokens = filter(None, text.strip().split())
+    tokens = [_f for _f in text.strip().split() if _f]
     if tokens and not inspace:
-        if tokens[-1].endswith(u""):
+        if tokens[-1].endswith(""):
             if tokens[0] in INDENT_KW:
                 i_space += 1
             elif tokens[0] in UNINDENT_KW:
                 i_space = max(i_space - 1, 0)
-        elif tokens[-1].endswith(u"\\"):
+        elif tokens[-1].endswith("\\"):
             i_space += 1
 
     rval = eolch + (ichar * i_space) + end_spaces
-    if inspace and ichar != u"\t":
+    if inspace and ichar != "\t":
         rpos = indent - (pos - spos)
         if rpos < len(rval) and rpos > 0:
             rval = rval[:-rpos]

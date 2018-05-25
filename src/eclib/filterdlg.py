@@ -23,7 +23,7 @@ __all__ = ["FilterDialog",]
 import wx
 
 # Eclib Imports
-import ecbasewin
+from . import ecbasewin
 
 #-----------------------------------------------------------------------------#
 # Globals
@@ -34,9 +34,9 @@ _ = wx.GetTranslation
 
 class FilterDialog(ecbasewin.ECBaseDlg):
     """Dialog that allows adding and removing items from a filter list"""
-    def __init__(self, parent, id=wx.ID_ANY, title=u"",
+    def __init__(self, parent, id=wx.ID_ANY, title="",
                  pos=wx.DefaultPosition, size=wx.DefaultSize, 
-                 style=wx.DEFAULT_DIALOG_STYLE, name=u"FilterDialog"):
+                 style=wx.DEFAULT_DIALOG_STYLE, name="FilterDialog"):
         super(FilterDialog, self).__init__(parent, id, title,
                                            pos, size, style, name)
 
@@ -138,7 +138,7 @@ class FilterPanel(wx.Panel):
         """
         includes = list()
         excludes = list()
-        for item, include in valuemap.iteritems():
+        for item, include in valuemap.items():
             if include:
                 includes.append(item)
             else:

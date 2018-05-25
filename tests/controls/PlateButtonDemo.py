@@ -26,7 +26,7 @@ import wx.lib.scrolledpanel as scrolled
 #sys.path.insert(0, os.path.abspath('../../src'))
 import eclib
 
-from IconFile import *
+from .IconFile import *
 
 #-----------------------------------------------------------------------------#
 
@@ -255,7 +255,7 @@ class TestLog:
         pass
 
     def write(self, msg):
-        print msg
+        print(msg)
 
 #----------------------------------------------------------------------
 

@@ -18,7 +18,7 @@ __revision__ = "$Revision: 67626 $"
 #-----------------------------------------------------------------------------#
 import wx
 import wx.stc
-from extern.embeddedimage import PyEmbeddedImage
+from .extern.embeddedimage import PyEmbeddedImage
 
 # NOTE: Must be 1 char per pixel for Scintilla to display
 _BookmarkBmp = PyEmbeddedImage(
@@ -209,7 +209,7 @@ class Marker(object):
         if self.Bitmap.IsNull():
             symbols = self.GetSymbols()
             if len(ids) == len(symbols):
-                markers = zip(ids, symbols)
+                markers = list(zip(ids, symbols))
                 for marker, symbol in markers:
                     stc.MarkerDefine(marker, symbol,
                                      self.Foreground, self.Background)
@@ -227,8 +227,8 @@ class Bookmark(Marker):
         super(Bookmark, self).__init__()
 
         # Attributes
-        self._name = u""        # Bookmark alias name
-        self._fname = u""       # Filename
+        self._name = ""        # Bookmark alias name
+        self._fname = ""       # Filename
         self.Bitmap = _BookmarkBmp.Bitmap
 
     def __eq__(self, other):

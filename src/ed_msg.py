@@ -32,7 +32,7 @@ __all__ = ['PostMessage', 'Subscribe', 'Unsubscribe']
 #--------------------------------------------------------------------------#
 # Imports
 from wx import PyDeadObjectError
-from extern.pubsub import Publisher
+from .extern.pubsub import Publisher
 
 #--------------------------------------------------------------------------#
 # Message Type Definitions
@@ -423,7 +423,7 @@ class NullValue:
     def __int__(self):
         return 0
 
-    def __nonzero__(self):
+    def __bool__(self):
         return False
 
 def RegisterCallback(callback, msgtype):
@@ -486,7 +486,7 @@ def UnRegisterCallback(callback):
     @param callback: callable
 
     """
-    for key, val in _CALLBACK_REGISTRY.iteritems():
+    for key, val in _CALLBACK_REGISTRY.items():
         if callback in val:
             _CALLBACK_REGISTRY[key].remove(callback)
 

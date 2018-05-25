@@ -23,16 +23,16 @@ import wx
 import wx.aui as aui
 
 # Editra Imports
-import util
-import ed_menu
-import ed_fmgr
-from profiler import Profile_Get, Profile_Set
+from . import util
+from . import ed_menu
+from . import ed_fmgr
+from .profiler import Profile_Get, Profile_Set
 
 #--------------------------------------------------------------------------#
 # Globals
-AUTO_PERSPECTIVE = u'Automatic'
-DATA_FILE = u'perspectives'
-LAST_KEY = u'**LASTVIEW**'
+AUTO_PERSPECTIVE = 'Automatic'
+DATA_FILE = 'perspectives'
+LAST_KEY = '**LASTVIEW**'
 
 # ID's
 ID_SAVE_PERSPECTIVE = wx.NewId()
@@ -254,7 +254,7 @@ class PerspectiveManager(object):
 
         try:
             for line in reader.readlines():
-                label, val = line.split(u"=", 1)
+                label, val = line.split("=", 1)
                 label = label.strip()
                 if not len(label):
                     continue
@@ -288,7 +288,7 @@ class PerspectiveManager(object):
                     mainw.AddPerspective(name, self._viewset[name])
 
         elif e_id == ID_DELETE_PERSPECTIVE:
-            views = [ view for view in self._viewset.keys()
+            views = [ view for view in list(self._viewset.keys())
                       if view != AUTO_PERSPECTIVE ]
             name = wx.GetSingleChoice(_("Perspective to Delete"),
                                       _("Delete Perspective"), views)
@@ -358,7 +358,7 @@ class PerspectiveManager(object):
         try:
             self._viewset[LAST_KEY] = self._currview
             for perspect in self._viewset:
-                writer.write(u"%s=%s\n" % (perspect, self._viewset[perspect]))
+                writer.write("%s=%s\n" % (perspect, self._viewset[perspect]))
             del self._viewset[LAST_KEY]
         except (IOError, OSError):
             util.Log("[perspective][err] Write error: %s" % self._base)

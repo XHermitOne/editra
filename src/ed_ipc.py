@@ -57,9 +57,9 @@ import time
 #import select
 
 # Editra Libs
-import util
-import ed_xml
-import ebmlib
+from . import util
+from . import ed_xml
+from . import ebmlib
 
 #-----------------------------------------------------------------------------#
 # Globals
@@ -186,10 +186,10 @@ class EdIpcServer(threading.Thread):
                     try:
                         # Well formed xml must be utf-8 string not Unicode
                         if not ebmlib.IsUnicode(xmlstr):
-                            xmlstr = unicode(xmlstr, sys.getfilesystemencoding())
+                            xmlstr = str(xmlstr, sys.getfilesystemencoding())
                         xmlstr = xmlstr.encode('utf-8')
                         exml = IPCCommand.parse(xmlstr)
-                    except Exception, msg:
+                    except Exception as msg:
                         # Log and ignore parsing errors
                         logmsg = "[ed_ipc][err] Parsing failed: %s\n" % msg
                         xmlstr = xmlstr.replace('\n', '').strip()
@@ -237,7 +237,7 @@ def SendCommands(xmlobj, key):
         client.send(message)
         client.shutdown(socket.SHUT_RDWR)
         client.close()
-    except Exception, msg:
+    except Exception as msg:
         util.Log("[ed_ipc][err] Failed in SendCommands: %s" % msg)
         return False
     else:

@@ -35,7 +35,7 @@ TYPE_ATTRIBUTE, \
 TYPE_PROPERTY, \
 TYPE_VARIABLE, \
 TYPE_ELEMENT, \
-TYPE_UNKNOWN = range(1, 9)
+TYPE_UNKNOWN = list(range(1, 9))
 
 #--------------------------------------------------------------------------#
 class Symbol(object):
@@ -56,7 +56,7 @@ class Symbol(object):
         super(Symbol, self).__init__()
 
         # Attributes
-        self._name = unicode(name)
+        self._name = str(name)
         self._type = symtype
     
     def __eq__(self, other):
@@ -80,7 +80,7 @@ class Symbol(object):
     # TODO: this task should probably be delegated to the ui
     def __str__(self):
         if self.Type != TYPE_UNKNOWN:
-            return u'?'.join([self.Name, unicode(self.Type)])
+            return '?'.join([self.Name, str(self.Type)])
         else:
             return self.Name
 
@@ -122,8 +122,8 @@ class BaseCompleter(object):
         self._choose_single = True
 
         self._autocomp_keys = list()
-        self._autocomp_stop = u''
-        self._autocomp_fillup = u''
+        self._autocomp_stop = ''
+        self._autocomp_fillup = ''
         self._calltip_keys = list()
         self._calltip_cancel = list()
 
@@ -143,7 +143,7 @@ class BaseCompleter(object):
         @return: string
 
         """
-        return u''
+        return ''
 
     def OnCompletionInserted(self, pos, text):
         """Called by the buffer when an autocomp selection has been inserted.
@@ -170,11 +170,11 @@ class BaseCompleter(object):
             line = line[:-1]
         cmd_lmt = list(self.GetAutoCompStops() + self.GetAutoCompFillups())
         for key in self.GetAutoCompKeys():
-            kval = unichr(key)
+            kval = chr(key)
             if kval in cmd_lmt:
                 cmd_lmt.remove(kval)
 
-        cmd = u''
+        cmd = ''
         curr_pos = len(line) - 1
         while curr_pos > -1:
             cmd = line[curr_pos:]
@@ -184,7 +184,7 @@ class BaseCompleter(object):
                 break
 
         for char in cmd_lmt:
-            cmd = cmd.replace(char, u'')
+            cmd = cmd.replace(char, '')
 
         return cmd.strip()
 

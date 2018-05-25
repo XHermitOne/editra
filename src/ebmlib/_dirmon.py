@@ -26,7 +26,7 @@ import time
 import threading
 
 # Local imports
-import fileutil
+from . import fileutil
 
 #-----------------------------------------------------------------------------#
 

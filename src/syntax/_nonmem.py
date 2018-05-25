@@ -29,8 +29,8 @@ from pygments.token import Token, Text, Comment, Operator, \
 import re
 
 #Local Imports
-import synglob
-import syndata
+from . import synglob
+from . import syndata
 
 #-----------------------------------------------------------------------------#
 # Style Id's
@@ -49,7 +49,7 @@ STC_NONMEM_FEATURE, \
 STC_NONMEM_CROSSREF, \
 STC_NONMEM_PACKAGE, \
 STC_NONMEM_KEYWORD, \
-STC_NONMEM_KEYWORD_PSEUDO = range(13)
+STC_NONMEM_KEYWORD_PSEUDO = list(range(13))
 
 #-----------------------------------------------------------------------------#
 
@@ -204,4 +204,4 @@ if __name__=='__main__':
     for index, token, txt in lexer.get_tokens_unprocessed(text):
         if token is Token.EndOfLine:
             line += 1
-        print line, token, txt
+        print(line, token, txt)

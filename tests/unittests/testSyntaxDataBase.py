@@ -67,8 +67,8 @@ class SyntaxDataBaseTest(unittest.TestCase):
 
     def testSetLangId(self):
         self.data.SetLangId(10)
-        self.assertEquals(10, self.data.LangId)
+        self.assertEqual(10, self.data.LangId)
 
     def testSetLexer(self):
         self.data.SetLexer(wx.stc.STC_LEX_CPP)
-        self.assertEquals(wx.stc.STC_LEX_CPP, self.data.GetLexer())
+        self.assertEqual(wx.stc.STC_LEX_CPP, self.data.GetLexer())

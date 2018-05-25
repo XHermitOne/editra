@@ -37,6 +37,7 @@ import os
 
 import wx
 import wx.stc
+from functools import reduce
 _ = wx.GetTranslation
 
 class STCPrintout(wx.Printout):
@@ -145,7 +146,7 @@ class STCPrintout(wx.Printout):
         logical coordinates.
         """
         if self.debuglevel > 0:
-            print
+            print()
         
         dc.SetFont(self.stc.GetFont())
         
@@ -156,9 +157,9 @@ class STCPrintout(wx.Printout):
         screen_ppi_x, screen_ppi_y = self.GetPPIScreen()
         dc_ppi_x, dc_ppi_y = dc.GetPPI()
         if self.debuglevel > 0:
-            print("printer ppi: %dx%d" % (page_ppi_x, page_ppi_y))
-            print("screen ppi: %dx%d" % (screen_ppi_x, screen_ppi_y))
-            print("dc ppi: %dx%d" % (dc_ppi_x, dc_ppi_y))
+            print(("printer ppi: %dx%d" % (page_ppi_x, page_ppi_y)))
+            print(("screen ppi: %dx%d" % (screen_ppi_x, screen_ppi_y)))
+            print(("dc ppi: %dx%d" % (dc_ppi_x, dc_ppi_y)))
         
         # Calculate paper size.  Note that this is the size in pixels of the
         # entire paper, which may be larger than the printable range of the
@@ -169,15 +170,15 @@ class STCPrintout(wx.Printout):
         page_width_inch = float(pw) / page_ppi_x
         page_height_inch = float(ph) / page_ppi_y
         if self.debuglevel > 0:
-            print("page pixels: %dx%d" % (pw, ph))
-            print("page size: %fx%f in" % (page_width_inch, page_height_inch))
+            print(("page pixels: %dx%d" % (pw, ph)))
+            print(("page size: %fx%f in" % (page_width_inch, page_height_inch)))
         
         dw, dh = dc.GetSizeTuple()
         dc_pixels_per_inch_x = float(dw) / page_width_inch
         dc_pixels_per_inch_y = float(dh) / page_height_inch
         if self.debuglevel > 0:
-            print("device pixels: %dx%d" % (dw, dh))
-            print("device pixels per inch: %fx%f" % (dc_pixels_per_inch_x, dc_pixels_per_inch_y))
+            print(("device pixels: %dx%d" % (dw, dh)))
+            print(("device pixels per inch: %fx%f" % (dc_pixels_per_inch_x, dc_pixels_per_inch_y)))
         
         # Calculate usable page size
         page_height_mm = page_height_inch * 25.4
@@ -198,10 +199,10 @@ class STCPrintout(wx.Printout):
         dc.SetUserScale(page_to_dc, page_to_dc)
 
         if self.debuglevel > 0:
-            print("Usable page height: %f in" % (usable_page_height_mm / 25.4))
-            print("Usable page pixels: %d" % dc_usable_pixels)
-            print("lines per page: %d" % self.lines_pp)
-            print("page_to_dc: %f" % page_to_dc)
+            print(("Usable page height: %f in" % (usable_page_height_mm / 25.4)))
+            print(("Usable page pixels: %d" % dc_usable_pixels))
+            print(("lines per page: %d" % self.lines_pp))
+            print(("page_to_dc: %f" % page_to_dc))
 
         self.x1 = dc.DeviceToLogicalXRel(float(self.top_left_margin[0]) / 25.4 * dc_pixels_per_inch_x)
         self.y1 = dc.DeviceToLogicalXRel(float(self.top_left_margin[1]) / 25.4 * dc_pixels_per_inch_y)
@@ -212,7 +213,7 @@ class STCPrintout(wx.Printout):
         #self.lines_pp = int(page_height / dc_pixels_per_line)
         
         if self.debuglevel > 0:
-            print("page size: %d,%d -> %d,%d, height=%d" % (int(self.x1), int(self.y1), int(self.x2), int(self.y2), page_height))
+            print(("page size: %d,%d -> %d,%d, height=%d" % (int(self.x1), int(self.y1), int(self.x2), int(self.y2), page_height)))
     
     def _calculateLinesPerPage(self, dc, usable_page_height_mm):
         """Calculate the number of lines that will fit on the page.
@@ -238,8 +239,8 @@ class STCPrintout(wx.Printout):
         lines_per_inch = 72.0 / float(points_per_line)
         
         if self.debuglevel > 0:
-            print("font: point size per line=%d" % points_per_line)
-            print("font: lines per inch=%f" % lines_per_inch)
+            print(("font: point size per line=%d" % points_per_line))
+            print(("font: lines per inch=%f" % lines_per_inch))
             
         # Lines per page is then the number of lines (based on the point size
         # reported by wx) that will fit into the usable page height
@@ -267,8 +268,8 @@ class STCPrintout(wx.Printout):
         # account additional spacing?
         stc_pixels_per_line = self.stc.TextHeight(0)
         if self.debuglevel > 0:
-            print("font: dc pixels per line=%d" % dc_pixels_per_line)
-            print("font: stc pixels per line=%d" % stc_pixels_per_line)
+            print(("font: dc pixels per line=%d" % dc_pixels_per_line))
+            print(("font: stc pixels per line=%d" % stc_pixels_per_line))
         
         # Platform dependency alert: I don't know why this works, but through
         # experimentation it seems like the scaling factor depends on
@@ -298,7 +299,7 @@ class STCPrintout(wx.Printout):
             if attempt_wrap:
                 wrap_count = self.stc.WrapCount(line)
                 if wrap_count > 1 and self.debuglevel > 0:
-                    print("found wrapped line %d: %d" % (line, wrap_count))
+                    print(("found wrapped line %d: %d" % (line, wrap_count)))
             else:
                 wrap_count = 1
             
@@ -308,7 +309,7 @@ class STCPrintout(wx.Printout):
                 start_pos = self.stc.PositionFromLine(page_line_start)
                 end_pos = self.stc.GetLineEndPosition(page_line_start + lines_on_page - 1)
                 if self.debuglevel > 0:
-                    print("Page: line %d - %d" % (page_line_start, page_line_start + lines_on_page))
+                    print(("Page: line %d - %d" % (page_line_start, page_line_start + lines_on_page)))
                 page_offsets.append((start_pos, end_pos))
                 page_line_start = line
                 lines_on_page = 0
@@ -323,7 +324,7 @@ class STCPrintout(wx.Printout):
         self.page_count = len(page_offsets)
         self.page_offsets = page_offsets
         if self.debuglevel > 0:
-            print("page offsets: %s" % self.page_offsets)
+            print(("page offsets: %s" % self.page_offsets))
 
     def _getPositionsOfPage(self, page):
         """Get the starting and ending positions of a page
@@ -449,8 +450,8 @@ class STCPrintout(wx.Printout):
 
 if __name__ == "__main__":
     import sys
-    import __builtin__
-    __builtin__._ = unicode
+    import builtins
+    builtins._ = str
     
     # Set up sample print data
     top_left_margin = wx.Point(15,15)
@@ -509,7 +510,7 @@ if __name__ == "__main__":
             self.stc.SetText(fh.read())
         
         def loadSample(self, paragraphs=10, word_wrap=False):
-            lorem_ipsum = u"""\
+            lorem_ipsum = """\
 Lorem ipsum dolor sit amet, consectetuer adipiscing elit.  Vivamus mattis
 commodo sem.  Phasellus scelerisque tellus id lorem.  Nulla facilisi.
 Suspendisse potenti.  Fusce velit odio, scelerisque vel, consequat nec,
@@ -547,7 +548,7 @@ And some Russian: \u041f\u0438\u0442\u043e\u043d - \u043b\u0443\u0447\u0448\u043
                                defaultFile = "",
                                wildcard = "*")
             if dlg.ShowModal() == wx.ID_OK:
-                print("Opening %s" % dlg.GetPath())
+                print(("Opening %s" % dlg.GetPath()))
                 self.loadFile(dlg.GetPath())
             dlg.Destroy()
         

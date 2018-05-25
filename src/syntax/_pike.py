@@ -23,9 +23,9 @@ __revision__ = "$Revision: 68798 $"
 import wx.stc as stc
 
 # Local Imports
-import synglob
-import syndata
-import _cpp
+from . import synglob
+from . import syndata
+from . import _cpp
 
 #-----------------------------------------------------------------------------#
 
@@ -52,4 +52,4 @@ class SyntaxData(_cpp.SyntaxData):
 
     def GetCommentPattern(self):
         """Get the comment pattern"""
-        return [u"//"]
+        return ["//"]

@@ -43,268 +43,268 @@ _idCounter = 32100
 
 #---- Use LEX_NULL ----#
 ID_LANG_TXT  = _NewId()
-LANG_TXT = u'Plain Text'
+LANG_TXT = 'Plain Text'
 
 #---- Use LEX_ADA ----#
 ID_LANG_ADA = _NewId()
-LANG_ADA = u'Ada'
+LANG_ADA = 'Ada'
 
 #---- Use LEX_ASM ----#
 ID_LANG_ASM  = _NewId()
-LANG_ASM = u'GNU Assembly'
+LANG_ASM = 'GNU Assembly'
 ID_LANG_DSP56K = _NewId()
-LANG_DSP56K = u'DSP56K Assembly'
+LANG_DSP56K = 'DSP56K Assembly'
 ID_LANG_68K  = _NewId()
-LANG_68K = u'68k Assembly'
+LANG_68K = '68k Assembly'
 ID_LANG_MASM = _NewId()
-LANG_MASM = u'MASM'
+LANG_MASM = 'MASM'
 ID_LANG_NASM = _NewId()
-LANG_NASM = u'Netwide Assembler'
+LANG_NASM = 'Netwide Assembler'
 
 # Use LEX_BASH
 ID_LANG_BOURNE = _NewId()
-LANG_BOURNE = u'Bourne Shell Script'
+LANG_BOURNE = 'Bourne Shell Script'
 ID_LANG_BASH   = _NewId()
-LANG_BASH = u'Bash Shell Script'
+LANG_BASH = 'Bash Shell Script'
 ID_LANG_CSH    = _NewId()
-LANG_CSH = u'C-Shell Script'
+LANG_CSH = 'C-Shell Script'
 ID_LANG_KSH    = _NewId()
-LANG_KSH = u'Korn Shell Script'
+LANG_KSH = 'Korn Shell Script'
 
 # Use LEX_CAML
 ID_LANG_CAML = _NewId()
-LANG_CAML = u'Caml'
+LANG_CAML = 'Caml'
 
 # Use LEX_CONF
 ID_LANG_APACHE = _NewId()
-LANG_APACHE = u'Apache Conf'
+LANG_APACHE = 'Apache Conf'
 
 # Use LEX_CPP
 ID_LANG_AS = _NewId()
-LANG_AS = u'ActionScript'
+LANG_AS = 'ActionScript'
 ID_LANG_C = _NewId()
-LANG_C = u'C'
+LANG_C = 'C'
 ID_LANG_CILK = _NewId()
-LANG_CILK = u'Cilk'
+LANG_CILK = 'Cilk'
 ID_LANG_CPP = _NewId()
-LANG_CPP = u'CPP'
+LANG_CPP = 'CPP'
 ID_LANG_CSHARP = _NewId()
-LANG_CSHARP = u'C#'
+LANG_CSHARP = 'C#'
 ID_LANG_D = _NewId()
-LANG_D = u'D'
+LANG_D = 'D'
 ID_LANG_DOT = _NewId()
-LANG_DOT = u'DOT'
+LANG_DOT = 'DOT'
 ID_LANG_EDJE = _NewId()
-LANG_EDJE = u'Edje'
+LANG_EDJE = 'Edje'
 ID_LANG_FERITE = _NewId()
-LANG_FERITE = u'Ferite'
+LANG_FERITE = 'Ferite'
 ID_LANG_GLSL = _NewId()
-LANG_GLSL = u'GLSL'
+LANG_GLSL = 'GLSL'
 ID_LANG_HAXE = _NewId()
-LANG_HAXE = u'HaXe'
+LANG_HAXE = 'HaXe'
 ID_LANG_JAVA = _NewId()
-LANG_JAVA = u'Java'
+LANG_JAVA = 'Java'
 ID_LANG_OBJC = _NewId()
-LANG_OBJC = u'Objective C'
+LANG_OBJC = 'Objective C'
 ID_LANG_OOC = _NewId()
-LANG_OOC = u'OOC'
+LANG_OOC = 'OOC'
 ID_LANG_PIKE = _NewId()
-LANG_PIKE = u'Pike'
+LANG_PIKE = 'Pike'
 ID_LANG_SQUIRREL = _NewId()
-LANG_SQUIRREL = u'Squirrel'
+LANG_SQUIRREL = 'Squirrel'
 ID_LANG_STATA = _NewId()
-LANG_STATA = u'Stata'
+LANG_STATA = 'Stata'
 ID_LANG_VALA = _NewId()
-LANG_VALA = u'Vala'
+LANG_VALA = 'Vala'
 
 # Use LEX_CSS
 ID_LANG_CSS = _NewId()
-LANG_CSS = u'Cascading Style Sheet'
+LANG_CSS = 'Cascading Style Sheet'
 ID_LANG_ESS = _NewId()
-LANG_ESS = u'Editra Style Sheet'
+LANG_ESS = 'Editra Style Sheet'
 
 # Use LEX_EIFFEL
 ID_LANG_EIFFEL = _NewId()
-LANG_EIFFEL = u'Eiffel'
+LANG_EIFFEL = 'Eiffel'
 
 # Use LEX_ERLANG
 ID_LANG_ERLANG = _NewId()
-LANG_ERLANG = u'Erlang'
+LANG_ERLANG = 'Erlang'
 
 # Use LEX_FLAGSHIP
 ID_LANG_FLAGSHIP = _NewId()
-LANG_FLAGSHIP = u'FlagShip'
+LANG_FLAGSHIP = 'FlagShip'
 
 # Use LEX_F77
 ID_LANG_F77 = _NewId()
-LANG_F77 = u'Fortran 77'
+LANG_F77 = 'Fortran 77'
 
 # Use LEX_FORTH
 ID_LANG_FORTH = _NewId()
-LANG_FORTH = u"Forth"
+LANG_FORTH = "Forth"
 
 # Use LEX_FORTRAN
 ID_LANG_F95 = _NewId()
-LANG_F95 = u'Fortran 95'
+LANG_F95 = 'Fortran 95'
 
 # Use LEX_GUI4CLI
 ID_LANG_GUI4CLI = _NewId()
-LANG_GUI4CLI = u'Gui4Cli'
+LANG_GUI4CLI = 'Gui4Cli'
 
 # Use LEX_HASKELL
 ID_LANG_HASKELL = _NewId()
-LANG_HASKELL = u'Haskell'
+LANG_HASKELL = 'Haskell'
 
 # Use LEX_HTML
 ID_LANG_COLDFUSION = _NewId()
-LANG_COLDFUSION = u'ColdFusion'
+LANG_COLDFUSION = 'ColdFusion'
 ID_LANG_HTML = _NewId()
-LANG_HTML = u'HTML'
+LANG_HTML = 'HTML'
 ID_LANG_JS   = _NewId()
-LANG_JS = u'JavaScript'
+LANG_JS = 'JavaScript'
 ID_LANG_PHP  = _NewId()
-LANG_PHP = u'PHP'
+LANG_PHP = 'PHP'
 ID_LANG_XML  = _NewId()
-LANG_XML = u'XML'
+LANG_XML = 'XML'
 ID_LANG_SGML = _NewId()
 
 # Use LEX_INNOSETUP
 ID_LANG_INNO = _NewId()
-LANG_INNO = u'Inno Setup Script'
+LANG_INNO = 'Inno Setup Script'
 
 # Use LEX_KIX
 ID_LANG_KIX = _NewId()
-LANG_KIX = u'Kix'
+LANG_KIX = 'Kix'
 
 # Use LEX_LISP
 ID_LANG_LISP = _NewId()
-LANG_LISP = u'Lisp'
+LANG_LISP = 'Lisp'
 ID_LANG_SCHEME = _NewId()
-LANG_SCHEME = u'Scheme'
+LANG_SCHEME = 'Scheme'
 ID_LANG_NEWLISP = _NewId()
-LANG_NEWLISP = u'newLISP'
+LANG_NEWLISP = 'newLISP'
 
 # Use LEX_LOUT
 ID_LANG_LOUT = _NewId()
-LANG_LOUT = u'Lout'
+LANG_LOUT = 'Lout'
 
 # Use LEX_LUA
 ID_LANG_LUA = _NewId()
-LANG_LUA = u'Lua'
+LANG_LUA = 'Lua'
 
 # Use LEX_MSSQL (Microsoft SQL)
 ID_LANG_MSSQL = _NewId()
-LANG_MSSQL = u'Microsoft SQL'
+LANG_MSSQL = 'Microsoft SQL'
 
 # Use LEX_NONMEM
 ID_LANG_NONMEM = _NewId()
-LANG_NONMEM = u'NONMEM Control Stream'
+LANG_NONMEM = 'NONMEM Control Stream'
 
 # Use LEX_NSIS
 ID_LANG_NSIS = _NewId()
-LANG_NSIS = u'Nullsoft Installer Script'
+LANG_NSIS = 'Nullsoft Installer Script'
 
 # Use LEX_PASCAL
 ID_LANG_PASCAL = _NewId()
-LANG_PASCAL = u'Pascal'
+LANG_PASCAL = 'Pascal'
 
 # Use LEX_PERL
 ID_LANG_PERL = _NewId()
-LANG_PERL = u'Perl'
+LANG_PERL = 'Perl'
 
 # Use LEX_PS
 ID_LANG_PS = _NewId()
-LANG_PS = u'Postscript'
+LANG_PS = 'Postscript'
 
 # Use LEX_PYTHON 
 ID_LANG_BOO = _NewId()
-LANG_BOO = u'Boo'
+LANG_BOO = 'Boo'
 ID_LANG_PYTHON = _NewId()
-LANG_PYTHON = u'Python'
+LANG_PYTHON = 'Python'
 ID_LANG_COBRA = _NewId()
-LANG_COBRA = u'Cobra'
+LANG_COBRA = 'Cobra'
 
 # Use LEX_MATLAB
 ID_LANG_MATLAB = _NewId()
-LANG_MATLAB = u'Matlab'
+LANG_MATLAB = 'Matlab'
 
 # Use LEX_RUBY
 ID_LANG_RUBY = _NewId()
-LANG_RUBY = u'Ruby'
+LANG_RUBY = 'Ruby'
 
 # Use LEX_SMALLTALK
 ID_LANG_ST = _NewId()
-LANG_ST = u'Smalltalk'
+LANG_ST = 'Smalltalk'
 
 # Use LEX_SQL (PL/SQL, SQL*Plus)
 ID_LANG_SQL = _NewId()
-LANG_SQL = u'SQL'
+LANG_SQL = 'SQL'
 ID_LANG_PLSQL = _NewId()
-LANG_PLSQL = u'PL/SQL'
+LANG_PLSQL = 'PL/SQL'
 ID_LANG_4GL = _NewId()
-LANG_4GL = u"Progress 4GL"
+LANG_4GL = "Progress 4GL"
 
 # Use LEX_TCL
 ID_LANG_TCL  = _NewId()
-LANG_TCL = u'Tcl/Tk'
+LANG_TCL = 'Tcl/Tk'
 
 # Use LEX_TEX
 ID_LANG_TEX = _NewId()
-LANG_TEX = u'Tex'
+LANG_TEX = 'Tex'
 ID_LANG_LATEX = _NewId()
-LANG_LATEX = u'LaTeX'
+LANG_LATEX = 'LaTeX'
 
 # Use LEX_VB
 ID_LANG_VB = _NewId()
-LANG_VB = u'Visual Basic'
+LANG_VB = 'Visual Basic'
 
 # Use LEX_VBSCRIPT
 ID_LANG_VBSCRIPT = _NewId()
-LANG_VBSCRIPT = u'VBScript'
+LANG_VBSCRIPT = 'VBScript'
 
 # Use LEX_VERILOG
 ID_LANG_VERILOG = _NewId()
-LANG_VERILOG = u'Verilog'
+LANG_VERILOG = 'Verilog'
 ID_LANG_SYSVERILOG = _NewId()
-LANG_SYSVERILOG = u'System Verilog'
+LANG_SYSVERILOG = 'System Verilog'
 
 # Use LEX_VHDL
 ID_LANG_VHDL = _NewId()
-LANG_VHDL = u'VHDL'
+LANG_VHDL = 'VHDL'
 
 # Use LEX_OCTAVE
 ID_LANG_OCTAVE = _NewId()
-LANG_OCTAVE = u'Octave'
+LANG_OCTAVE = 'Octave'
 
 # Use LEX_OTHER (Batch, Diff, Makefile)
 ID_LANG_BATCH = _NewId()
-LANG_BATCH = u'DOS Batch Script'
+LANG_BATCH = 'DOS Batch Script'
 ID_LANG_DIFF = _NewId()
-LANG_DIFF = u'Diff File'
+LANG_DIFF = 'Diff File'
 ID_LANG_MAKE  = _NewId()
-LANG_MAKE = u'Makefile'
+LANG_MAKE = 'Makefile'
 ID_LANG_PROPS = _NewId()
-LANG_PROPS = u'Properties'
+LANG_PROPS = 'Properties'
 
 # Use LEX_YAML
 ID_LANG_YAML = _NewId()
-LANG_YAML = u'YAML'
+LANG_YAML = 'YAML'
 
 # Use LEX_CONTAINER
 ID_LANG_DJANGO = _NewId()
-LANG_DJANGO = u'Django'
+LANG_DJANGO = 'Django'
 ID_LANG_ISSL = _NewId()
-LANG_ISSL = u'IssueList'
+LANG_ISSL = 'IssueList'
 ID_LANG_MAKO = _NewId()
-LANG_MAKO = u'Mako'
+LANG_MAKO = 'Mako'
 ID_LANG_R = _NewId()
-LANG_R = u'R'
+LANG_R = 'R'
 ID_LANG_S = _NewId()
-LANG_S = u'S'
+LANG_S = 'S'
 ID_LANG_GROOVY = _NewId()
-LANG_GROOVY = u'Groovy'
+LANG_GROOVY = 'Groovy'
 ID_LANG_XTEXT = _NewId()
-LANG_XTEXT = u'Xtext'
+LANG_XTEXT = 'Xtext'
 
 #---- End Language Identifier Keys ----#
 
@@ -408,7 +408,7 @@ class ExtensionRegister(dict):
 
     """
     instance = None
-    config = u'synmap'
+    config = 'synmap'
     def __init__(self):
         """Initializes the register"""
         if not ExtensionRegister.instance:
@@ -428,7 +428,7 @@ class ExtensionRegister(dict):
         @return: txt extension for plain text
 
         """
-        return u'txt'
+        return 'txt'
 
     def __setitem__(self, i, y):
         """Ensures that only one filetype is associated with an extension
@@ -440,8 +440,8 @@ class ExtensionRegister(dict):
 
         """
         if not isinstance(y, list):
-            raise TypeError, "Extension Register Expects a List"
-        for key, val in self.iteritems():
+            raise TypeError("Extension Register Expects a List")
+        for key, val in self.items():
             for item in y:
                 if item in val:
                     val.pop(val.index(item))
@@ -454,11 +454,11 @@ class ExtensionRegister(dict):
         @return: the register as a string
 
         """
-        keys = self.keys()
+        keys = list(self.keys())
         keys.sort()
         tmp = list()
         for key in keys:
-            tmp.append("%s=%s" % (key, u':'.join(self.__getitem__(key))))
+            tmp.append("%s=%s" % (key, ':'.join(self.__getitem__(key))))
         return os.linesep.join(tmp)
 
     def Associate(self, ftype, ext):
@@ -506,7 +506,7 @@ class ExtensionRegister(dict):
 
         """
         ext = ext.lower()
-        for key, val in self.iteritems():
+        for key, val in self.items():
             if ext in [ext2.lower() for ext2 in val]:
                 return key
         return LANG_TXT
@@ -517,7 +517,7 @@ class ExtensionRegister(dict):
 
         """
         ext = list()
-        for extension in self.values():
+        for extension in list(self.values()):
             ext.extend(extension) 
         ext.sort()
         return ext
@@ -544,11 +544,11 @@ class ExtensionRegister(dict):
             lines = file_h.readlines()
             file_h.close()
             for line in lines:
-                tmp = line.split(u'=')
+                tmp = line.split('=')
                 if len(tmp) != 2:
                     continue
                 ftype = tmp[0].strip()
-                exts = tmp[1].split(u':')
+                exts = tmp[1].split(':')
                 self.__setitem__(ftype, exts)
 
     def Remove(self, ftype):

@@ -110,23 +110,23 @@ class HistoryCacheTest(unittest.TestCase):
     def testPeek(self):
         """Test peeking at the next/prev item in the cache."""
         self.cache.Clear()
-        self.assertEquals(self.cache.PeekNext(), None)
-        self.assertEquals(self.cache.PeekNext(), None)
-        self.assertEquals(self.cache.PeekPrevious(), None)
-        self.assertEquals(self.cache.PeekPrevious(), None)
+        self.assertEqual(self.cache.PeekNext(), None)
+        self.assertEqual(self.cache.PeekNext(), None)
+        self.assertEqual(self.cache.PeekPrevious(), None)
+        self.assertEqual(self.cache.PeekPrevious(), None)
         self.cache.PutItem("hello")
         self.cache.PutItem("hello1")
-        self.assertEquals(self.cache.PeekPrevious(), "hello1")
-        self.assertEquals(self.cache.PeekNext(), None)
+        self.assertEqual(self.cache.PeekPrevious(), "hello1")
+        self.assertEqual(self.cache.PeekNext(), None)
         self.cache.PutItem("hello2")
         self.cache.PutItem("hello3")
-        self.assertEquals(self.cache.PeekPrevious(), "hello3")
-        self.assertEquals(self.cache.PeekPrevious(), "hello3")
+        self.assertEqual(self.cache.PeekPrevious(), "hello3")
+        self.assertEqual(self.cache.PeekPrevious(), "hello3")
         self.cache.GetPreviousItem() # move back one position
-        self.assertEquals(self.cache.PeekPrevious(), "hello2")
-        self.assertEquals(self.cache.PeekPrevious(), "hello2")
-        self.assertEquals(self.cache.PeekNext(), "hello3")
-        self.assertEquals(self.cache.PeekNext(), "hello3")
+        self.assertEqual(self.cache.PeekPrevious(), "hello2")
+        self.assertEqual(self.cache.PeekPrevious(), "hello2")
+        self.assertEqual(self.cache.PeekNext(), "hello3")
+        self.assertEqual(self.cache.PeekNext(), "hello3")
 
     def testPutItem(self):
         """Test putting an item in the cache"""
@@ -146,15 +146,15 @@ class HistoryCacheTest(unittest.TestCase):
 
         # Test setting a valid cache size
         self.cache.SetMaxSize(3)
-        self.assertEquals(self.cache.GetMaxSize(), 3)
+        self.assertEqual(self.cache.GetMaxSize(), 3)
 
         # Ensure max size is enforced
         self.cache.PutItem("Hello1")
         self.cache.PutItem("Hello2")
         self.cache.PutItem("Hello3")
-        self.assertEquals(self.cache.GetSize(), 3)
+        self.assertEqual(self.cache.GetSize(), 3)
         self.cache.PutItem("Hello4")
-        self.assertEquals(self.cache.GetSize(), 3)
+        self.assertEqual(self.cache.GetSize(), 3)
 
         # Test that correct items are still on the cache
         self.assertTrue(self.cache.GetPreviousItem(), "Hello4")

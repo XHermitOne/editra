@@ -31,7 +31,7 @@ def IsUnicode(txt):
     @return: bool
 
     """
-    return isinstance(txt, types.UnicodeType)
+    return isinstance(txt, str)
 
 def DecodeString(txt, enc):
     """Decode the given string with the given encoding,

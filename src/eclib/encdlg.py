@@ -30,11 +30,11 @@ import encodings
 import wx
 
 # Editra Control Library Imports
-import choicedlg
+from . import choicedlg
 
 #--------------------------------------------------------------------------#
 # Globals
-EncodingDialogNameStr = u"EncodingDialog"
+EncodingDialogNameStr = "EncodingDialog"
 
 #--------------------------------------------------------------------------#
 
@@ -43,8 +43,8 @@ class EncodingDialog(choicedlg.ChoiceDialog):
     encodings on the system.
 
     """
-    def __init__(self, parent, id=wx.ID_ANY, msg=u'', title=u'',
-                  elist=list(), default=u'',
+    def __init__(self, parent, id=wx.ID_ANY, msg='', title='',
+                  elist=list(), default='',
                   style=wx.CAPTION, pos=wx.DefaultPosition,
                   size=wx.DefaultSize,
                   name=EncodingDialogNameStr):
@@ -88,7 +88,7 @@ def GetAllEncodings():
     @return: list of strings
 
     """
-    elist = encodings.aliases.aliases.values()
+    elist = list(encodings.aliases.aliases.values())
     elist = list(set(elist))
     elist.sort()
     elist = [ enc for enc in elist if not enc.endswith('codec') ]

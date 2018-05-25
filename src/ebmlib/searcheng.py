@@ -26,10 +26,10 @@ import re
 import fnmatch
 import types
 import unicodedata
-from StringIO import StringIO
+from io import StringIO
 
 # Local imports
-import fchecker
+from . import fchecker
 
 #-----------------------------------------------------------------------------#
 
@@ -59,11 +59,11 @@ class SearchEngine(object):
         self._matchcase = matchcase
         self._wholeword = wholeword
         self._query = query
-        self._regex = u''
-        self._pool = u''
+        self._regex = ''
+        self._pool = ''
         self._lmatch = None             # Last match object
         self._filters = None            # File Filters
-        self._formatter = lambda f, l, m: u"%s %d: %s" % (f, l+1, m)
+        self._formatter = lambda f, l, m: "%s %d: %s" % (f, l+1, m)
         self._CompileRegex()
 
     def _CompileRegex(self):
@@ -74,8 +74,8 @@ class SearchEngine(object):
         """
         tmp = self._query
 
-        uquery = type(tmp) is types.UnicodeType
-        upool = type(self._pool) is types.UnicodeType
+        uquery = type(tmp) is str
+        upool = type(self._pool) is str
         if uquery and upool:
             tmp = unicodedata.normalize("NFC", tmp)
 
@@ -84,7 +84,7 @@ class SearchEngine(object):
 
         if self._wholeword:
             if uquery:
-                tmp = u"\\b%s\\b" % tmp
+                tmp = "\\b%s\\b" % tmp
             else:
                 tmp = "\\b%s\\b" % tmp
 
@@ -115,7 +115,7 @@ class SearchEngine(object):
     def ClearPool(self):
         """Clear the search pool"""
         del self._pool
-        self._pool = u""
+        self._pool = ""
 
     def Find(self, spos=0):
         """Find the next match based on the state of the search engine
@@ -156,7 +156,7 @@ class SearchEngine(object):
 
         for lnum, line in enumerate(StringIO(self._pool)):
             if self._regex.search(line) is not None:
-                rlist.append(self._formatter(u"Untitled", lnum, line))
+                rlist.append(self._formatter("Untitled", lnum, line))
 
         return rlist
 
@@ -205,15 +205,15 @@ class SearchEngine(object):
 
     def GetOptionsString(self):
         """Get a string describing the search engines options"""
-        rstring = u"\"%s\" [ " % self._query
+        rstring = "\"%s\" [ " % self._query
         for desc, attr in (("regex: %s", self._isregex),
                            ("match case: %s", self._matchcase),
                            ("whole word: %s", self._wholeword)):
             if attr:
-                rstring += (desc % u"on; ")
+                rstring += (desc % "on; ")
             else:
-                rstring += (desc % u"off; ")
-        rstring += u"]"
+                rstring += (desc % "off; ")
+        rstring += "]"
 
         return rstring
 

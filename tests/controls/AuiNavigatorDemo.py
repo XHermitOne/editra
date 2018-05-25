@@ -22,7 +22,7 @@ import sys
 import wx
 import wx.aui as aui
 
-import IconFile
+from . import IconFile
 
 # Put local package on the path
 #sys.path.insert(0, os.path.abspath('../../src'))
@@ -106,7 +106,7 @@ class TestPanel(wx.Panel):
         self._paneNavi.Destroy()
         self._paneNavi = None
 
-        if isinstance(sel, basestring):
+        if isinstance(sel, str):
             paneInfo = self.mgr.GetPane(sel)
             if paneInfo.IsOk():
                 if not paneInfo.IsShown():
@@ -125,7 +125,7 @@ class TestLog:
         pass
 
     def write(self, msg):
-        print msg
+        print(msg)
 
 #----------------------------------------------------------------------
 

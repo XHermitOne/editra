@@ -50,7 +50,7 @@ def CleanTempDir():
     """Clean all files from the temporary directory"""
     tdir = GetTempDir()
     for path in os.listdir(tdir):
-        if path.startswith(u'.'):
+        if path.startswith('.'):
             continue
 
         fpath = os.path.join(tdir, path)
@@ -68,7 +68,7 @@ def GetDataDir():
     @return: string
 
     """
-    path = os.path.join(u'.', u'data')
+    path = os.path.join('.', 'data')
     return os.path.abspath(path)
 
 def GetDataFilePath(fname):
@@ -77,7 +77,7 @@ def GetDataFilePath(fname):
     @return: string
 
     """
-    path = os.path.join(u'.', u'data', fname)
+    path = os.path.join('.', 'data', fname)
     return os.path.abspath(path)
 
 def GetFileContents(path):
@@ -96,7 +96,7 @@ def GetTempDir():
     @return: string
 
     """
-    path = os.path.join(u'.', u'temp')
+    path = os.path.join('.', 'temp')
     return os.path.abspath(path)
 
 def GetTempFilePath(fname):
@@ -113,12 +113,12 @@ def GetThemeDir():
     @return: string
 
     """
-    tpath = os.path.join(u"..", u"..", u"pixmaps", u"theme")
+    tpath = os.path.join("..", "..", "pixmaps", "theme")
     tpath = os.path.abspath(tpath)
     return tpath
 
 def GetStylesDir():
-    tpath = os.path.join(u"..", u"..", u"styles")
+    tpath = os.path.join("..", "..", "styles")
     tpath = os.path.abspath(tpath)
     return tpath
 

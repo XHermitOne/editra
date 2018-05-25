@@ -78,7 +78,7 @@ import wx
 import random
 import math
 import weakref
-import cPickle
+import pickle
 
 # Used on OSX to get access to carbon api constants
 if wx.Platform == '__WXMAC__':
@@ -645,8 +645,8 @@ def GetMondrianBitmap():
 
 
 def GetMondrianImage():
-    import cStringIO
-    stream = cStringIO.StringIO(GetMondrianData())
+    import io
+    stream = io.StringIO(GetMondrianData())
     return wx.ImageFromStream(stream)
 
 
@@ -703,7 +703,7 @@ def PaintStraightGradientBox(dc, rect, startColor, endColor, vertical=True):
     if high < 1:
         return
 
-    for i in xrange(high+1):
+    for i in range(high+1):
     
         r = startColor.Red() + ((i*rd*100)/high)/100
         g = startColor.Green() + ((i*gd*100)/high)/100
@@ -733,7 +733,7 @@ def DrawButton(dc, rect, focus, upperTabs):
 
     # Define the rounded rectangle base on the given rect
     # we need an array of 9 points for it
-    regPts = [wx.Point() for indx in xrange(9)]
+    regPts = [wx.Point() for indx in range(9)]
 
     if focus:
         if upperTabs:
@@ -868,7 +868,7 @@ class FNBDropTarget(wx.DropTarget):
                 return wx.DragNone
 
             draginfo = self._dataobject.GetData()
-            drginfo = cPickle.loads(draginfo)
+            drginfo = pickle.loads(draginfo)
             
             return self._parent.OnDropTarget(x, y, drginfo.GetPageIndex(), drginfo.GetContainer())
         except wx.PyAssertionError:
@@ -1207,7 +1207,7 @@ class TabNavigatorWindow(wx.Dialog):
             self._listBox.Append(book.GetPageText(prevSel))
             self._indexMap.append(prevSel)
         
-        for c in xrange(count):
+        for c in range(count):
         
             # Skip selected page
             if c == selection:
@@ -1791,7 +1791,7 @@ class FNBRenderer:
 
             # Draw thik grey line between the windows area and
             # the tab area
-            for num in xrange(3):
+            for num in range(3):
                 dc.DrawLine(0, greyLineYVal + num, size.x, greyLineYVal + num)
 
             wbPen = (pc.HasFlag(FNB_BOTTOM) and [wx.BLACK_PEN] or [wx.WHITE_PEN])[0]
@@ -1814,7 +1814,7 @@ class FNBRenderer:
             posx += 12
 
         # Update all the tabs from 0 to 'pc._nFrom' to be non visible
-        for i in xrange(pc._nFrom):
+        for i in range(pc._nFrom):
         
             pc._pagesInfoVec[i].SetPosition(wx.Point(-1, -1))
             pc._pagesInfoVec[i].GetRegion().Clear()
@@ -1825,7 +1825,7 @@ class FNBRenderer:
         # Go over and draw the visible tabs
         #----------------------------------------------------------
         x1 = x2 = -1
-        for i in xrange(pc._nFrom, len(pc._pagesInfoVec)):
+        for i in range(pc._nFrom, len(pc._pagesInfoVec)):
         
             dc.SetPen(borderPen)
 
@@ -1876,7 +1876,7 @@ class FNBRenderer:
             posx += tabWidth
         
         # Update all tabs that can not fit into the screen as non-visible
-        for i in xrange(count, len(pc._pagesInfoVec)):
+        for i in range(count, len(pc._pagesInfoVec)):
             pc._pagesInfoVec[i].SetPosition(wx.Point(-1, -1))
             pc._pagesInfoVec[i].GetRegion().Clear()
         
@@ -1943,7 +1943,7 @@ class FNBRenderer:
         if fr < 0:
             fr = pc._nFrom
 
-        for i in xrange(fr, len(pc._pagesInfoVec)):
+        for i in range(fr, len(pc._pagesInfoVec)):
 
             tabWidth = self.CalcTabWidth(pageContainer, i, tabHeight) 
             if posx + tabWidth + self.GetButtonsAreaLength(pc) >= clientWidth:
@@ -2025,7 +2025,7 @@ class FNBRendererDefault(FNBRenderer):
         borderPen = wx.Pen(wx.SystemSettings_GetColour(wx.SYS_COLOUR_BTNSHADOW))
         pc = pageContainer 
 
-        tabPoints = [wx.Point() for ii in xrange(7)]
+        tabPoints = [wx.Point() for ii in range(7)]
         tabPoints[0].x = posx
         tabPoints[0].y = (pc.HasFlag(FNB_BOTTOM) and [2] or [tabHeight - 2])[0]
 
@@ -2145,7 +2145,7 @@ class FNBRendererFirefox2(FNBRenderer):
         borderPen = wx.Pen(wx.SystemSettings_GetColour(wx.SYS_COLOUR_BTNSHADOW))
         pc = pageContainer
 
-        tabPoints = [wx.Point() for indx in xrange(7)]
+        tabPoints = [wx.Point() for indx in range(7)]
         tabPoints[0].x = posx + 2
         tabPoints[0].y = (pc.HasFlag(FNB_BOTTOM) and [2] or [tabHeight - 2])[0]
 
@@ -2517,7 +2517,7 @@ class FNBRendererVC8(FNBRenderer):
         dc.SetFont(boldFont)
 
         # Update all the tabs from 0 to 'pc.self._nFrom' to be non visible
-        for i in xrange(pc._nFrom):
+        for i in range(pc._nFrom):
         
             pc._pagesInfoVec[i].SetPosition(wx.Point(-1, -1))
             pc._pagesInfoVec[i].GetRegion().Clear()
@@ -2529,7 +2529,7 @@ class FNBRendererVC8(FNBRenderer):
         activeTabWidth = 0
         activeTabHeight = 0
 
-        for cur in xrange(len(vTabsInfo)-1, -1, -1):
+        for cur in range(len(vTabsInfo)-1, -1, -1):
         
             # 'i' points to the index of the currently drawn tab
             # in pc.GetPageInfoVector() vector
@@ -2589,7 +2589,7 @@ class FNBRendererVC8(FNBRenderer):
             self.DrawTab(pc, dc, activeTabPosx, pc.GetSelection(), activeTabWidth, activeTabHeight, pc._nTabXButtonStatus)
         
         # Update all tabs that can not fit into the screen as non-visible
-        for xx in xrange(pc._nFrom + len(vTabsInfo), len(pc._pagesInfoVec)):
+        for xx in range(pc._nFrom + len(vTabsInfo), len(pc._pagesInfoVec)):
         
             pc._pagesInfoVec[xx].SetPosition(wx.Point(-1, -1))
             pc._pagesInfoVec[xx].GetRegion().Clear()
@@ -2607,7 +2607,7 @@ class FNBRendererVC8(FNBRenderer):
 
         pc = pageContainer
         borderPen = wx.Pen(pc._pParent.GetBorderColour())
-        tabPoints = [wx.Point() for ii in xrange(8)]
+        tabPoints = [wx.Point() for ii in range(8)]
 
         # If we draw the first tab or the active tab, 
         # we draw a full tab, else we draw a truncated tab
@@ -2832,7 +2832,7 @@ class FNBRendererVC8(FNBRenderer):
 
         if bBottomStyle:
         
-            for i in xrange(3):
+            for i in range(3):
                 
                 if y >= tabPoints[i].y and y < tabPoints[i+1].y:
                 
@@ -2845,7 +2845,7 @@ class FNBRendererVC8(FNBRenderer):
                 
         else:
         
-            for i in xrange(3):
+            for i in range(3):
                 
                 if y <= tabPoints[i].y and y > tabPoints[i+1].y:
                 
@@ -2888,7 +2888,7 @@ class FNBRendererVC8(FNBRenderer):
 
         if bBottomStyle:
 
-            for i in xrange(7, 3, -1):
+            for i in range(7, 3, -1):
                 
                 if y >= tabPoints[i].y and y < tabPoints[i-1].y:
                 
@@ -2901,7 +2901,7 @@ class FNBRendererVC8(FNBRenderer):
         
         else:
         
-            for i in xrange(7, 3, -1):
+            for i in range(7, 3, -1):
                 
                 if y <= tabPoints[i].y and y > tabPoints[i-1].y:
                 
@@ -2951,7 +2951,7 @@ class FNBRendererVC8(FNBRenderer):
         if fr < 0:
             fr = pc._nFrom
 
-        for i in xrange(fr, len(pc._pagesInfoVec)):
+        for i in range(fr, len(pc._pagesInfoVec)):
         
             vc8glitch = tabHeight + FNB_HEIGHT_SPACER
             tabWidth = self.CalcTabWidth(pageContainer, i, tabHeight)
@@ -3453,7 +3453,7 @@ class FlatNotebook(wx.PyPanel):
                 bmp = wx.BitmapFromImage(img)
             self._naviIcon = bmp
         else:
-            raise TypeError, "SetNavigatorIcon requires a valid bitmap"
+            raise TypeError("SetNavigatorIcon requires a valid bitmap")
 
     def OnNavigationKey(self, event):
         """ Handles the wx.EVT_NAVIGATION_KEY event for L{FlatNotebook}. """
@@ -3510,7 +3510,7 @@ class FlatNotebook(wx.PyPanel):
         if angle > 15:
             return
 
-        for ii in xrange(len(self._pages._pagesInfoVec)):
+        for ii in range(len(self._pages._pagesInfoVec)):
             self._pages._pagesInfoVec[ii].SetTabAngle(angle)
         
         self.Refresh()
@@ -3909,7 +3909,7 @@ class PageContainer(wx.Panel):
         fr = 0
         page = self.GetSelection()
         
-        for fr in xrange(self._nFrom):
+        for fr in range(self._nFrom):
             vTabInfo = renderer.NumberTabsCanFit(self, fr)
             if page - fr >= len(vTabInfo):
                 continue
@@ -4153,7 +4153,7 @@ class PageContainer(wx.Panel):
         # Test whether a left click was made on a tab
         bFoundMatch = False
         
-        for cur in xrange(self._nFrom, len(self._pagesInfoVec)):
+        for cur in range(self._nFrom, len(self._pagesInfoVec)):
 
             pgInfo = self._pagesInfoVec[cur]
 
@@ -4397,7 +4397,7 @@ class PageContainer(wx.Panel):
 
                     self._isdragging = True                
                     draginfo = FNBDragInfo(self, tabIdx)
-                    drginfo = cPickle.dumps(draginfo)
+                    drginfo = pickle.dumps(draginfo)
                     dataobject = wx.CustomDataObject(wx.CustomDataFormat("FlatNotebook"))
                     dataobject.SetData(drginfo)
                     dragSource = FNBDropSource(self)
@@ -4447,7 +4447,7 @@ class PageContainer(wx.Panel):
 
         ii = 0
         
-        for ii in xrange(self._nFrom, len(self._pagesInfoVec)):
+        for ii in range(self._nFrom, len(self._pagesInfoVec)):
         
             if self._pagesInfoVec[ii].GetPosition() == wx.Point(-1, -1):
                 break
@@ -4709,7 +4709,7 @@ class PageContainer(wx.Panel):
         """ Returns the number of visible tabs. """
 
         count = 0
-        for ii in xrange(self._nFrom, len(self._pagesInfoVec)):
+        for ii in range(self._nFrom, len(self._pagesInfoVec)):
             if self._pagesInfoVec[ii].GetPosition() == wx.Point(-1, -1):
                 break
             count = count + 1
@@ -4851,7 +4851,7 @@ class PageContainer(wx.Panel):
 
         longest = 0
         has_bmp = False
-        for i in xrange(len(self._pagesInfoVec)):
+        for i in range(len(self._pagesInfoVec)):
             pi = self._pagesInfoVec[i]
             caption = pi.GetCaption()
             item = wx.MenuItem(popupMenu, i+1, caption, caption, wx.ITEM_NORMAL)
@@ -4963,7 +4963,7 @@ class PageContainer(wx.Panel):
         if page < len(self._pagesInfoVec):
             return self._pagesInfoVec[page].GetCaption()
         else:
-            return u''
+            return ''
 
 
     def SetPageText(self, page, text):

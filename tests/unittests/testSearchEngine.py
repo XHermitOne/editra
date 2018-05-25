@@ -41,19 +41,19 @@ as doing multiline replaces.
 class SearchEngineTest(unittest.TestCase):
     def setUp(self):
         """Setup the test items"""
-        self._def_eng = ebmlib.SearchEngine(u"", regex=False, down=True,
+        self._def_eng = ebmlib.SearchEngine("", regex=False, down=True,
                                                matchcase=False, wholeword=False)
-        self._ww_eng = ebmlib.SearchEngine(u"", regex=False, down=True,
+        self._ww_eng = ebmlib.SearchEngine("", regex=False, down=True,
                                               matchcase=False, wholeword=True)
-        self._mc_eng = ebmlib.SearchEngine(u"", regex=False, down=True,
+        self._mc_eng = ebmlib.SearchEngine("", regex=False, down=True,
                                               matchcase=True, wholeword=False)
-        self._regex_eng = ebmlib.SearchEngine(u"", regex=True, down=True,
+        self._regex_eng = ebmlib.SearchEngine("", regex=True, down=True,
                                                  matchcase=False, wholeword=False)
-        self._regexmc_eng = ebmlib.SearchEngine(u"", regex=True, down=True,
+        self._regexmc_eng = ebmlib.SearchEngine("", regex=True, down=True,
                                                   matchcase=True, wholeword=False)
-        self._regww_eng = ebmlib.SearchEngine(u"", regex=True, down=True,
+        self._regww_eng = ebmlib.SearchEngine("", regex=True, down=True,
                                                  matchcase=False, wholeword=True)
-        self._all_eng = ebmlib.SearchEngine(u"", regex=True, down=True,
+        self._all_eng = ebmlib.SearchEngine("", regex=True, down=True,
                                                matchcase=True, wholeword=True)
 
     def tearDown(self):
@@ -87,13 +87,13 @@ class SearchEngineTest(unittest.TestCase):
         self._def_eng.SetQuery('test')
         t1 = self._def_eng.Find(0)
         self.assertTrue(t1 is not None, "Find failed")
-        self.assertEquals(t1[0], 0, "Find got wrong postion")
-        self.assertEquals(t1[1] - t1[0], 4, "Find returned wrong span")
+        self.assertEqual(t1[0], 0, "Find got wrong postion")
+        self.assertEqual(t1[1] - t1[0], 4, "Find returned wrong span")
 
         # Find Next
         t2 = self._def_eng.Find(t1[1])
         self.assertTrue(t2 is not None, "Find next failed")
-        self.assertEquals(t2[0] + t1[1], 32, "Find next: %d != 32" % t2[0])
+        self.assertEqual(t2[0] + t1[1], 32, "Find next: %d != 32" % t2[0])
 
         # Test not found
         self._def_eng.SetQuery('gyoza')
@@ -105,7 +105,7 @@ class SearchEngineTest(unittest.TestCase):
         self._def_eng.SetSearchPool(POOL)
         
         # Find All Case insensitive
-        self._def_eng.SetQuery(u"test")
+        self._def_eng.SetQuery("test")
         t1 = self._def_eng.FindAll()
         self.assertTrue(len(t1) == 6, "Found: %d Expected: 5" % len(t1))
 
@@ -122,9 +122,9 @@ class SearchEngineTest(unittest.TestCase):
         # Find searching in a pool that is a string not Unicode
         self._def_eng.SetFlags(wholeword=False)
         self._def_eng.SetFlags(matchcase=False)
-        pool = u"Hello ä".encode('utf-8')
+        pool = "Hello ä".encode('utf-8')
         self._def_eng.SetSearchPool(pool)
-        self._def_eng.SetQuery(u'ä')
+        self._def_eng.SetQuery('ä')
         t4 = self._def_eng.FindAll()
         self.assertTrue(len(t4) == 1, "Find Results %s" % repr(t4))
 
@@ -138,8 +138,8 @@ class SearchEngineTest(unittest.TestCase):
         self._ww_eng.SetQuery('test')
         t1 = self._ww_eng.Find(0)
         self.assertTrue(t1 is not None, "Find failed")
-        self.assertEquals(t1[0], 0, "Find got wrong postion")
-        self.assertEquals(t1[1] - t1[0], 4, "Find returned wrong span")
+        self.assertEqual(t1[0], 0, "Find got wrong postion")
+        self.assertEqual(t1[1] - t1[0], 4, "Find returned wrong span")
 
         # Find Next (Should be None)
         t2 = self._ww_eng.Find(t1[1])
@@ -155,13 +155,13 @@ class SearchEngineTest(unittest.TestCase):
         self._mc_eng.SetQuery('test')
         t1 = self._mc_eng.Find(0)
         self.assertTrue(t1 is not None, "Find failed")
-        self.assertEquals(t1[0], 32, "Find got wrong position")
-        self.assertEquals(t1[1] - t1[0], 4, "Find returned wrong span")
+        self.assertEqual(t1[0], 32, "Find got wrong position")
+        self.assertEqual(t1[1] - t1[0], 4, "Find returned wrong span")
 
         # Find Next
         t2 = self._mc_eng.Find(t1[1])
         self.assertTrue(t2 is not None, "Find next failed")
-        self.assertEquals(t2[0] + t1[1], 48, "Find next: %d != 48" % t2[0])
+        self.assertEqual(t2[0] + t1[1], 48, "Find next: %d != 48" % t2[0])
 
         # Test not found
         self._mc_eng.SetQuery('TeSt')
@@ -171,9 +171,9 @@ class SearchEngineTest(unittest.TestCase):
     def testQuery(self):
         """Test setting and retrieving the search query"""
         q1 = self._def_eng.GetQuery()
-        self.assertTrue(q1 == u"")
-        self._def_eng.SetQuery(u"test")
-        self.assertTrue(self._def_eng.GetQuery() == u"test")
+        self.assertTrue(q1 == "")
+        self._def_eng.SetQuery("test")
+        self.assertTrue(self._def_eng.GetQuery() == "test")
 
     def testRegexFind(self):
         """Test find procedure to see if it accurately returns the correct
@@ -189,7 +189,7 @@ class SearchEngineTest(unittest.TestCase):
         # Find Next
         t2 = self._regex_eng.Find(t1[1])
         self.assertTrue(t2 is not None, "Find next failed")
-        self.assertEquals(t2[0] + t1[1], 6, "Find next: %d != 6" % t2[0])
+        self.assertEqual(t2[0] + t1[1], 6, "Find next: %d != 6" % t2[0])
 
         # Test not found
         self._regex_eng.SetQuery('test{10,10}')
@@ -201,19 +201,19 @@ class SearchEngineTest(unittest.TestCase):
 
     def testNormalizedFind(self):
         """Test searching for normalized Unicode data"""
-        pool = unicodedata.normalize('NFC', u"école")
-        query = unicodedata.normalize('NFD', u"école")
+        pool = unicodedata.normalize('NFC', "école")
+        query = unicodedata.normalize('NFD', "école")
         self.assertTrue(pool != query)
         search = ebmlib.SearchEngine(query)
         search.SetSearchPool(pool)
         val = search.Find()
         self.assertTrue(val is not None)
 
-        pool = unichr(0x00E9)
-        query = u'e' + u'\u0301'
+        pool = chr(0x00E9)
+        query = 'e' + '\u0301'
         self.assertTrue(pool != query)
         search = ebmlib.SearchEngine(query)
-        search.SetSearchPool(u"foobar " + pool)
+        search.SetSearchPool("foobar " + pool)
         val = search.Find()
         self.assertTrue(val is not None)
 

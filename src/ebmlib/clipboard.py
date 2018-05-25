@@ -40,15 +40,15 @@ class Clipboard(object):
            Normal mode when Vi(m) emulation is enabled.
 
     """
-    NAMES = list(u'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_')
+    NAMES = list('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_')
     registers = {}
-    current = u'"'
+    current = '"'
 
     @classmethod
     def ClearAll(cls):
         """Clear all registers"""
         for reg in cls.registers:
-            cls.registers[reg] = u''
+            cls.registers[reg] = ''
 
     @classmethod
     def DeleteAll(cls):
@@ -61,10 +61,10 @@ class Clipboard(object):
         @param reg: char
 
         """
-        if reg in cls.NAMES or reg == u'"':
+        if reg in cls.NAMES or reg == '"':
             cls.current = reg
         else:
-            raise ClipboardException(u"Switched to invalid register name")
+            raise ClipboardException("Switched to invalid register name")
 
     @classmethod
     def NextFree(cls):
@@ -76,11 +76,11 @@ class Clipboard(object):
         @note: This is not used yet.
 
         """
-        if cls.Get() == u'':
+        if cls.Get() == '':
             return
 
         for name in cls.NAMES:
-            if cls.registers.get(name, u'') == u'':
+            if cls.registers.get(name, '') == '':
                 cls.Switch(name)
                 break
 
@@ -92,19 +92,19 @@ class Clipboard(object):
         @return: dict
 
         """
-        cmd_map = { u'"': cls.SystemGet() }
+        cmd_map = { '"': cls.SystemGet() }
         for name in cls.NAMES:
-            if cls.registers.get(name, u''):
+            if cls.registers.get(name, ''):
                 cmd_map[name] = cls.registers[name]
         return cmd_map
 
     @classmethod
     def Get(cls):
         """Get the content of the current register. Used for pasting"""
-        if cls.current == u'"':
+        if cls.current == '"':
             return cls.SystemGet()
         else:
-            return cls.registers.get(cls.current, u'')
+            return cls.registers.get(cls.current, '')
 
     @classmethod
     def Set(cls, text):
@@ -112,7 +112,7 @@ class Clipboard(object):
         @param text: string
 
         """
-        if cls.current == u'"':
+        if cls.current == '"':
             return cls.SystemSet(text)
         else:
             cls.registers[cls.current] = text
@@ -134,7 +134,7 @@ class Clipboard(object):
         if text is not None:
             return text.GetText()
         else:
-            return u''
+            return ''
 
     @classmethod
     def SystemSet(cls, text):

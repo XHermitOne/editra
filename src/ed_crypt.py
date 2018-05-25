@@ -68,7 +68,7 @@ def _Encode(text):
     return ''.join([g(y) for y in ''.join(['\\%o'%ord(x) for x in text])])
 
 def _Decode(text):
-    exec 's="'+text.replace('8','\\').replace('9','\\')+'"'
+    exec('s="'+text.replace('8','\\').replace('9','\\')+'"')
     return s
 
 #-----------------------------------------------------------------------------#
@@ -85,8 +85,8 @@ def Encrypt(passwd, salt):
     if not len(passwd.strip()) or not len(salt.strip()):
         return passwd
     else:
-        return base64.b64encode(zlib.compress(str(long(_Encode(passwd))*\
-                                long(_Encode(salt).replace('8','9'))),9))
+        return base64.b64encode(zlib.compress(str(int(_Encode(passwd))*\
+                                int(_Encode(salt).replace('8','9'))),9))
 
 def Decrypt(passwd, salt):
     """Decrypt the given password string using the supplied salt as a key
@@ -99,8 +99,8 @@ def Decrypt(passwd, salt):
     if not len(passwd.strip()) or not len(salt.strip()):
         return passwd
     else:
-        return _Decode(str(long(zlib.decompress(base64.b64decode(passwd)))/\
-                       long(str.replace(_Encode(salt),'8','9'))))
+        return _Decode(str(int(zlib.decompress(base64.b64decode(passwd)))/\
+                       int(str.replace(_Encode(salt),'8','9'))))
 
 #-----------------------------------------------------------------------------#
 # Test
@@ -108,13 +108,13 @@ if __name__ == '__main__':
     TEST_FILE = "TEST_passwd.crypt"
     PASSWD = 'HelloWorld'
     salt = os.urandom(8)
-    print "PASSWORD STR: ", PASSWD
+    print("PASSWORD STR: ", PASSWD)
     es = Encrypt(PASSWD, salt)
-    print "ENCRYPTED STR: ", es
-    print "DECRYPTED STR: ", Decrypt(es, salt)
+    print("ENCRYPTED STR: ", es)
+    print("DECRYPTED STR: ", Decrypt(es, salt))
 
-    print "Empty String Test"
+    print("Empty String Test")
     salt2 = os.urandom(8)
     es = Encrypt('', salt2)
-    print "Encrypted String", es
-    print "Decrypted String", Decrypt(es, salt)
+    print("Encrypted String", es)
+    print("Decrypted String", Decrypt(es, salt))

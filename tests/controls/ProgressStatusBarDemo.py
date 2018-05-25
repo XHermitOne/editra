@@ -99,7 +99,7 @@ class PBSDemoFrame(wx.Frame):
         self.panel.SetButtonState(e_id)
 
         if e_id == wx.ID_STOP:
-            statb.SetStatusText(u"", 0)
+            statb.SetStatusText("", 0)
             if self.timer.IsRunning():
                 self.timer.Stop()
             statb.Stop()
@@ -175,7 +175,7 @@ class TestLog:
         pass
 
     def write(self, msg):
-        print msg
+        print(msg)
 
 #----------------------------------------------------------------------
 

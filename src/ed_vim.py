@@ -23,7 +23,7 @@ import re
 import string
 
 # Local Imports
-import ebmlib
+from . import ebmlib
 
 # ---------------------------------------------------------------------------- #
 
@@ -971,16 +971,16 @@ def vim_parser(start_chars, generic_repeat=True, is_motion=False):
 NeedMore = True
 InvalidOp = False
 
-@vim_parser( u'iIaAoO' )
+@vim_parser( 'iIaAoO' )
 def InsertMode(editor, repeat, cmd):
     """Handler for basic commands that put vim in INSERT mode"""
     cmd_map = {
-            u'i': (lambda:None),
-            u'I': editor.GotoIndentStart,
-            u'A': editor.GotoLineEnd,
-            u'a': editor.MoveForward,
-            u'o': editor.OpenLine,
-            u'O': editor.OpenLineUp
+            'i': (lambda:None),
+            'I': editor.GotoIndentStart,
+            'A': editor.GotoLineEnd,
+            'a': editor.MoveForward,
+            'o': editor.OpenLine,
+            'O': editor.OpenLineUp
             }
     func = cmd_map[cmd]
     func()
@@ -989,7 +989,7 @@ def InsertMode(editor, repeat, cmd):
     editor.InsertMode()
 
 #TODO:CJP Documentation for below methods please
-@vim_parser( u'v' )
+@vim_parser( 'v' )
 def VisualMode(editor, repeat, cmd):
     """Enter visual mode
     @see: vim_parser
@@ -1007,29 +1007,29 @@ def Dot(editor, repeat, cmd):
     if editor.IsInsertMode():
         editor.NormalMode() # in case it was a 'c' command
 
-@vim_parser(u'hjkl\r \x08\u013c\u013a', is_motion=True)
+@vim_parser('hjkl\r \x08\u013c\u013a', is_motion=True)
 def Arrows(editor, repeat, cmd):
     """Basic arrow movement in vim.
     @see: vim_parser
 
     """
     cmd_map = {
-            u'h': editor.MoveLeft,
-            u'j': editor.MoveDown,
-            u'k': editor.MoveUp,
-            u'l': editor.MoveRight,
-            u'\r': editor.MoveDown,
-            u' ' : editor.MoveRight,
-            u'\x08' : editor.MoveLeft
+            'h': editor.MoveLeft,
+            'j': editor.MoveDown,
+            'k': editor.MoveUp,
+            'l': editor.MoveRight,
+            '\r': editor.MoveDown,
+            ' ' : editor.MoveRight,
+            '\x08' : editor.MoveLeft
           }
     if cmd in cmd_map:
         cmd_map[cmd](repeat)
     else:
         # Handle motion for actual arrow keys
-        if cmd == u'\u013c' and not editor.IsAtLineEnd():
+        if cmd == '\u013c' and not editor.IsAtLineEnd():
             # Right arrow
             editor.MoveRight()
-        elif cmd == u'\u013a' and not editor.IsAtLineStart():
+        elif cmd == '\u013a' and not editor.IsAtLineStart():
             # Left Arrow
             editor.MoveLeft()
 
@@ -1042,54 +1042,54 @@ def Words(editor,repeat, cmd):
 
     """
     cmd_map = {
-            u'w': editor.NextWord,
-            u'e': editor.WordEnd,
-            u'b': editor.BackWord,
-            u'W': editor.NextWordBig,
-            u'E': editor.WordEndBig,
-            u'B': editor.BackWordBig,
-            u'[': editor.BackWordPart,
-            u']': editor.WordPartEnd,
+            'w': editor.NextWord,
+            'e': editor.WordEnd,
+            'b': editor.BackWord,
+            'W': editor.NextWordBig,
+            'E': editor.WordEndBig,
+            'B': editor.BackWordBig,
+            '[': editor.BackWordPart,
+            ']': editor.WordPartEnd,
           }
     cmd_map.get(cmd, lambda x: None)(repeat)
 
-@vim_parser(u'$^0', is_motion=True)
+@vim_parser('$^0', is_motion=True)
 def Line(editor, repeat, cmd):
     """Motions to beginning/end of a line.
     @see: vim_parser
 
     """
-    cmd_map = { u'0': editor.GotoLineStart,
-                u'^': editor.GotoIndentStart,
-                u'$': editor.GotoLineEnd,
+    cmd_map = { '0': editor.GotoLineStart,
+                '^': editor.GotoIndentStart,
+                '$': editor.GotoLineEnd,
               }
     cmd_map.get(cmd, lambda:None)()
 
-@vim_parser(u'{}', is_motion=True)
+@vim_parser('{}', is_motion=True)
 def Para(editor, repeat, cmd):
     """Paragraph motions.
     @see: vim_parser
 
     """
-    cmd_map = { u'{': editor.ParaUp,
-            u'}': editor.ParaDown,
+    cmd_map = { '{': editor.ParaUp,
+            '}': editor.ParaDown,
           }
     cmd_map.get(cmd, lambda x: None)(repeat)
 
-@vim_parser(u'uU')
+@vim_parser('uU')
 def Undo(editor, repeat, cmd):
     """Undo/Redo commands.
     @note: unlike vim, U is used for redo.
     @see: vim_parser
 
     """
-    if cmd == u'u':
+    if cmd == 'u':
         editor.Undo(repeat)
-    elif cmd == u'U':
+    elif cmd == 'U':
         editor.Redo(repeat)
 
 # TODO:CJP Scintilla lexing bug, check if fixed in 2.9
-@vim_parser(u'*#', is_motion=True)
+@vim_parser('*#', is_motion=True)
 def FindIdent(editor, repeat, cmd):
     """Find the next/previous occurance of identifier under caret
     @note: There's a sublte difference from vim: if some text is already
@@ -1098,12 +1098,12 @@ def FindIdent(editor, repeat, cmd):
     @see: vim_parser
 
     """
-    cmd_map = { u'#': editor.PrevIdent,
-                u'*': editor.NextIdent,
+    cmd_map = { '#': editor.PrevIdent,
+                '*': editor.NextIdent,
               }
     cmd_map.get(cmd, lambda x: None)(repeat)
 
-@vim_parser(u'~')
+@vim_parser('~')
 def Tilde(editor, repeat, cmd):
     """Invert case of character(s) under caret. Also operates on selection.
     @see: vim_parser
@@ -1112,7 +1112,7 @@ def Tilde(editor, repeat, cmd):
     editor.InvertCase(repeat)
     editor.NormalMode() # In case this command was applied in visual mode
 
-@vim_parser(u'J')
+@vim_parser('J')
 def Join(editor, repeat, cmd):
     """Join lines command.
     @see: vim_parser
@@ -1122,7 +1122,7 @@ def Join(editor, repeat, cmd):
     editor.JoinLines(repeat)
     editor.PopCaret()
 
-@vim_parser(u'xXsSCDY')
+@vim_parser('xXsSCDY')
 def Delete(editor, repeat, cmd):
     """Simple delete/change commands that are implemented in terms of more
     advanced c/d commands.
@@ -1130,14 +1130,14 @@ def Delete(editor, repeat, cmd):
 
     """
     cmd_map = {
-        u'x': u'dl', u'X': u'dh',
-        u's': u'cl', u'S': u'cc',
-        u'C': u'c$', u'D': u'd$', u'Y': u'y$',
+        'x': 'dl', 'X': 'dh',
+        's': 'cl', 'S': 'cc',
+        'C': 'c$', 'D': 'd$', 'Y': 'y$',
         }
     if cmd in cmd_map:
         Change(editor, repeat, cmd_map[cmd])
 
-@vim_parser(u'cdy<>')
+@vim_parser('cdy<>')
 def Change(editor, repeat, cmd):
     """Implementations for c/d/y commands. Also for <> (indentation) commands.
     @todo: This method is quite larger than other methods in this module,
@@ -1200,25 +1200,25 @@ def Change(editor, repeat, cmd):
                 editor.SelectFullLines()
 
     cmd_map = {
-            u'y': editor.YankSelection,
-            u'd': editor.DeleteSelection,
-            u'c': editor.ChangeSelection,
-            u'<': editor.DedentSelection,
-            u'>': editor.IndentSelection,
+            'y': editor.YankSelection,
+            'd': editor.DeleteSelection,
+            'c': editor.ChangeSelection,
+            '<': editor.DedentSelection,
+            '>': editor.IndentSelection,
           }
 
     cmd_map[cmd]()
 
-    restore_x = cmd in (u'y', u'<', u'>') or cmd == u'd' and line_motion
+    restore_x = cmd in ('y', '<', '>') or cmd == 'd' and line_motion
     editor.PopColumn(restore_x)
 
     # XXX: Some special case handling
     #      Not the most elegant way though ..
-    if cmd == u'c':
+    if cmd == 'c':
         pass
     else:
         # Repeating delete/yank/indent commands doesn't insert any text
-        editor.SetLastInsertedText(u'')
+        editor.SetLastInsertedText('')
         # Applying them in visual mode ends visual mode
         editor.NormalMode()
 
@@ -1228,17 +1228,17 @@ def Change(editor, repeat, cmd):
         # doesn't make much sense
         editor.SetLastChangeCommand(lambda : Change(editor, repeat, cmd+motion))
 
-@vim_parser(u'pP')
+@vim_parser('pP')
 def Put(editor, repeat, cmd):
     """Paste commands.
     @see: vim_parser
 
     """
-    before = cmd == u'P'
+    before = cmd == 'P'
     editor.Put(before, repeat)
     editor.NormalMode() # for pasting in visual mode
 
-@vim_parser(u'"')
+@vim_parser('"')
 def Reg(editor, repeat, cmd):
     """Switch register (clipboard) command
     @note: This command is stand-alone, not prefix to other commands.
@@ -1255,7 +1255,7 @@ def Reg(editor, repeat, cmd):
         # Attempted to switch to invalid register
         wx.Bell()
 
-@vim_parser(u'r')
+@vim_parser('r')
 def ReplaceChar(editor, repeat, cmd):
     """Replace character under caret with another one.
     @note: Does not enter into Insert mode.
@@ -1269,9 +1269,9 @@ def ReplaceChar(editor, repeat, cmd):
     f = lambda: editor.ReplaceChar(char, repeat)
     f()
     editor.SetLastChangeCommand(f)
-    editor.SetLastInsertedText(u'')
+    editor.SetLastInsertedText('')
 
-@vim_parser(u'R')
+@vim_parser('R')
 def ReplaceMode(editor, repeat, cmd):
     """Enter into Replace Mode.
     @see: vim_parser
@@ -1280,7 +1280,7 @@ def ReplaceMode(editor, repeat, cmd):
     # TODO handle repetition
     editor.ReplaceMode()
 
-@vim_parser(u'fFtT', is_motion=True)
+@vim_parser('fFtT', is_motion=True)
 def FindChar(editor, repeat, cmd):
     """Find character on current line and move the caret to it (if found).
     @see: vim_parser
@@ -1291,16 +1291,16 @@ def FindChar(editor, repeat, cmd):
 
     cmd, char = cmd
     cmd_map = {
-            u'f' : editor.FindNextChar,
-            u'F' : editor.FindPrevChar,
-            u't' : editor.FindTillNextChar,
-            u'T' : editor.FindTillPrevChar,
+            'f' : editor.FindNextChar,
+            'F' : editor.FindPrevChar,
+            't' : editor.FindTillNextChar,
+            'T' : editor.FindTillPrevChar,
           }
     if cmd in cmd_map:
         cmd_map[cmd](char, repeat)
         editor.SetFindCharCmd(cmd, char)
 
-@vim_parser(u',;', is_motion=True)
+@vim_parser(',;', is_motion=True)
 def RepeatFindChar(editor, repeat, cmd):
     """Repeat the last FindChar motion.
     @see: vim_parser
@@ -1311,13 +1311,13 @@ def RepeatFindChar(editor, repeat, cmd):
         return
 
     pcmd, char = prev_cmd
-    if cmd == u',':
+    if cmd == ',':
         pcmd = pcmd.swapcase()
 
     FindChar(editor, repeat, pcmd+char)
     editor.SetFindCharCmd(*prev_cmd)
 
-@vim_parser(u'm')
+@vim_parser('m')
 def Mark(editor, repeat, cmd):
     """Create a bookmark and associate it with a character label.
     @see: vim_parser
@@ -1329,7 +1329,7 @@ def Mark(editor, repeat, cmd):
     cmd, mark = cmd
     editor.Mark(mark)
 
-@vim_parser(u"`'", is_motion=True)
+@vim_parser("`'", is_motion=True)
 def Jump(editor, repeat, cmd):
     """Jump to a bookmark specified by a character label.
     @see: vim_parser
@@ -1340,26 +1340,26 @@ def Jump(editor, repeat, cmd):
 
     cmd, mark = cmd
     editor.GotoMark(mark)
-    if cmd == u"'":
+    if cmd == "'":
         editor.GotoIndentStart()
 
-@vim_parser(u'HLMGgz', is_motion=True, generic_repeat=False)
+@vim_parser('HLMGgz', is_motion=True, generic_repeat=False)
 def NavExtra(editor, repeat, cmd):
     """Commands for navigating visible lines or scrolling.
     @see: vim_parser
 
     """
-    if cmd == u'H':
+    if cmd == 'H':
         editor.GotoScreenTop()
         if repeat:
             editor.MoveDown(repeat)
-    elif cmd == u'M':
+    elif cmd == 'M':
         editor.GotoScreenMiddle()
-    elif cmd == u'L':
+    elif cmd == 'L':
         editor.GotoScreenLast()
         if repeat:
             editor.MoveUp(repeat)
-    elif cmd == u'G':
+    elif cmd == 'G':
         if repeat:
             editor.GotoLine(repeat)
         else:
@@ -1368,16 +1368,16 @@ def NavExtra(editor, repeat, cmd):
         if len(cmd) < 2:
             return NeedMore
 
-        if cmd == u'gg':
+        if cmd == 'gg':
             editor.GotoLine(0)
-        elif cmd == u'zz':
+        elif cmd == 'zz':
             editor.ScrollMiddle()
-        elif cmd == u'zt':
+        elif cmd == 'zt':
             editor.ScrollTop()
-        elif cmd == u'zb':
+        elif cmd == 'zb':
             editor.ScrollBottom()
 
-@vim_parser(u'/?', is_motion=True)
+@vim_parser('/?', is_motion=True)
 def RegexSearch(editor, repeat, cmd):
     """Incremental search commands.
     @note: Uses the find bar in editra.
@@ -1389,7 +1389,7 @@ def RegexSearch(editor, repeat, cmd):
     #          search was done using regular expressions.
     editor.ShowFindBar()
 
-@vim_parser(u'|', is_motion=True)
+@vim_parser('|', is_motion=True)
 def Column(editor, repeat, cmd):
     """Goto specified column, with 1 being the default.
     @see: vim_parser
@@ -1397,7 +1397,7 @@ def Column(editor, repeat, cmd):
     """
     editor.GotoColumn(repeat)
 
-@vim_parser(u':')
+@vim_parser(':')
 def Ex(editor, repeat, cmd):
     """Command for opening the command bar.
     @see: vim_parser
@@ -1418,4 +1418,4 @@ MOTION_HANDLERS = [h for h in HANDLERS if h.is_motion]
 #       So watch out if things get out of control with many such hacks.
 # These are motions that, if operated on, the operation should happen
 # on whole lines.
-LINE_MOTION_PREFIXES = [u'\'', u'G', u'{', u'}', u'H', u'L', u'M']
+LINE_MOTION_PREFIXES = ['\'', 'G', '{', '}', 'H', 'L', 'M']

@@ -56,12 +56,12 @@ class LogMsgTest(unittest.TestCase):
     def testOrigin(self):
         """Test Origin property"""
         for msg in (self.err,  self.warn, self.info):
-            self.assertEquals(msg.Origin, "ed_main", "%s != ed_main" % msg.Origin)
-            self.assertTrue(isinstance(msg.Origin, basestring))
+            self.assertEqual(msg.Origin, "ed_main", "%s != ed_main" % msg.Origin)
+            self.assertTrue(isinstance(msg.Origin, str))
 
         for msg in (self.err2, self.warn2, self.info2):
-            self.assertEquals(msg.Origin, "ed_stc", "%s != ed_stc" % msg.Origin)
-            self.assertTrue(isinstance(msg.Origin, basestring))
+            self.assertEqual(msg.Origin, "ed_stc", "%s != ed_stc" % msg.Origin)
+            self.assertTrue(isinstance(msg.Origin, str))
 
     def testString(self):
         """Test conversion to bytestring"""
@@ -70,14 +70,14 @@ class LogMsgTest(unittest.TestCase):
 
     def testType(self):
         """Test Type property"""
-        self.assertEquals(self.err.Type, "err", "%s != err" % self.err.Type)
-        self.assertTrue(isinstance(self.err.Type, basestring))
+        self.assertEqual(self.err.Type, "err", "%s != err" % self.err.Type)
+        self.assertTrue(isinstance(self.err.Type, str))
 
-        self.assertEquals(self.warn.Type, "warn", "%s != err" % self.warn.Type)
-        self.assertTrue(isinstance(self.warn.Type, basestring))
+        self.assertEqual(self.warn.Type, "warn", "%s != err" % self.warn.Type)
+        self.assertTrue(isinstance(self.warn.Type, str))
 
-        self.assertEquals(self.info.Type, "info", "%s != err" % self.info.Type)
-        self.assertTrue(isinstance(self.info.Type, basestring))
+        self.assertEqual(self.info.Type, "info", "%s != err" % self.info.Type)
+        self.assertTrue(isinstance(self.info.Type, str))
 
     def testUnicode(self):
         """Test that attributes are properly converted to Unicode"""
@@ -86,17 +86,17 @@ class LogMsgTest(unittest.TestCase):
         self.assertTrue(ebmlib.IsUnicode(msg1.Origin))
         self.assertTrue(ebmlib.IsUnicode(msg1.Type))
         self.assertTrue(ebmlib.IsUnicode(msg1.ClockTime))
-        self.assertTrue(ebmlib.IsUnicode(unicode(msg1)))
+        self.assertTrue(ebmlib.IsUnicode(str(msg1)))
 
         # Test with some non ascii values for conversion
         msg2 = dev_tool.LogMsg('\\u0259','\\u0259','\\u0259')
         self.assertTrue(ebmlib.IsUnicode(msg2.Value))
         self.assertTrue(ebmlib.IsUnicode(msg2.Origin))
         self.assertTrue(ebmlib.IsUnicode(msg2.Type))
-        self.assertTrue(ebmlib.IsUnicode(unicode(msg2)))
+        self.assertTrue(ebmlib.IsUnicode(str(msg2)))
 
     def testValue(self):
         """Test the message value property"""
-        self.assertTrue(isinstance(self.err.Value, basestring))
-        self.assertTrue(isinstance(self.warn.Value, basestring))
-        self.assertTrue(isinstance(self.info.Value, basestring))
+        self.assertTrue(isinstance(self.err.Value, str))
+        self.assertTrue(isinstance(self.warn.Value, str))
+        self.assertTrue(isinstance(self.info.Value, str))

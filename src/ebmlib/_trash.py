@@ -73,7 +73,7 @@ def MoveToTrash(paths):
     
     """
     # Make sure that we are always dealing with a list
-    if isinstance(paths, basestring):
+    if isinstance(paths, str):
         paths = [paths] 
        
     # Get absolute paths and make sure files exist
@@ -94,9 +94,9 @@ def _ensurePermissions(path):
         try: os.chmod(path, stat.S_IWRITE|stat.S_IREAD)
         except (IOError, OSError): pass
     if not os.access(path, os.R_OK):
-        raise TrashPermissionsError, ('You do not have permissions to read this path', path)
+        raise TrashPermissionsError('You do not have permissions to read this path', path)
     if not os.access(path, os.W_OK):
-        raise TrashPermissionsError, ('You do not have permissions to remove this path', path)
+        raise TrashPermissionsError('You do not have permissions to remove this path', path)
 
 def _winTrash(paths):
     """ Move to windows recycle bin if possible """
@@ -107,15 +107,15 @@ def _winTrash(paths):
             rc = os.spawnv(os.P_WAIT, recycleexe, 
                           [os.path.basename(recycleexe)] + ['"%s"'%path])
             if rc:
-                raise TrashMoveError, ('Could not move path', path, '%s' % rc)
-        except (IOError, OSError), msg:
-            raise TrashMoveError, ('Could not move path', path, msg)
+                raise TrashMoveError('Could not move path', path, '%s' % rc)
+        except (IOError, OSError) as msg:
+            raise TrashMoveError('Could not move path', path, msg)
 
 def _osxTrash(paths):
     """ Move paths to OS X Trash can """
     trashdir = os.path.join(os.path.expanduser('~'),'.Trash')
     if not os.path.isdir(trashdir):
-        raise TrashDirectoryError, ('Could not locate trash directory', trashdir)
+        raise TrashDirectoryError('Could not locate trash directory', trashdir)
 
     for path in paths:
         # See if we can even do this
@@ -131,8 +131,8 @@ def _osxTrash(paths):
         # Move the path
         try: 
             shutil.move(path, newpath)
-        except (OSError, IOError), msg:
-            raise TrashMoveError, ('Could not move path', path, msg)
+        except (OSError, IOError) as msg:
+            raise TrashMoveError('Could not move path', path, msg)
 
 def _unixTrash(paths):
     """ 
@@ -157,9 +157,9 @@ def _unixTrash(paths):
     
     # Make sure that directories got created
     if not os.path.isdir(os.path.join(trashdir, 'files')):
-        raise TrashDirectoryError, ('Could not locate trash directory', trashdir)
+        raise TrashDirectoryError('Could not locate trash directory', trashdir)
     if not os.path.isdir(os.path.join(trashdir, 'info')):
-        raise TrashDirectoryError, ('Could not locate trash directory', trashdir)
+        raise TrashDirectoryError('Could not locate trash directory', trashdir)
     
     for path in paths:
         # See if we can even do this
@@ -183,18 +183,18 @@ def _unixTrash(paths):
             info.write('Path=%s\n' % path)
             info.write(time.strftime('DeletionDate=%Y%m%dT%H:%M:%S\n'))
             info.close()
-        except (OSError, IOError), msg:
+        except (OSError, IOError) as msg:
             try:
                 os.remove(infopath)
             except:
                 pass
-            raise TrashMoveError, ('Could not move path', path, msg)
+            raise TrashMoveError('Could not move path', path, msg)
 
         # Move file
         try:
             shutil.move(path, newpath)
-        except (OSError, IOError), msg:
-            raise TrashMoveError, ('Could not move path', path, msg)
+        except (OSError, IOError) as msg:
+            raise TrashMoveError('Could not move path', path, msg)
 
 #-----------------------------------------------------------------------------#
 

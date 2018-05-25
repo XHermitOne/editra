@@ -16,7 +16,7 @@ __svnid__ = "$Id: edimage.py 54209 2008-06-14 04:57:51Z CJP $"
 __revision__ = "$Revision: 54209 $"
 
 #-----------------------------------------------------------------------------#
-from extern.embeddedimage import PyEmbeddedImage
+from .extern.embeddedimage import PyEmbeddedImage
 
 catalog = {}
 index = []

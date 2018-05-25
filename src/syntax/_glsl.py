@@ -23,10 +23,10 @@ import wx.stc as stc
 import re
 
 # Local imports
-import synglob
-import syndata
+from . import synglob
+from . import syndata
 
-import _cpp
+from . import _cpp
 
 #-----------------------------------------------------------------------------#
 

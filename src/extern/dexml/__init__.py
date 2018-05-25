@@ -73,10 +73,10 @@ import copy
 from xml.dom import minidom
 
 ## Local Imports
-import fields
-from _util import *
+from . import fields
+from ._util import *
 
-class Model(object):
+class Model(object, metaclass=ModelMetaclass):
     """Base class for dexml Model objects.
 
     Subclasses of Model represent a concrete type of object that can parsed 
@@ -100,8 +100,6 @@ class Model(object):
     See the 'Meta' class in this module for available meta options, and the
     'fields' submodule for available field types.
     """
-
-    __metaclass__ = ModelMetaclass
     _fields = []
 
     def __init__(self,**kwds):
@@ -127,7 +125,7 @@ class Model(object):
         #  Keep track of fields that have successfully parsed something
         fields_found = []
         #  Try to consume all the node's attributes
-        attrs = node.attributes.values()
+        attrs = list(node.attributes.values())
         for field in self._fields:
             unused_attrs = field.parse_attributes(self,attrs)
             if len(unused_attrs) < len(attrs):
@@ -311,15 +309,15 @@ class Model(object):
         try:
             ntype = xml.nodeType
         except AttributeError:
-            if isinstance(xml,basestring):
+            if isinstance(xml,str):
                 try:
                     xml = minidom.parseString(xml)
-                except Exception, e:
+                except Exception as e:
                     raise XmlError(e)
             elif hasattr(xml,"read"):
                 try:
                     xml = minidom.parse(xml)
-                except Exception, e:
+                except Exception as e:
                     raise XmlError(e)
             else:
                 raise ValueError("Can't convert that to an XML DOM node")

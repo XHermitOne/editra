@@ -25,12 +25,12 @@ import os
 import wx
 
 # Local Imports
-import ed_glob
-import util
-import plugin
-from profiler import Profile_Get, Profile_Set
-import syntax.synglob as synglob
-from syntax.syntax import SYNTAX_IDS
+from . import ed_glob
+from . import util
+from . import plugin
+from .profiler import Profile_Get, Profile_Set
+from . import syntax.synglob as synglob
+from .syntax.syntax import SYNTAX_IDS
 
 #--------------------------------------------------------------------------#
 
@@ -120,14 +120,14 @@ class BitmapProvider(plugin.Plugin):
         @return: ThemeI object
 
         """
-        theme = Profile_Get('ICONS', 'str', u'')
+        theme = Profile_Get('ICONS', 'str', '')
         for prov in self.observers:
             if theme == prov.GetName():
                 return prov
 
         # Case if a theme was deleted while it was the active theme
-        if theme.lower() != u'default':
-            Profile_Set('ICONS', u'Default')
+        if theme.lower() != 'default':
+            Profile_Set('ICONS', 'Default')
 
         return None
 
@@ -195,108 +195,108 @@ class BitmapProvider(plugin.Plugin):
 
 #-----------------------------------------------------------------------------#
 # Default theme data maps
-ART = { ed_glob.ID_ABOUT  : u'about.png',
-        ed_glob.ID_ADD    : u'add.png',
-        ed_glob.ID_ADD_BM : u'bmark_add.png',
-        ed_glob.ID_ADVANCED : u'advanced.png',
-        ed_glob.ID_BACKWARD : u'backward.png',
-        ed_glob.ID_BIN_FILE : u'bin_file.png',
-        ed_glob.ID_CDROM  : u'cdrom.png',
-        ed_glob.ID_CONTACT : u'mail.png',
-        ed_glob.ID_COPY   : u'copy.png',
-        ed_glob.ID_COMPUTER : u'computer.png',
-        ed_glob.ID_CUT    : u'cut.png',
-        ed_glob.ID_DELETE : u'delete.png',
-        ed_glob.ID_DELETE_ALL : u'delete_all.png',
-        ed_glob.ID_DOCPROP : u'doc_props.png',
-        ed_glob.ID_DOCUMENTATION : u'docs.png',
-        ed_glob.ID_DOWN   : u'down.png',
-        ed_glob.ID_EXIT   : u'quit.png',
-        ed_glob.ID_FILE   : u'file.png',
-        ed_glob.ID_FIND   : u'find.png',
-        ed_glob.ID_FIND_REPLACE : u'findr.png',
-        ed_glob.ID_FIND_RESULTS : u'find.png',
-        ed_glob.ID_FLOPPY : u'floppy.png',
-        ed_glob.ID_FOLDER : u'folder.png',
-        ed_glob.ID_FONT   : u'font.png',
-        ed_glob.ID_FORWARD : u'forward.png',
-        ed_glob.ID_HARDDISK : u'harddisk.png',
-        ed_glob.ID_HOMEPAGE : u'web.png',
-        ed_glob.ID_HTML_GEN : u'html_gen.png',
-        ed_glob.ID_INDENT : u'indent.png',
-        ed_glob.ID_LOGGER : u'log.png',
-        ed_glob.ID_NEW    : u'new.png',
-        ed_glob.ID_NEW_FOLDER : u'newfolder.png',
-        ed_glob.ID_NEW_WINDOW: u'newwin.png',
-        ed_glob.ID_NEXT_MARK : u'bmark_next.png',
-        ed_glob.ID_NEXT_POS : u'forward.png',
-        ed_glob.ID_OPEN    : u'open.png',
-        ed_glob.ID_PACKAGE : u'package.png',
-        ed_glob.ID_PASTE   : u'paste.png',
-        ed_glob.ID_PLUGMGR : u'plugin.png',
-        ed_glob.ID_PRE_MARK : u'bmark_pre.png',
-        ed_glob.ID_PRE_POS : u'backward.png',
-        ed_glob.ID_PREF    : u'pref.png',
-        ed_glob.ID_PRINT   : u'print.png',
-        ed_glob.ID_PRINT_PRE : u'printpre.png',
-        ed_glob.ID_PYSHELL : u'pyshell.png',
-        ed_glob.ID_REDO    : u'redo.png',
-        ed_glob.ID_REFRESH : u'refresh.png',
-        ed_glob.ID_REMOVE  : u'remove.png',
-        ed_glob.ID_RTF_GEN : u'rtf_gen.png',
-        ed_glob.ID_SAVE    : u'save.png',
-        ed_glob.ID_SAVEALL : u'saveall.png',
-        ed_glob.ID_SAVEAS  : u'saveas.png',
-        ed_glob.ID_SELECTALL : u'selectall.png',
-        ed_glob.ID_STOP    : u'stop.png',
-        ed_glob.ID_STYLE_EDIT : u'style_edit.png',
-        ed_glob.ID_TEX_GEN : u'tex_gen.png',
-        ed_glob.ID_THEME  : u'theme.png',
-        ed_glob.ID_UNDO   : u'undo.png',
-        ed_glob.ID_UNINDENT : u'outdent.png',
-        ed_glob.ID_UP     : u'up.png',
-        ed_glob.ID_USB    : u'usb.png',
-        ed_glob.ID_WEB    : u'web.png',
-        ed_glob.ID_ZOOM_IN : u'zoomi.png',
-        ed_glob.ID_ZOOM_OUT : u'zoomo.png',
-        ed_glob.ID_ZOOM_NORMAL : u'zoomd.png',
-        ed_glob.ID_READONLY : u'readonly.png',
+ART = { ed_glob.ID_ABOUT  : 'about.png',
+        ed_glob.ID_ADD    : 'add.png',
+        ed_glob.ID_ADD_BM : 'bmark_add.png',
+        ed_glob.ID_ADVANCED : 'advanced.png',
+        ed_glob.ID_BACKWARD : 'backward.png',
+        ed_glob.ID_BIN_FILE : 'bin_file.png',
+        ed_glob.ID_CDROM  : 'cdrom.png',
+        ed_glob.ID_CONTACT : 'mail.png',
+        ed_glob.ID_COPY   : 'copy.png',
+        ed_glob.ID_COMPUTER : 'computer.png',
+        ed_glob.ID_CUT    : 'cut.png',
+        ed_glob.ID_DELETE : 'delete.png',
+        ed_glob.ID_DELETE_ALL : 'delete_all.png',
+        ed_glob.ID_DOCPROP : 'doc_props.png',
+        ed_glob.ID_DOCUMENTATION : 'docs.png',
+        ed_glob.ID_DOWN   : 'down.png',
+        ed_glob.ID_EXIT   : 'quit.png',
+        ed_glob.ID_FILE   : 'file.png',
+        ed_glob.ID_FIND   : 'find.png',
+        ed_glob.ID_FIND_REPLACE : 'findr.png',
+        ed_glob.ID_FIND_RESULTS : 'find.png',
+        ed_glob.ID_FLOPPY : 'floppy.png',
+        ed_glob.ID_FOLDER : 'folder.png',
+        ed_glob.ID_FONT   : 'font.png',
+        ed_glob.ID_FORWARD : 'forward.png',
+        ed_glob.ID_HARDDISK : 'harddisk.png',
+        ed_glob.ID_HOMEPAGE : 'web.png',
+        ed_glob.ID_HTML_GEN : 'html_gen.png',
+        ed_glob.ID_INDENT : 'indent.png',
+        ed_glob.ID_LOGGER : 'log.png',
+        ed_glob.ID_NEW    : 'new.png',
+        ed_glob.ID_NEW_FOLDER : 'newfolder.png',
+        ed_glob.ID_NEW_WINDOW: 'newwin.png',
+        ed_glob.ID_NEXT_MARK : 'bmark_next.png',
+        ed_glob.ID_NEXT_POS : 'forward.png',
+        ed_glob.ID_OPEN    : 'open.png',
+        ed_glob.ID_PACKAGE : 'package.png',
+        ed_glob.ID_PASTE   : 'paste.png',
+        ed_glob.ID_PLUGMGR : 'plugin.png',
+        ed_glob.ID_PRE_MARK : 'bmark_pre.png',
+        ed_glob.ID_PRE_POS : 'backward.png',
+        ed_glob.ID_PREF    : 'pref.png',
+        ed_glob.ID_PRINT   : 'print.png',
+        ed_glob.ID_PRINT_PRE : 'printpre.png',
+        ed_glob.ID_PYSHELL : 'pyshell.png',
+        ed_glob.ID_REDO    : 'redo.png',
+        ed_glob.ID_REFRESH : 'refresh.png',
+        ed_glob.ID_REMOVE  : 'remove.png',
+        ed_glob.ID_RTF_GEN : 'rtf_gen.png',
+        ed_glob.ID_SAVE    : 'save.png',
+        ed_glob.ID_SAVEALL : 'saveall.png',
+        ed_glob.ID_SAVEAS  : 'saveas.png',
+        ed_glob.ID_SELECTALL : 'selectall.png',
+        ed_glob.ID_STOP    : 'stop.png',
+        ed_glob.ID_STYLE_EDIT : 'style_edit.png',
+        ed_glob.ID_TEX_GEN : 'tex_gen.png',
+        ed_glob.ID_THEME  : 'theme.png',
+        ed_glob.ID_UNDO   : 'undo.png',
+        ed_glob.ID_UNINDENT : 'outdent.png',
+        ed_glob.ID_UP     : 'up.png',
+        ed_glob.ID_USB    : 'usb.png',
+        ed_glob.ID_WEB    : 'web.png',
+        ed_glob.ID_ZOOM_IN : 'zoomi.png',
+        ed_glob.ID_ZOOM_OUT : 'zoomo.png',
+        ed_glob.ID_ZOOM_NORMAL : 'zoomd.png',
+        ed_glob.ID_READONLY : 'readonly.png',
 
         # code elements
-        ed_glob.ID_CLASS_TYPE : u'class.png',
-        ed_glob.ID_FUNCT_TYPE : u'function.png',
-        ed_glob.ID_ELEM_TYPE : u'element.png',
-        ed_glob.ID_VARIABLE_TYPE : u'variable.png',
-        ed_glob.ID_ATTR_TYPE : u'attribute.png',
-        ed_glob.ID_PROPERTY_TYPE : u'property.png',
-        ed_glob.ID_METHOD_TYPE : u'method.png'
+        ed_glob.ID_CLASS_TYPE : 'class.png',
+        ed_glob.ID_FUNCT_TYPE : 'function.png',
+        ed_glob.ID_ELEM_TYPE : 'element.png',
+        ed_glob.ID_VARIABLE_TYPE : 'variable.png',
+        ed_glob.ID_ATTR_TYPE : 'attribute.png',
+        ed_glob.ID_PROPERTY_TYPE : 'property.png',
+        ed_glob.ID_METHOD_TYPE : 'method.png'
 }
 
 # File Type Art
-MIME_ART = { synglob.ID_LANG_ADA : u'ada.png',
-             synglob.ID_LANG_BASH : u'shell.png',
-             synglob.ID_LANG_BOO : u'boo.png',
-             synglob.ID_LANG_BOURNE : u'shell.png',
-             synglob.ID_LANG_C : u'c.png',
-             synglob.ID_LANG_CPP : u'cpp.png',
-             synglob.ID_LANG_CSH : u'shell.png',
-             synglob.ID_LANG_CSS : u'css.png',
-             synglob.ID_LANG_DIFF : u'diff.png',
-             synglob.ID_LANG_HTML : u'html.png',
-             synglob.ID_LANG_JAVA : u'java.png',
-             synglob.ID_LANG_KSH : u'shell.png',
-             synglob.ID_LANG_LATEX : u'tex.png',
-             synglob.ID_LANG_MAKE : u'makefile.png',
-             synglob.ID_LANG_PASCAL : u'pascal.png',
-             synglob.ID_LANG_PERL : u'perl.png',
-             synglob.ID_LANG_PHP : u'php.png',
-             synglob.ID_LANG_PS : u'postscript.png',
-             synglob.ID_LANG_PYTHON : u'python.png',
-             synglob.ID_LANG_RUBY : u'ruby.png',
-             synglob.ID_LANG_TCL : u'tcl.png',
-             synglob.ID_LANG_TEX : u'tex.png',
-             synglob.ID_LANG_TXT : u'text.png',
-             synglob.ID_LANG_XML : u'xml.png'
+MIME_ART = { synglob.ID_LANG_ADA : 'ada.png',
+             synglob.ID_LANG_BASH : 'shell.png',
+             synglob.ID_LANG_BOO : 'boo.png',
+             synglob.ID_LANG_BOURNE : 'shell.png',
+             synglob.ID_LANG_C : 'c.png',
+             synglob.ID_LANG_CPP : 'cpp.png',
+             synglob.ID_LANG_CSH : 'shell.png',
+             synglob.ID_LANG_CSS : 'css.png',
+             synglob.ID_LANG_DIFF : 'diff.png',
+             synglob.ID_LANG_HTML : 'html.png',
+             synglob.ID_LANG_JAVA : 'java.png',
+             synglob.ID_LANG_KSH : 'shell.png',
+             synglob.ID_LANG_LATEX : 'tex.png',
+             synglob.ID_LANG_MAKE : 'makefile.png',
+             synglob.ID_LANG_PASCAL : 'pascal.png',
+             synglob.ID_LANG_PERL : 'perl.png',
+             synglob.ID_LANG_PHP : 'php.png',
+             synglob.ID_LANG_PS : 'postscript.png',
+             synglob.ID_LANG_PYTHON : 'python.png',
+             synglob.ID_LANG_RUBY : 'ruby.png',
+             synglob.ID_LANG_TCL : 'tcl.png',
+             synglob.ID_LANG_TEX : 'tex.png',
+             synglob.ID_LANG_TXT : 'text.png',
+             synglob.ID_LANG_XML : 'xml.png'
  }
 
 #-----------------------------------------------------------------------------#
@@ -305,7 +305,7 @@ class TangoTheme(plugin.Plugin):
     """Represents the Tango Icon theme for Editra"""
     plugin.Implements(ThemeI)
 
-    name = u'Tango'
+    name = 'Tango'
 
     def __GetArtPath(self, client, mime=False):
         """Gets the path of the resource directory to get
@@ -316,22 +316,22 @@ class TangoTheme(plugin.Plugin):
         @rtype: string
 
         """
-        clients = { wx.ART_MENU : u"menu",
-                    wx.ART_TOOLBAR : u"toolbar",
-                    wx.ART_OTHER : u"other" }
+        clients = { wx.ART_MENU : "menu",
+                    wx.ART_TOOLBAR : "toolbar",
+                    wx.ART_OTHER : "other" }
 
         # Get the path
-        if ed_glob.CONFIG['THEME_DIR'] == u'':
-            theme = util.ResolvConfigDir(os.path.join(u"pixmaps", u"theme"))
+        if ed_glob.CONFIG['THEME_DIR'] == '':
+            theme = util.ResolvConfigDir(os.path.join("pixmaps", "theme"))
             ed_glob.CONFIG['THEME_DIR'] = theme
 
         if mime:
             path = os.path.join(ed_glob.CONFIG['THEME_DIR'],
-                                self.GetName(), u'mime')
+                                self.GetName(), 'mime')
         else:
             path = os.path.join(ed_glob.CONFIG['THEME_DIR'],
                                 self.GetName(),
-                                clients.get(client, u"menu"))
+                                clients.get(client, "menu"))
 
         path += os.sep
         if os.path.exists(path):

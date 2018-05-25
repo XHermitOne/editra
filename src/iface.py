@@ -28,7 +28,7 @@ __revision__ = "$Revision: 70229 $"
 import wx
 
 # Local Imports
-import plugin
+from . import plugin
 
 #--------------------------------------------------------------------------#
 

@@ -29,7 +29,7 @@ import ebmlib
 
 class FileBackupMgrTest(unittest.TestCase):
     def setUp(self):
-        self.bkup = ebmlib.FileBackupMgr(None, u"%s~")
+        self.bkup = ebmlib.FileBackupMgr(None, "%s~")
         self.path = common.MakeTempFile("test.txt")
         self.file = ebmlib.FileObjectImpl(self.path)
 
@@ -41,7 +41,7 @@ class FileBackupMgrTest(unittest.TestCase):
     def testGetBackupFilename(self):
         """Test getting the backup file name"""
         fname = self.bkup.GetBackupFilename(self.path)
-        self.assertTrue(fname.endswith(u"~"))
+        self.assertTrue(fname.endswith("~"))
 
     def testGetBackupWriter(self):
         """Test getting the backup writer function"""
@@ -75,20 +75,20 @@ class FileBackupMgrTest(unittest.TestCase):
 
     def testSetBackupFileTemplate(self):
         """Test setting the template for making backup files"""
-        self.bkup.SetBackupFileTemplate(u"%s#")
-        self.assertEquals(u"%s#", self.bkup.template)
+        self.bkup.SetBackupFileTemplate("%s#")
+        self.assertEqual("%s#", self.bkup.template)
         self.assertRaises(AssertionError, self.bkup.SetBackupFileTemplate, "!")
         self.assertRaises(AssertionError, self.bkup.SetBackupFileTemplate, "%s%s")
 
     def testSetHeader(self):
         """Test setting the file header"""
         self.bkup.SetHeader("Hello World")
-        self.assertEquals("Hello World", self.bkup.header)
+        self.assertEqual("Hello World", self.bkup.header)
         self.assertRaises(AssertionError, self.bkup.SetHeader, "\n\nHELLO")
 
     def testBackupWithHeader(self):
         """Tests using the backup file header identifier option"""
-        bkup = ebmlib.FileBackupMgr("SuperHeader", u"%s~")
+        bkup = ebmlib.FileBackupMgr("SuperHeader", "%s~")
         path = common.MakeTempFile("test_header.txt")
         self.assertTrue(bkup.MakeBackupCopy(path))
         bkupf = bkup.GetBackupFilename(path)

@@ -9,5 +9,5 @@
 
 import os
 launcher = os.path.join(os.path.dirname(__file__), 'Editra')
-execfile(launcher)
+exec(compile(open(launcher).read(), launcher, 'exec'))
 

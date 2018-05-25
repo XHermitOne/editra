@@ -52,8 +52,8 @@ __all__ = ['SegmentBook', 'SegmentBookEvent', 'SEGBOOK_STYLE_DEFAULT',
 import wx
 
 # Local Imports
-import ctrlbox
-from eclutil import Freezer
+from . import ctrlbox
+from .eclutil import Freezer
 
 #-----------------------------------------------------------------------------#
 # Events
@@ -89,7 +89,7 @@ SEGBOOK_STYLE_RIGHT       = 32  # Segments at top
 SEGBOOK_STYLE_DEFAULT     = SEGBOOK_STYLE_TOP   # Default Style
 
 # Misc
-SEGBOOK_NAME_STR = u"EditraSegmentBook"
+SEGBOOK_NAME_STR = "EditraSegmentBook"
 
 #-----------------------------------------------------------------------------#
 
@@ -171,7 +171,7 @@ class SegmentBook(ctrlbox.ControlBox):
         """Handle right click events"""
         pos = evt.GetPosition()
         where, index = self._segbar.HitTest(pos)
-        print where, index
+        print(where, index)
         if where in (ctrlbox.SEGMENT_HT_SEG, ctrlbox.SEGMENT_HT_X_BTN):
             if where == ctrlbox.SEGMENT_HT_SEG:
                 self._segbar.SetSelection(index)
@@ -245,7 +245,7 @@ class SegmentBook(ctrlbox.ControlBox):
 
     def DeleteAllPages(self):
         """Remove all pages from the control"""
-        for page in reversed(range(len(self._pages))):
+        for page in reversed(list(range(len(self._pages)))):
             self.DeletePage()
 
     def DeletePage(self, index):

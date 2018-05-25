@@ -44,7 +44,7 @@ class ArtProviderTest(unittest.TestCase):
         ap = wx.ArtProvider()
         bmp = ap.GetBitmap(str(ed_glob.ID_COPY), wx.ART_MENU)
         self.assertTrue(bmp.IsOk())
-        self.assertEquals(bmp.GetSize(), (16, 16))
+        self.assertEqual(bmp.GetSize(), (16, 16))
 
         bmp = ap.GetBitmap(str(ed_glob.ID_COPY), wx.ART_TOOLBAR)
         self.assertTrue(bmp.IsOk())

@@ -18,5 +18,5 @@ __revision__ = "$Revision: 62467 $"
 #-----------------------------------------------------------------------------#
 # Setup Public Namespace
 
-from autocomp import *
-from completer import *
+from .autocomp import *
+from .completer import *

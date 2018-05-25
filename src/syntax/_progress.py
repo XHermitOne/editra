@@ -20,9 +20,9 @@ __revision__ = "$Revision: 68798 $"
 import wx.stc as stc
 
 # Local Imports
-import synglob
-import syndata
-import _sql
+from . import synglob
+from . import syndata
+from . import _sql
 
 #-----------------------------------------------------------------------------#
 
@@ -259,4 +259,4 @@ class SyntaxData(syndata.SyntaxDataBase):
 
     def GetCommentPattern(self):
         """Comment pattern """
-        return [u'/*', u'*/']
+        return ['/*', '*/']

@@ -21,9 +21,9 @@ import os
 import sys
 
 # Editra Libraries
-import util
-from profiler import Profile_Get
-import ebmlib
+from . import util
+from .profiler import Profile_Get
+from . import ebmlib
 
 #--------------------------------------------------------------------------#
 
@@ -194,13 +194,13 @@ class DocPositionMgr(object):
 
             for line in lines:
                 line = line.strip()
-                vals = line.rsplit(u'=', 1)
+                vals = line.rsplit('=', 1)
                 if len(vals) != 2 or not os.path.exists(vals[0]):
                     continue
 
                 try:
                     vals[1] = int(vals[1])
-                except (TypeError, ValueError), msg:
+                except (TypeError, ValueError) as msg:
                     util.Log("[docpositionmgr][err] %s" % str(msg))
                     continue
                 else:
@@ -232,13 +232,13 @@ class DocPositionMgr(object):
         writer = util.GetFileWriter(self.GetBook(), sys.getfilesystemencoding())
         if writer != -1:
             try:
-                for key, val in self._records.iteritems():
+                for key, val in self._records.items():
                     try:
-                        writer.write(u"%s=%d\n" % (key, val))
+                        writer.write("%s=%d\n" % (key, val))
                     except UnicodeDecodeError:
                         continue
                 writer.close()
-            except IOError, msg:
+            except IOError as msg:
                 util.Log("[docpositionmgr][err] %s" % str(msg))
         else:
             util.Log("[docpositionmgr][err] Failed to open %s" % self.GetBook())

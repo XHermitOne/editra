@@ -23,20 +23,20 @@ __revision__ = "$Revision: 70229 $"
 import os
 import sys
 import re
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import wx
 import wx.lib.delayedresult as delayedresult
 
 # Local Imports
-import ed_glob
-import plugin
-import ed_event
-import ed_msg
-import util
-import ed_txt
-from profiler import Profile_Get, Profile_Set
-import ed_basewin
-import eclib
+from . import ed_glob
+from . import plugin
+from . import ed_event
+from . import ed_msg
+from . import util
+from . import ed_txt
+from .profiler import Profile_Get, Profile_Set
+from . import ed_basewin
+from . import eclib
 
 #-----------------------------------------------------------------------------#
 # Globals
@@ -101,7 +101,7 @@ class PluginDialog(wx.Frame):
     it does not interfere with usage of the editor.
 
     """
-    def __init__(self, parent, id=wx.ID_ANY, title=u'', size=wx.DefaultSize):
+    def __init__(self, parent, id=wx.ID_ANY, title='', size=wx.DefaultSize):
         super(PluginDialog, self).__init__(parent, title=title, size=size,
                                            style=wx.DEFAULT_FRAME_STYLE)
         util.SetWindowIcon(self)
@@ -343,8 +343,8 @@ class ConfigPanel(eclib.ControlBox):
         p_mgr.ReInit()
         config = p_mgr.GetConfig()
         keys = sorted([ ed_txt.DecodeString(name)
-                        for name in config.keys() ],
-                      key=unicode.lower)
+                        for name in list(config.keys()) ],
+                      key=str.lower)
         uninstalled = Profile_Get('UNINSTALL_PLUGINS', default=list())
 
         with eclib.Freezer(self._list) as _tmp:
@@ -361,7 +361,7 @@ class ConfigPanel(eclib.ControlBox):
                 pdata = PluginData()
                 pdata.SetName(item)
                 desc = getattr(mod, '__doc__', None)
-                if not isinstance(desc, basestring):
+                if not isinstance(desc, str):
                     desc = _("No Description Available")
                 pdata.SetDescription(desc.strip())
                 pdata.SetAuthor(getattr(mod, '__author__', _("Unknown")))
@@ -396,8 +396,8 @@ class ConfigPanel(eclib.ControlBox):
         p_mgr.ReInit()
         errors = p_mgr.GetIncompatible()
         keys = sorted([ ed_txt.DecodeString(name)
-                        for name in errors.keys() ],
-                      key=unicode.lower)
+                        for name in list(errors.keys()) ],
+                      key=str.lower)
         bmp = wx.ArtProvider.GetBitmap(wx.ART_ERROR, wx.ART_TOOLBAR, (32, 32))
         msg = _("This plugin requires a newer version of Editra.")
 
@@ -410,7 +410,7 @@ class ConfigPanel(eclib.ControlBox):
                     item = dist.project_name
                     version = dist.version
                 else:
-                    version = unicode(getattr(mod, '__version__', _("Unknown")))
+                    version = str(getattr(mod, '__version__', _("Unknown")))
 
                 pin = PluginData()
                 pin.SetName(item)
@@ -492,7 +492,7 @@ class DownloadPanel(ed_basewin.EdBaseCtrlBox):
                 frame.SetStatusText(_("Select plugins to download"), 0)
         except wx.PyDeadObjectError:
             return
-        except Exception, msg:
+        except Exception as msg:
             util.Log("[plugdlg][err] Download failed " + str(msg))
             frame.SetStatusText(_("Unable to retrieve plugin list"), 0)
         wx.CallAfter(frame.Busy, False)
@@ -530,7 +530,7 @@ class DownloadPanel(ed_basewin.EdBaseCtrlBox):
                 if funct:
                     funct(ed_txt.DecodeString(tmp[1].strip()))
 
-            if tmpdat.GetName() != u'':
+            if tmpdat.GetName() != '':
                 p_list[ed_txt.DecodeString(tmpdat.GetName())] = tmpdat
 
         # Remove items that have already been installed
@@ -625,7 +625,7 @@ class DownloadPanel(ed_basewin.EdBaseCtrlBox):
         """
         if self._list.GetItemCount():
             self._list.DeleteAllItems()
-        pins = sorted([ name for name in self._p_list.keys() ], key=unicode.lower)
+        pins = sorted([ name for name in list(self._p_list.keys()) ], key=str.lower)
         with eclib.Freezer(self) as _tmp:
             for item in pins:
                 pbi = PBDownloadItem(self._list, self._p_list[item], None)
@@ -677,7 +677,7 @@ def _GetPluginListData(url=PLUGIN_REPO):
     @return: list of data of available plugins from website
 
     """
-    text = u''
+    text = ''
     try:
         try:
             if Profile_Get('USE_PROXY', default=False):
@@ -687,11 +687,11 @@ def _GetPluginListData(url=PLUGIN_REPO):
                 proxy = util.GetProxyOpener(proxy_set)
                 h_file = proxy.open(url)
             else:
-                h_file = urllib2.urlopen(url)
+                h_file = urllib.request.urlopen(url)
 
             text = h_file.read()
             h_file.close()
-        except (IOError, OSError), msg:
+        except (IOError, OSError) as msg:
             util.Log("[plugdlg][err] %s" % str(msg))
     finally:
         return text.split("###")
@@ -714,11 +714,11 @@ def _DownloadPlugin(*args):
                 proxy = util.GetProxyOpener(proxy_set)
                 h_file = proxy.open(url)
             else:
-                h_file = urllib2.urlopen(url)
+                h_file = urllib.request.urlopen(url)
 
             egg = h_file.read()
             h_file.close()
-        except (IOError, OSError), msg:
+        except (IOError, OSError) as msg:
             util.Log("[plugdlg][err] %s" % str(msg))
     finally:
         return (url.split("/")[-1], True, egg)
@@ -884,7 +884,7 @@ class InstallPanel(ed_basewin.EdBaseCtrlBox):
                         the eggs in the list.
         """
         # Filter out any files that are not eggs
-        good = [ fname for fname in files if fname.split(u'.')[-1] == u'egg' ]
+        good = [ fname for fname in files if fname.split('.')[-1] == 'egg' ]
         for item in good:
             if self._install.FindString(item) == wx.NOT_FOUND:
                 self._install.Append(item)
@@ -1018,7 +1018,7 @@ class PBPluginItem(eclib.PanelBoxItemBase):
             dist = self._pdata.GetDist()
             if dist is not None:
                 return dist.location
-        return u''
+        return ''
 
     def GetPluginName(self):
         """Get the name of the plugin
@@ -1168,8 +1168,8 @@ class PluginData(plugin.PluginData):
     @see: plugin.PluginData
 
     """
-    def __init__(self, name=u'', descript=u'', \
-                 author=u'', ver=u'', url=u''):
+    def __init__(self, name='', descript='', \
+                 author='', ver='', url=''):
         """Extends PluginData to include information about url to get it from.
         @keyword name: Plugin name
         @keyword descript: Plugin short description
@@ -1195,11 +1195,11 @@ class PluginData(plugin.PluginData):
         @param url: fully qualified url string
 
         """
-        if not isinstance(url, basestring):
+        if not isinstance(url, str):
             try:
                 url = str(url)
             except (TypeError, ValueError):
-                url = u''
+                url = ''
         self._url = url
 
 #-----------------------------------------------------------------------------#

@@ -68,30 +68,30 @@ except ImportError:
 
 #----------------------------------------------------------------------------#
 # Tag Definitions
-EXML_START        = u"editra"
-EXML_SYNTAX       = u"syntax"
-EXML_KEYWORDLIST  = u"keywordlist"
-EXML_KEYWORDS     = u"keywords"
-EXML_SYNSPECLIST  = u"syntaxspeclist"
-EXML_SYNTAXSPEC   = u"syntaxspec"
-EXML_PROPERTYLIST = u"propertylist"
-EXML_PROPERTY     = u"property"
-EXML_COMMENTPAT   = u"commentpattern"
-EXML_FEATURELIST  = u"featurelist"
-EXML_FEATURE      = u"feature"
-EXML_ASSOCIATIONS = u"associations"
+EXML_START        = "editra"
+EXML_SYNTAX       = "syntax"
+EXML_KEYWORDLIST  = "keywordlist"
+EXML_KEYWORDS     = "keywords"
+EXML_SYNSPECLIST  = "syntaxspeclist"
+EXML_SYNTAXSPEC   = "syntaxspec"
+EXML_PROPERTYLIST = "propertylist"
+EXML_PROPERTY     = "property"
+EXML_COMMENTPAT   = "commentpattern"
+EXML_FEATURELIST  = "featurelist"
+EXML_FEATURE      = "feature"
+EXML_ASSOCIATIONS = "associations"
 
 # Attributes
-EXML_ENABLE  = u"enable"
-EXML_LANG    = u"language"
-EXML_LEXER   = u"lexer"
-EXML_METHOD  = u"method"
-EXML_SOURCE  = u"source"
-EXML_TAG     = u"tag"
-EXML_VALUE   = u"value"
-EXML_VERSION = u"version"
-EXML_NAME    = u"name"
-EXML_ID      = u"id"
+EXML_ENABLE  = "enable"
+EXML_LANG    = "language"
+EXML_LEXER   = "lexer"
+EXML_METHOD  = "method"
+EXML_SOURCE  = "source"
+EXML_TAG     = "tag"
+EXML_VALUE   = "value"
+EXML_VERSION = "version"
+EXML_NAME    = "name"
+EXML_ID      = "id"
 
 #----------------------------------------------------------------------------#
 
@@ -101,7 +101,7 @@ class EditraXml(sax.ContentHandler):
         sax.ContentHandler.__init__(self)
 
         # Attributes
-        self.name   = u''            # Tag name
+        self.name   = ''            # Tag name
         self.level  = 0              # Set the level of the element
         self.indent = 3              # Indentation
         self.path = path
@@ -165,7 +165,7 @@ class EditraXml(sax.ContentHandler):
         @return: string
 
         """
-        xml = u''
+        xml = ''
         for handler in self.GetHandlers():
             handler.SetLevel(self.Level + 1)
             xml += (os.linesep + handler.GetXml())
@@ -176,14 +176,14 @@ class EditraXml(sax.ContentHandler):
         @return: string
 
         """
-        return u"<%s>" % self.name
+        return "<%s>" % self.name
 
     def GetEndTag(self):
         """Get the closing tag
         @return: string
 
         """
-        return u"</%s>" % self.name
+        return "</%s>" % self.name
 
     def LoadFromDisk(self):
         """Load the object from from disk
@@ -244,7 +244,7 @@ class EditraXml(sax.ContentHandler):
         @return: list of EditraXml objects
 
         """
-        return self._reg_handler.values()
+        return list(self._reg_handler.values())
 
     def GetIndentation(self):
         """Get the indentation string
@@ -258,7 +258,7 @@ class EditraXml(sax.ContentHandler):
         @return: string
 
         """
-        return (self.indent * u" ") * self.level
+        return (self.indent * " ") * self.level
 
     def GetLevel(self):
         """Get the level of this element
@@ -359,7 +359,7 @@ class SyntaxModeHandler(EditraXml):
             EditraXml.endElement(self, name)
 
     def GetStartTag(self):
-        return u"<%s version=\"%s\">" % (self.GetName(), self.Version)
+        return "<%s version=\"%s\">" % (self.GetName(), self.Version)
 
     #---- Get External Api ----#
 
@@ -473,9 +473,9 @@ class Syntax(EditraXml):
         EditraXml.__init__(self)
 
         # Attributes
-        self.language = u"Plain Text"
-        self.langid = u"ID_LANG_TXT"
-        self.lexstr = u"STC_LEX_NULL"
+        self.language = "Plain Text"
+        self.langid = "ID_LANG_TXT"
+        self.lexstr = "STC_LEX_NULL"
         self.lexer = stc.STC_LEX_NULL
         self.file_ext = list()
 
@@ -507,9 +507,9 @@ class Syntax(EditraXml):
         elif name == EXML_ASSOCIATIONS:
             self.file_ext = attrs.get(EXML_VALUE, '').split()
         elif name == self.Name:
-            lang = attrs.get(EXML_LANG, u"Plain Text")
-            langid = attrs.get(EXML_ID, u"ID_LANG_TXT")
-            assert langid.startswith(u"ID_LANG_"), "id must start with ID_LANG_"
+            lang = attrs.get(EXML_LANG, "Plain Text")
+            langid = attrs.get(EXML_ID, "ID_LANG_TXT")
+            assert langid.startswith("ID_LANG_"), "id must start with ID_LANG_"
             lexer = attrs.get(EXML_LEXER, 'STC_LEX_NULL')
             lexval = getattr(stc, lexer, None)
             assert lexval is not None, "Invalid Lexer: %s" % lexer
@@ -522,7 +522,7 @@ class Syntax(EditraXml):
 
     def GetStartTag(self):
         """Get the syntax opening tag and attributes"""
-        return u"<%s %s=\"%s\" %s=\"%s\" %s=\"%s\">" % (self.Name, EXML_LANG, 
+        return "<%s %s=\"%s\" %s=\"%s\" %s=\"%s\">" % (self.Name, EXML_LANG, 
                                                         self.language, EXML_LEXER,
                                                         self.lexstr, EXML_ID,
                                                         self.langid)
@@ -533,14 +533,14 @@ class Syntax(EditraXml):
 
         """
         xml = EditraXml.GetSubElements(self)
-        ident = self.GetIndentationStr() + (self.Indentation * u" ")
+        ident = self.GetIndentationStr() + (self.Indentation * " ")
         xml += os.linesep
-        cpat = u" ".join(self.GetCommentPattern())
-        comment = u"<%s %s=\"%s\"/>" % (EXML_COMMENTPAT, EXML_VALUE, cpat.strip())
+        cpat = " ".join(self.GetCommentPattern())
+        comment = "<%s %s=\"%s\"/>" % (EXML_COMMENTPAT, EXML_VALUE, cpat.strip())
         xml += os.linesep
         xml += (ident + comment)
         xml += os.linesep
-        fileext = u"<%s %s=\"%s\"/>" % (EXML_ASSOCIATIONS, EXML_VALUE, u" ".join(self.file_ext))
+        fileext = "<%s %s=\"%s\"/>" % (EXML_ASSOCIATIONS, EXML_VALUE, " ".join(self.file_ext))
         xml += (ident + fileext)
         return xml
 
@@ -631,16 +631,16 @@ class KeywordList(EditraXml):
 
     def GetSubElements(self):
         """Get the keyword list elements"""
-        xml = u""
-        tag = u"<%s %s=" % (EXML_KEYWORDS, EXML_VALUE)
+        xml = ""
+        tag = "<%s %s=" % (EXML_KEYWORDS, EXML_VALUE)
         tag += "\"%s\">"
-        end = u"</%s>" % EXML_KEYWORDS
-        ident = self.GetIndentationStr() + (self.Indentation * u" ")
+        end = "</%s>" % EXML_KEYWORDS
+        ident = self.GetIndentationStr() + (self.Indentation * " ")
         for key in sorted(self._keywords.keys()):
             xml += os.linesep + ident
             xml += (tag % key)
             xml += os.linesep + ident
-            words = (self.Indentation * u" ") + u" ".join(self._keywords[key])
+            words = (self.Indentation * " ") + " ".join(self._keywords[key])
             xml += words
             xml += os.linesep + ident
             xml += end
@@ -699,10 +699,10 @@ class SyntaxSpecList(EditraXml):
 
     def GetSubElements(self):
         """Get the xml for all the syntax spec elements"""
-        xml = u""
-        tag = u"<%s %s=" % (EXML_SYNTAXSPEC, EXML_VALUE)
+        xml = ""
+        tag = "<%s %s=" % (EXML_SYNTAXSPEC, EXML_VALUE)
         tag += ("\"%s\" " + EXML_TAG + "=\"%s\"/>")
-        ident = self.GetIndentationStr() + (self.Indentation * u" ")
+        ident = self.GetIndentationStr() + (self.Indentation * " ")
         for spec in self._specs:
             xml += os.linesep + ident
             xml += (tag % spec)
@@ -740,10 +740,10 @@ class PropertyList(EditraXml):
             pass
 
     def GetSubElements(self):
-        xml = u""
-        tag = u"<%s %s=" % (EXML_PROPERTY, EXML_VALUE)
+        xml = ""
+        tag = "<%s %s=" % (EXML_PROPERTY, EXML_VALUE)
         tag += ("\"%s\" " + EXML_ENABLE + "=\"%s\"/>")
-        ident = self.GetIndentationStr() + (self.Indentation * u" ")
+        ident = self.GetIndentationStr() + (self.Indentation * " ")
         for prop in self.properties:
             xml += os.linesep + ident
             xml += (tag % prop)
@@ -788,11 +788,11 @@ class FeatureList(EditraXml):
             EditraXml.startElement(self, name, attrs)
 
     def GetSubElements(self):
-        xml = u""
-        tag = u"<%s %s=" % (EXML_FEATURE, EXML_METHOD)
+        xml = ""
+        tag = "<%s %s=" % (EXML_FEATURE, EXML_METHOD)
         tag += ("\"%s\" " + EXML_SOURCE + "=\"%s\"/>")
-        ident = self.GetIndentationStr() + (self.Indentation * u" ")
-        for feature in self._features.iteritems():
+        ident = self.GetIndentationStr() + (self.Indentation * " ")
+        for feature in self._features.items():
             xml += (os.linesep + ident)
             xml += (tag % feature)
         return xml

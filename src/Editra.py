@@ -44,31 +44,31 @@ import wx
 try:
     import wx.lib.eventStack as events
 except:
-    import extern.events as events
+    from . import extern.events as events
 
 # Try and import a system installed version of pkg_resources else fallback to
 # the one bundled with Editra's source.
 try:
     from pkg_resources import resource_filename
 except ImportError:
-    from extern.pkg_resources import resource_filename
+    from .extern.pkg_resources import resource_filename
 
 # Editra Libraries
-import ed_glob
-import ed_i18n
-import profiler
-import util
-import dev_tool
-import ed_main
-import ed_art
-import ed_txt
-import ed_event
-import updater
-import plugin
-import ed_ipc
-import ed_session
-import ebmlib
-from syntax import synglob
+from . import ed_glob
+from . import ed_i18n
+from . import profiler
+from . import util
+from . import dev_tool
+from . import ed_main
+from . import ed_art
+from . import ed_txt
+from . import ed_event
+from . import updater
+from . import plugin
+from . import ed_ipc
+from . import ed_session
+from . import ebmlib
+from .syntax import synglob
 
 #--------------------------------------------------------------------------#
 # Global Variables
@@ -109,13 +109,13 @@ class Editra(wx.App, events.AppEventHandlerMixin):
 
         if ed_glob.SINGLE:
             # Setup the instance checker
-            instance_name = u"%s-%s" % (self.GetAppName(), wx.GetUserId())
+            instance_name = "%s-%s" % (self.GetAppName(), wx.GetUserId())
             lockpath = wx.StandardPaths.Get().GetTempDir()
             self._instance = wx.SingleInstanceChecker(instance_name, path=lockpath)
             if self._instance.IsAnotherRunning():
                 try:
                     opts, args = ProcessCommandLine()
-                except getopt.GetoptError, msg:
+                except getopt.GetoptError as msg:
                     self._log("[app][err] %s" % str(msg))
                     args = list()
                     opts = dict()
@@ -133,7 +133,7 @@ class Editra(wx.App, events.AppEventHandlerMixin):
                         nargs.append(fxml)
                     exml.filelist = nargs
                 arglist = list()
-                for arg, val in opts.items():
+                for arg, val in list(opts.items()):
                     axml = ed_ipc.IPCArg()
                     axml.name = arg
                     axml.value = val
@@ -166,7 +166,7 @@ class Editra(wx.App, events.AppEventHandlerMixin):
                 try:
                     self._server = ed_ipc.EdIpcServer(self, key)
                     self._server.start()
-                except Exception, msg:
+                except Exception as msg:
                     self._log("[app][err] Failed to start ipc server")
                     self._log("[app][err] %s" % str(msg))
                     self._server = None
@@ -183,11 +183,11 @@ class Editra(wx.App, events.AppEventHandlerMixin):
             wx.ArtProvider.PushProvider(ed_art.EditraArt())
 
         # Check if libenchant has been loaded or need to be
-        import extern.stcspellcheck as stcspellcheck
+        from . import extern.stcspellcheck as stcspellcheck
         checker = stcspellcheck.STCSpellCheck
         if not checker.isEnchantOk():
             spref = profiler.Profile_Get('SPELLCHECK', default=dict())
-            libpath = spref.get('epath', u'')
+            libpath = spref.get('epath', '')
             checker.reloadEnchant(libpath)
             # TODO: log if load fails here
 
@@ -262,7 +262,7 @@ class Editra(wx.App, events.AppEventHandlerMixin):
 
         # Splash a warning if version is not a final version
         if profiler.Profile_Get('APPSPLASH'):
-            import edimage
+            from . import edimage
             splash_img = edimage.splashwarn.GetBitmap()
             self.splash = wx.SplashScreen(splash_img, wx.SPLASH_CENTRE_ON_PARENT | \
                                           wx.SPLASH_NO_TIMEOUT, 0, None, wx.ID_ANY)
@@ -469,7 +469,7 @@ class Editra(wx.App, events.AppEventHandlerMixin):
                 # Some unlikely error condition
                 self._log("[app][err] OpenFile unknown error: %s" % filename)
                 
-        except Exception, msg:
+        except Exception as msg:
             self._log("[app][err] Failed to open file: %s" % str(msg))
 
     def MacNewFile(self):
@@ -610,7 +610,7 @@ class Editra(wx.App, events.AppEventHandlerMixin):
         else:
             evt.Skip()
 
-    def OpenNewWindow(self, fname=u'', caller=None):
+    def OpenNewWindow(self, fname='', caller=None):
         """Open a new window
         @keyword fname: Open a file in the new window
         @keyword caller: MainWindow that called to open this one
@@ -626,7 +626,7 @@ class Editra(wx.App, events.AppEventHandlerMixin):
 
         self.RegisterWindow(repr(frame), frame, True)
         self.SetTopWindow(frame)
-        if isinstance(fname, basestring) and fname != u'':
+        if isinstance(fname, str) and fname != '':
             frame.DoOpen(ed_glob.ID_COMMAND_LINE_OPEN, fname)
         frame.Show(True)
 
@@ -763,16 +763,16 @@ def InitConfig():
         # exists Use it instead of the user one. This will allow for running
         # Editra from a portable drive or for system administrators to enforce
         # settings on a system installed version.
-        config_base = util.ResolvConfigDir(u'.Editra', True) 
+        config_base = util.ResolvConfigDir('.Editra', True) 
 
     if os.path.exists(config_base):
         ed_glob.CONFIG['CONFIG_BASE'] = config_base
-        ed_glob.CONFIG['PROFILE_DIR'] = os.path.join(config_base, u"profiles")
+        ed_glob.CONFIG['PROFILE_DIR'] = os.path.join(config_base, "profiles")
         ed_glob.CONFIG['PROFILE_DIR'] += os.sep
         ed_glob.CONFIG['ISLOCAL'] = True
     else:
         config_base = wx.StandardPaths.Get().GetUserDataDir()
-        ed_glob.CONFIG['PROFILE_DIR'] = util.ResolvConfigDir(u"profiles")
+        ed_glob.CONFIG['PROFILE_DIR'] = util.ResolvConfigDir("profiles")
 
     # Check for if config directory exists and if profile is from the current
     # running version of Editra.
@@ -826,7 +826,7 @@ def InitConfig():
             profiler.Profile_Del('LASTCHECK')
 
             # Print modes don't use strings anymore
-            if isinstance(profiler.Profile_Get('PRINT_MODE'), basestring):
+            if isinstance(profiler.Profile_Get('PRINT_MODE'), str):
                 profiler.Profile_Set('PRINT_MODE', ed_glob.PRINT_BLACK_WHITE)
 
             # Simplifications to eol mode persistence (0.4.28)
@@ -835,7 +835,7 @@ def InitConfig():
 
             # After 0.4.65 LAST_SESSION now points a session file and not
             # to a list of files to open.
-            ed_glob.CONFIG['SESSION_DIR'] = util.ResolvConfigDir(u"sessions")
+            ed_glob.CONFIG['SESSION_DIR'] = util.ResolvConfigDir("sessions")
             smgr = ed_session.EdSessionMgr()
             sess = profiler.Profile_Get('LAST_SESSION')
             if isinstance(sess, list) or not sess:
@@ -860,12 +860,12 @@ def InitConfig():
         success = True
         try:
             success = UpgradeOldInstall()
-        except Exception, msg:
+        except Exception as msg:
             dev_tool.DEBUGP("[InitConfig][err] %s" % msg)
             success = False
 
         if not success:
-            old_cdir = u"%s%s.%s%s" % (wx.GetHomeDir(), os.sep,
+            old_cdir = "%s%s.%s%s" % (wx.GetHomeDir(), os.sep,
                                        ed_glob.PROG_NAME, os.sep)
             msg = ("Failed to upgrade your old installation\n"
                    "To retain your old settings you may need to copy some files:\n"
@@ -890,24 +890,24 @@ def InitConfig():
             ed_glob.VDEBUG = True
 
     # Resolve resource locations
-    ed_glob.CONFIG['CONFIG_DIR'] = util.ResolvConfigDir(u"")
-    ed_glob.CONFIG['INSTALL_DIR'] = util.ResolvConfigDir(u"", True)
-    ed_glob.CONFIG['KEYPROF_DIR'] = util.ResolvConfigDir(u"ekeys", True)
-    ed_glob.CONFIG['SYSPIX_DIR'] = util.ResolvConfigDir(u"pixmaps", True)
-    ed_glob.CONFIG['PLUGIN_DIR'] = util.ResolvConfigDir(u"plugins")
-    ed_glob.CONFIG['THEME_DIR'] = util.ResolvConfigDir(os.path.join(u"pixmaps", u"theme"))
-    ed_glob.CONFIG['LANG_DIR'] = util.ResolvConfigDir(u"locale", True)
-    ed_glob.CONFIG['STYLES_DIR'] = util.ResolvConfigDir(u"styles")
-    ed_glob.CONFIG['SYS_PLUGIN_DIR'] = util.ResolvConfigDir(u"plugins", True)
-    ed_glob.CONFIG['SYS_STYLES_DIR'] = util.ResolvConfigDir(u"styles", True)
-    ed_glob.CONFIG['TEST_DIR'] = util.ResolvConfigDir(os.path.join(u"tests", u"syntax"), True)
+    ed_glob.CONFIG['CONFIG_DIR'] = util.ResolvConfigDir("")
+    ed_glob.CONFIG['INSTALL_DIR'] = util.ResolvConfigDir("", True)
+    ed_glob.CONFIG['KEYPROF_DIR'] = util.ResolvConfigDir("ekeys", True)
+    ed_glob.CONFIG['SYSPIX_DIR'] = util.ResolvConfigDir("pixmaps", True)
+    ed_glob.CONFIG['PLUGIN_DIR'] = util.ResolvConfigDir("plugins")
+    ed_glob.CONFIG['THEME_DIR'] = util.ResolvConfigDir(os.path.join("pixmaps", "theme"))
+    ed_glob.CONFIG['LANG_DIR'] = util.ResolvConfigDir("locale", True)
+    ed_glob.CONFIG['STYLES_DIR'] = util.ResolvConfigDir("styles")
+    ed_glob.CONFIG['SYS_PLUGIN_DIR'] = util.ResolvConfigDir("plugins", True)
+    ed_glob.CONFIG['SYS_STYLES_DIR'] = util.ResolvConfigDir("styles", True)
+    ed_glob.CONFIG['TEST_DIR'] = util.ResolvConfigDir(os.path.join("tests", "syntax"), True)
 
     # Make sure all standard config directories are there
     for cfg in ("cache", "styles", "plugins", "profiles", "sessions"):
         if not util.HasConfigDir(cfg):
             util.MakeConfigDir(cfg)
-    ed_glob.CONFIG['CACHE_DIR'] = util.ResolvConfigDir(u"cache")
-    ed_glob.CONFIG['SESSION_DIR'] = util.ResolvConfigDir(u"sessions")
+    ed_glob.CONFIG['CACHE_DIR'] = util.ResolvConfigDir("cache")
+    ed_glob.CONFIG['SESSION_DIR'] = util.ResolvConfigDir("sessions")
 
     return profile_updated
 
@@ -919,7 +919,7 @@ def UpgradeOldInstall():
     @return: bool (True if success, False if failure)
 
     """
-    old_cdir = u"%s%s.%s%s" % (wx.GetHomeDir(), os.sep,
+    old_cdir = "%s%s.%s%s" % (wx.GetHomeDir(), os.sep,
                                ed_glob.PROG_NAME, os.sep)
     base = ed_glob.CONFIG['CONFIG_BASE']
     if base is None:
@@ -939,7 +939,7 @@ def UpgradeOldInstall():
                         os.remove(dest)
 
                 shutil.move(item, dest)
-            except Exception, msg:
+            except Exception as msg:
                 util.Log("[Upgrade][err] %s" % msg)
                 err += 1
                 continue
@@ -949,7 +949,7 @@ def UpgradeOldInstall():
         # Load the copied over profile
         pstr = profiler.GetProfileStr()
         prof = os.path.basename(pstr)
-        pstr = os.path.join(base, u"profiles", prof)
+        pstr = os.path.join(base, "profiles", prof)
         if os.path.exists(pstr):
             profiler.TheProfile.Load(pstr)
             profiler.TheProfile.Update()
@@ -957,7 +957,7 @@ def UpgradeOldInstall():
 
         if not err:
             wx.MessageBox(_("Your profile has been updated to the latest "
-                "version") + u"\n" + \
+                "version") + "\n" + \
               _("Please check the preferences dialog to check "
                 "your preferences"),
               _("Profile Updated"))
@@ -974,7 +974,7 @@ def PrintHelp(err=None):
     if err is not None:
         sys.stderr.write(err + os.linesep)
 
-    print(("Editra - %s - Developers Text Editor\n"
+    print((("Editra - %s - Developers Text Editor\n"
        "Cody Precord (2005-2012)\n\n"
        "usage: Editra [arguments] [files... ]\n\n"
        "Short Arguments:\n"
@@ -993,7 +993,7 @@ def PrintHelp(err=None):
        "  --auth            Print the ipc server info\n"
        "  --version         Print version number and exit\n"
        "  --profileOut arg  Run Editra in the profiler (arg is output file)\n"
-      ) % ed_glob.VERSION)
+      ) % ed_glob.VERSION))
 
     if err is None:
         os._exit(0)
@@ -1011,19 +1011,19 @@ def ProcessCommandLine():
         items, args = getopt.getopt(sys.argv[1:], "dg:hp:vDSc:",
                                    ['debug', 'help', 'version', 'auth',
                                     'confdir=', 'profileOut='])
-    except getopt.GetoptError, msg:
+    except getopt.GetoptError as msg:
         # Raise error to console and exit
         PrintHelp(str(msg))
     
     # Process command line options
     opts = dict(items)
-    for opt, value in dict(opts).items():
+    for opt, value in list(dict(opts).items()):
         if opt in ['-h', '--help']:
             PrintHelp()
         elif opt in ['-v', '--version']:
-            print(ed_glob.VERSION)
+            print((ed_glob.VERSION))
             os._exit(0)
-        elif opt in ['-d', '--debug'] and '-D' not in opts.keys():
+        elif opt in ['-d', '--debug'] and '-D' not in list(opts.keys()):
             # If the debug flag is set more than once go into verbose mode
             if ed_glob.DEBUG:
                 ed_glob.VDEBUG = True
@@ -1098,8 +1098,8 @@ def _Main(opts, args):
     # Print ipc server authentication info
     if '--auth' in opts:
         opts.pop('--auth')
-        print "port=%d,key=%s" % (ed_ipc.EDPORT,
-                                  profiler.Profile_Get('SESSION_KEY'))
+        print("port=%d,key=%s" % (ed_ipc.EDPORT,
+                                  profiler.Profile_Get('SESSION_KEY')))
 
     # Check if this is the only instance, if its not exit since
     # any of the opening commands have already been passed to the
@@ -1126,7 +1126,7 @@ def _Main(opts, args):
     # But not if there are command line args for files to open
     if profiler.Profile_Get('SAVE_SESSION', 'bool', False) and not len(args):
         smgr = ed_session.EdSessionMgr()
-        session = profiler.Profile_Get('LAST_SESSION', default=u'')
+        session = profiler.Profile_Get('LAST_SESSION', default='')
         if isinstance(session, list):
             # Check for format conversion from previous versions
             profiler.Profile_Set('LAST_SESSION', smgr.DefaultSession)
@@ -1167,7 +1167,7 @@ def _Main(opts, args):
         # Make sure window iniliazes to default position
         profiler.Profile_Del('WPOS')
         wx.MessageBox(_("Your profile has been updated to the latest "
-                        "version") + u"\n" + \
+                        "version") + "\n" + \
                       _("Please check the preferences dialog to verify "
                         "your preferences"),
                       _("Profile Updated"))

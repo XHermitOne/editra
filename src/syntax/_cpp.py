@@ -23,8 +23,8 @@ import wx.stc as stc
 import re
 
 # Local imports
-import synglob
-import syndata
+from . import synglob
+from . import syndata
 
 #-----------------------------------------------------------------------------#
 
@@ -187,9 +187,9 @@ class SyntaxData(syndata.SyntaxDataBase):
                             synglob.ID_LANG_CSHARP,
                             synglob.ID_LANG_OBJC,
                             synglob.ID_LANG_VALA ]:
-            return [u'//']
+            return ['//']
         else:
-            return [u'/*', u'*/']
+            return ['/*', '*/']
 
 #-----------------------------------------------------------------------------#
 
@@ -201,20 +201,20 @@ def AutoIndenter(estc, pos, ichar):
     @return: string
 
     """
-    rtxt = u''
+    rtxt = ''
     line = estc.GetCurrentLine()
     text = estc.GetTextRange(estc.PositionFromLine(line), pos)
     eolch = estc.GetEOLChar()
 
     indent = estc.GetLineIndentation(line)
-    if ichar == u"\t":
+    if ichar == "\t":
         tabw = estc.GetTabWidth()
     else:
         tabw = estc.GetIndent()
 
     i_space = indent / tabw
     ndent = eolch + ichar * i_space
-    rtxt = ndent + ((indent - (tabw * i_space)) * u' ')
+    rtxt = ndent + ((indent - (tabw * i_space)) * ' ')
 
     cdef_pat = re.compile('(public|private|protected)\s*\:')
     case_pat = re.compile('(case\s+.+|default)\:')

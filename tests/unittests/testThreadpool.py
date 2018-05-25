@@ -51,7 +51,7 @@ class ThreadpoolTest(unittest.TestCase):
 
     def testThreadCount(self):
         """Check that thread pool spawned off requested number of threads"""
-        self.assertEquals(self.pool.ThreadCount, self._threads)
+        self.assertEqual(self.pool.ThreadCount, self._threads)
 
     def testQueueJob(self):
         jobs = [ (1.5, 1), (2, 2), (0.5, 3), (1, 4) ]

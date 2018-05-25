@@ -48,7 +48,7 @@ class Meta:
     """
     def __init__(self, cls, meta_attrs):
         assert hasattr(cls, 'GetMetaDefaults')
-        for (attr,default) in cls.GetMetaDefaults().items():
+        for (attr,default) in list(cls.GetMetaDefaults().items()):
             attr_val = meta_attrs.get(attr, default)
             setattr(self, attr, copy.copy(attr_val))
 
@@ -64,7 +64,7 @@ class MetaData(type):
         cls.meta = Meta(cls, meta_attrs)
         return cls
 
-class FactoryMixin:
+class FactoryMixin(metaclass=MetaData):
     """Factory implementation.
     All classes derived from classes using this mixin should declare a nested
     subclass 'meta' that has at least one member 'id' that is used to identify
@@ -95,7 +95,6 @@ class FactoryMixin:
             return dict(id=None, size=0)
 
     """
-    __metaclass__ = MetaData
     @classmethod
     def FactoryCreate(cls, identifier, *args, **kwargs):
         """Create an object of the appropriate type

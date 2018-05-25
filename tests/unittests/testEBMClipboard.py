@@ -38,17 +38,17 @@ class EBMClipboardTest(unittest.TestCase):
         self.cb.Switch('m')
         self.cb.Set("HELLO")
         val = self.cb.Get()
-        self.assertEquals(val, "HELLO")
+        self.assertEqual(val, "HELLO")
         self.cb.Switch('n')
         val = self.cb.Get()
-        self.assertEquals(val, u'')
+        self.assertEqual(val, '')
 
     def testNextFree(self):
         self.cb.NextFree()
-        self.assertEquals(self.cb.current, 'a')
+        self.assertEqual(self.cb.current, 'a')
         self.cb.Set("TEST")
         self.cb.NextFree()
-        self.assertEquals(self.cb.current, 'b')
+        self.assertEqual(self.cb.current, 'b')
 
     def testAllUsed(self):
         used = self.cb.AllUsed()

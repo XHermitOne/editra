@@ -7,7 +7,7 @@ from xml.dom import minidom
 import random
 from xml.sax.saxutils import escape, quoteattr
 
-from _util import *
+from ._util import *
 
 #  Global counter tracking the order in which fields are declared.
 _order_counter = 0
@@ -113,7 +113,7 @@ class Field(object):
     def _check_tagname(self,node,tagname):
         if node.nodeType != node.ELEMENT_NODE:
             return False
-        if isinstance(tagname,basestring):
+        if isinstance(tagname,str):
             if node.localName != tagname:
                 return False
             if node.namespaceURI:
@@ -178,7 +178,7 @@ class Value(Field):
         if self.__dict__["attrname"]:
             return None
         tagname = self.__dict__['tagname']
-        if tagname and not isinstance(tagname,(basestring,tuple)):
+        if tagname and not isinstance(tagname,(str,tuple)):
             tagname = self.field_name
         return tagname
     def _set_tagname(self,tagname):
@@ -197,7 +197,7 @@ class Value(Field):
             return attrs
         unused = []
         attrname = self.attrname
-        if isinstance(attrname,basestring):
+        if isinstance(attrname,str):
             ns = None
         else:
             (ns,attrname) = attrname
@@ -228,7 +228,7 @@ class Value(Field):
     def render_attributes(self,obj,val,nsmap):
         if val is not None and val and self.attrname:
             qaval = quoteattr(self.render_value(val))
-            if isinstance(self.attrname,basestring):
+            if isinstance(self.attrname,str):
                 yield '%s=%s' % (self.attrname,qaval,)
             else:
                 m_meta = self.model_class.meta
@@ -237,7 +237,7 @@ class Value(Field):
                     prefix = m_meta.namespace_prefix
                     yield '%s:%s=%s' % (prefix,nm,qaval,)
                 else:
-                    for (p,n) in nsmap.iteritems():
+                    for (p,n) in nsmap.items():
                         if ns == n[0]:
                             prefix = p
                             break
@@ -263,7 +263,7 @@ class Value(Field):
                     else:
                         return "<%s%s />" % (localName,attrs)
             attrs = ""
-            if isinstance(self.tagname,basestring):
+            if isinstance(self.tagname,str):
                 prefix = self.model_class.meta.namespace_prefix
                 localName = self.tagname
             else:
@@ -274,7 +274,7 @@ class Value(Field):
                 elif ns == m_meta.namespace:
                     prefix = m_meta.namespace_prefix
                 else:
-                    for (p,n) in nsmap.iteritems():
+                    for (p,n) in nsmap.items():
                         if ns == n[0]:
                             prefix = p
                             break
@@ -417,7 +417,7 @@ class Model(Field):
         if typ is None:
             typ = self.field_name
         typeclass = None
-        if isinstance(typ,basestring):
+        if isinstance(typ,str):
             if self.model_class.meta.namespace:
                 ns = self.model_class.meta.namespace
                 typeclass = ModelMetaclass.find_class(typ,ns)
@@ -427,7 +427,7 @@ class Model(Field):
             (ns,typ) = typ
             if isinstance(typ,ModelMetaclass):
                 return typ
-            if isinstance(ns,basestring):
+            if isinstance(ns,str):
                 typeclass = ModelMetaclass.find_class(typ,ns)
                 if typeclass is None and ns is None:
                     ns = self.model_class.meta.namespace
@@ -718,11 +718,11 @@ class Dict(Field):
         if self.maxlength is not None and len(items) > self.maxlength:
             raise RenderError("too many items")
         if self.tagname:
-            children = "".join(data for item in items.values() for data in self.field.render_children(obj,item,nsmap))
+            children = "".join(data for item in list(items.values()) for data in self.field.render_children(obj,item,nsmap))
             if children:
                 yield children.join(('<%s>'%self.tagname, '</%s>'%self.tagname))
         else:
-            for item in items.values():
+            for item in list(items.values()):
                 for data in self.field.render_children(obj, item, nsmap):
                     yield data
 
@@ -738,7 +738,7 @@ class Choice(Field):
         for field in fields:
             if isinstance(field,Model):
                 real_fields.append(field)
-            elif isinstance(field,basestring):
+            elif isinstance(field,str):
                 real_fields.append(Model(field))
             else:
                 raise Error("only Model fields are allowed within a Choice field")
@@ -772,8 +772,8 @@ class XmlNode(Field):
         encoding = None
 
     def __set__(self,instance,value):
-        if isinstance(value,basestring):
-            if isinstance(value,unicode) and self.encoding:
+        if isinstance(value,str):
+            if isinstance(value,str) and self.encoding:
                 value = value.encode(self.encoding)
             doc = minidom.parseString(value)
             value = doc.documentElement

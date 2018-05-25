@@ -23,16 +23,16 @@ import re
 import wx
 
 # Editra Imports
-import ed_menu
-import ed_glob
-from profiler import Profile_Get
-import ed_msg
-import plugin
-import iface
-import ed_fmgr
-from extern import aui
-import ed_book
-import ebmlib
+from . import ed_menu
+from . import ed_glob
+from .profiler import Profile_Get
+from . import ed_msg
+from . import plugin
+from . import iface
+from . import ed_fmgr
+from .extern import aui
+from . import ed_book
+from . import ebmlib
 
 #--------------------------------------------------------------------------#
 # Globals
@@ -46,7 +46,7 @@ class Shelf(plugin.Plugin):
     implemented by L{ShelfI}.
 
     """
-    SHELF_NAME = u'Shelf'
+    SHELF_NAME = 'Shelf'
     observers = plugin.ExtensionPoint(iface.ShelfI)
 
     def GetUiHandlers(self, delegate):
@@ -115,7 +115,7 @@ class Shelf(plugin.Plugin):
 
         # Only Load Perspective if all items are loaded
         if delegate.StockShelf(Profile_Get('SHELF_ITEMS', 'list', [])):
-            delegate.SetPerspective(Profile_Get('SHELF_LAYOUT', 'str', u""))
+            delegate.SetPerspective(Profile_Get('SHELF_LAYOUT', 'str', ""))
             delegate.SetSelection(Profile_Get('SHELF_SELECTION', 'int', -1))
         return delegate
 
@@ -212,7 +212,7 @@ class EdShelfBook(ed_book.EdBaseBook):
 
         """
         self.AddPage(item, 
-                     u"%s - %d" % (name, self._open.get(name, 0)),
+                     "%s - %d" % (name, self._open.get(name, 0)),
                      select=True)
 
         # Set the tab icon
@@ -245,7 +245,7 @@ class EdShelfBook(ed_book.EdBaseBook):
         idxs = list()
         for pg in range(self.GetPageCount()):
             lbl = self.GetPageText(pg)
-            lbl = PGNUM_PAT.sub(u"", lbl)
+            lbl = PGNUM_PAT.sub("", lbl)
             if lbl == name:
                 idxs.append(pg)
         return idxs
@@ -417,7 +417,7 @@ class EdShelfDelegate(object):
         rval = list()
         if self._shelf is not None:
             for page in range(self._shelf.GetPageCount()):
-                rval.append(re.sub(PGNUM_PAT, u'', 
+                rval.append(re.sub(PGNUM_PAT, '', 
                             self._shelf.GetPageText(page), 1))
         return rval
 
@@ -443,7 +443,7 @@ class EdShelfDelegate(object):
             try:
                 self._shelf.LoadPerspective(pdata)
                 self._shelf.Update()
-            except Exception, msg:
+            except Exception as msg:
                 self._log("[shelf][err] Failed LoadPerspective: %s" % msg)
 
     def GetShelfObjectMenu(self):
@@ -462,16 +462,16 @@ class EdShelfDelegate(object):
                 menu_i = observer.GetMenuEntry(menu)
                 if menu_i is not None:
                     menu_items.append((menu_i.GetItemLabel(), menu_i))
-            except Exception, msg:
+            except Exception as msg:
                 self._log("[shelf][err] %s" % str(msg))
         menu_items.sort()
 
         combo = 0
         for item in menu_items:
             combo += 1
-            shortcut = u""
+            shortcut = ""
             if combo < 10:
-                shortcut = u"\tCtrl+Alt+" + unicode(combo)
+                shortcut = "\tCtrl+Alt+" + str(combo)
             nitem = menu.Append(item[1].Id, item[1].GetText() + shortcut)
             if item[1].Bitmap.IsOk():
                 nitem.SetBitmap(item[1].Bitmap)
@@ -565,7 +565,7 @@ class EdShelfDelegate(object):
             window = None
             try:
                 window = item.CreateItem(self._shelf)
-            except Exception, msg:
+            except Exception as msg:
                 self._log("[shelf][err] CreateItem failed: %s" % msg)
                 return
 
@@ -614,7 +614,7 @@ class EdShelfDelegate(object):
         if self._shelf and index > 0 and index < self._shelf.GetPageCount():
             try:
                 self._shelf.SetSelection(index)
-            except Exception, msg:
+            except Exception as msg:
                 self._log("[shelf][err] Failed SetSelection: %s" % msg)
 
     def StockShelf(self, i_list):

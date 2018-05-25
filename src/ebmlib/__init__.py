@@ -18,29 +18,29 @@ __revision__ = "$Revision: 69798 $"
 #-----------------------------------------------------------------------------#
 
 # Text Utils
-from searcheng import *
-from fchecker import *
-from fileutil import *
-from _dirmon import *
-from fileimpl import *
-from txtutil import *
-from logfile import *
+from .searcheng import *
+from .fchecker import *
+from .fileutil import *
+from ._dirmon import *
+from .fileimpl import *
+from .txtutil import *
+from .logfile import *
 
-from backupmgr import *
-from calllock import *
+from .backupmgr import *
+from .calllock import *
 
 # Storage Classes
-from histcache import *
-from clipboard import *
+from .histcache import *
+from .clipboard import *
 
 # Networking utilities
-from e_weblib import *
+from .e_weblib import *
 
 # Misc
-from miscutil import *
-from _efactory import *
-from cmenumgr import *
-from efilehist import *
-from osutil import *
-from _threads import *
-from _trash import *
+from .miscutil import *
+from ._efactory import *
+from .cmenumgr import *
+from .efilehist import *
+from .osutil import *
+from ._threads import *
+from ._trash import *

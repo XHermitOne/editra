@@ -24,8 +24,8 @@ import wx.stc as stc
 import re
 
 # Local Imports
-import synglob
-import syndata
+from . import synglob
+from . import syndata
 
 #-----------------------------------------------------------------------------#
 
@@ -172,20 +172,20 @@ def AutoIndenter(estc, pos, ichar):
     @param ichar: Indentation character
 
     """
-    rtxt = u''
+    rtxt = ''
     line = estc.GetCurrentLine()
     text = estc.GetTextRange(estc.PositionFromLine(line), pos)
     eolch = estc.GetEOLChar()
 
     indent = estc.GetLineIndentation(line)
-    if ichar == u"\t":
+    if ichar == "\t":
         tabw = estc.GetTabWidth()
     else:
         tabw = estc.GetIndent()
 
     i_space = indent / tabw
     ndent = eolch + ichar * i_space
-    rtxt = ndent + ((indent - (tabw * i_space)) * u' ')
+    rtxt = ndent + ((indent - (tabw * i_space)) * ' ')
 
     blks = '(program|function|subroutine|if|do|while)'
     blk_pat = re.compile(blks + '\s*[(a-zA-Z][a-zA-Z0-9]*', re.IGNORECASE)

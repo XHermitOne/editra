@@ -6,24 +6,24 @@ def findFiles(path, flist):
     if os.path.isdir(path):
         fnames = [ os.path.join(path, p)
                    for p in os.listdir(path)
-                   if not p.startswith('.') and p != u'extern']
+                   if not p.startswith('.') and p != 'extern']
         for fname in fnames:
             findFiles(fname, flist)
-    elif path.endswith(u".py"):
+    elif path.endswith(".py"):
         flist.append(path)
 
 if __name__ == '__main__':
     # Generate the file list
-    path = u"../../src/"
-    cbrowser = u"../../plugins/codebrowser/codebrowser/"
-    fbrowser = u"../../plugins/filebrowser/filebrowser/"
-    launch = u"../../plugins/Launch/Launch/"
-    pshell = u"../../plugins/PyShell/PyShell/"
+    path = "../../src/"
+    cbrowser = "../../plugins/codebrowser/codebrowser/"
+    fbrowser = "../../plugins/filebrowser/filebrowser/"
+    launch = "../../plugins/Launch/Launch/"
+    pshell = "../../plugins/PyShell/PyShell/"
 
     flist = list()
     for p in (path, cbrowser, fbrowser, launch, pshell):
         findFiles(p, flist)
 
-    f = open(u'app.fil', 'wb')
+    f = open('app.fil', 'wb')
     f.write("\n".join(flist))
     f.close()

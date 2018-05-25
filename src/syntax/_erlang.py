@@ -24,8 +24,8 @@ import wx
 import wx.stc as stc
 
 # Local Imports
-import synglob
-import syndata
+from . import synglob
+from . import syndata
 
 #-----------------------------------------------------------------------------#
 
@@ -102,4 +102,4 @@ class SyntaxData(syndata.SyntaxDataBase):
 
     def GetCommentPattern(self):
         """Returns a list of characters used to comment a block of code """
-        return [u'%%']
+        return ['%%']

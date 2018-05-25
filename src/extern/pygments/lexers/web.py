@@ -800,7 +800,7 @@ class PhpLexer(RegexLexer):
         self._functions = set()
         if self.funcnamehighlighting:
             from pygments.lexers._phpbuiltins import MODULES
-            for key, value in MODULES.iteritems():
+            for key, value in MODULES.items():
                 if key not in self.disabledmodules:
                     self._functions.update(value)
         RegexLexer.__init__(self, **options)
@@ -1559,7 +1559,7 @@ class SassLexer(ExtendedRegexLexer):
             (r"\*/", Comment, '#pop'),
         ],
     }
-    for group, common in common_sass_tokens.iteritems():
+    for group, common in common_sass_tokens.items():
         tokens[group] = copy.copy(common)
     tokens['value'].append((r'\n', Text, 'root'))
     tokens['selector'].append((r'\n', Text, 'root'))
@@ -1606,7 +1606,7 @@ class ScssLexer(RegexLexer):
             (r"\*/", Comment, '#pop'),
         ],
     }
-    for group, common in common_sass_tokens.iteritems():
+    for group, common in common_sass_tokens.items():
         tokens[group] = copy.copy(common)
     tokens['value'].extend([(r'\n', Text), (r'[;{}]', Punctuation, 'root')])
     tokens['selector'].extend([(r'\n', Text), (r'[;{}]', Punctuation, 'root')])

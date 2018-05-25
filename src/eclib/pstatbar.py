@@ -265,7 +265,7 @@ class ProgressStatusBar(wx.StatusBar):
         self.tmp = self.GetStatusText(bfield)
         # Clear the progress field so the text doesn't show behind
         # the progress indicator.
-        super(ProgressStatusBar, self).SetStatusText(u'', bfield)
+        super(ProgressStatusBar, self).SetStatusText('', bfield)
         self.stop = False
         self.ShowProgress(True)
         self.Run(rate)

@@ -16,10 +16,10 @@ __date__ = "31 March 2009"
 import wx
 import types
 
-from aui_utilities import BitmapFromBits, StepColour, ChopText, GetBaseColour
-from aui_utilities import DrawGradientRectangle, DrawMACCloseButton
-from aui_utilities import DarkenBitmap, LightContrastColour
-from aui_constants import *
+from .aui_utilities import BitmapFromBits, StepColour, ChopText, GetBaseColour
+from .aui_utilities import DrawGradientRectangle, DrawMACCloseButton
+from .aui_utilities import DarkenBitmap, LightContrastColour
+from .aui_constants import *
 
 optionActive = 2**14
 """ Indicates that a pane is active and should display an active caption (if present). """
@@ -327,11 +327,11 @@ class AuiDefaultDockArt(object):
         :type `colour`: :class:`Colour` or tuple or integer
         """
 
-        if isinstance(colour, basestring):
+        if isinstance(colour, str):
             colour = wx.NamedColour(colour)
-        elif isinstance(colour, types.TupleType):
+        elif isinstance(colour, tuple):
             colour = wx.Colour(*colour)
-        elif isinstance(colour, types.IntType):
+        elif isinstance(colour, int):
             colour = wx.ColourRGB(colour)
 
         if id == AUI_DOCKART_BACKGROUND_COLOUR:
@@ -468,7 +468,7 @@ class AuiDefaultDockArt(object):
 
         if pane.IsToolbar():
 
-            for ii in xrange(0, border_width):
+            for ii in range(0, border_width):
 
                 dc.SetPen(wx.WHITE_PEN)
                 dc.DrawLine(drect.x, drect.y, drect.x+drect.width, drect.y)
@@ -482,7 +482,7 @@ class AuiDefaultDockArt(object):
 
         else:
 
-            for ii in xrange(0, border_width):
+            for ii in range(0, border_width):
 
                 dc.DrawRectangle(drect.x, drect.y, drect.width, drect.height)
                 drect.Deflate(1, 1)
@@ -618,7 +618,7 @@ class AuiDefaultDockArt(object):
         state = pane.state
         pane.state &= ~optionActive
 
-        for indx in xrange(6):
+        for indx in range(6):
             active = (indx%2 == 0 and [True] or [False])[0]
             if active:
                 pane.state |= optionActive
@@ -907,7 +907,7 @@ if _ctypes:
 
         def dump(self):
             """ Dumps `self` as a :class:`Rect`. """
-            return map(int, (self.left, self.top, self.right, self.bottom))
+            return list(map(int, (self.left, self.top, self.right, self.bottom)))
 
 
     class SIZE(ctypes.Structure):
@@ -1083,7 +1083,7 @@ class ModernDockArt(AuiDefaultDockArt):
         state = pane.state
         pane.state &= ~optionActive
 
-        for indx in xrange(6):
+        for indx in range(6):
             active = (indx%2 == 0 and [True] or [False])[0]
             if active:
                 pane.state |= optionActive

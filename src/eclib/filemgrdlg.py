@@ -27,8 +27,8 @@ import wx
 import wx.lib.mixins.listctrl as listmix
 
 # Eclib Imports
-import ecbasewin
-import elistmix
+from . import ecbasewin
+from . import elistmix
 
 #-----------------------------------------------------------------------------#
 # Globals
@@ -43,11 +43,11 @@ _ = wx.GetTranslation
 #-----------------------------------------------------------------------------#
 
 class FileMgrDialog(ecbasewin.ECBaseDlg):
-    def __init__(self, parent, id=wx.ID_ANY, title=u"",
-                 defaultPath=os.curdir, defaultFile=u'', filter="*",
+    def __init__(self, parent, id=wx.ID_ANY, title="",
+                 defaultPath=os.curdir, defaultFile='', filter="*",
                  pos=wx.DefaultPosition, size=wx.DefaultSize, 
                  style=FMD_DEFAULT_STYLE,
-                 name=u"FileMgrDialog"):
+                 name="FileMgrDialog"):
         ecbasewin.ECBaseDlg.__init__(self, parent, id, title,
                                      pos, size, style, name)
 
@@ -158,7 +158,7 @@ class FileMgrPanel(wx.Panel):
             item = self._flist.GetItem(item, 0)
             fname = item.GetText()
             return fname
-        return u""
+        return ""
 
     def OnDelete(self, evt):
         """Prompt to delete file the selected file"""
@@ -252,7 +252,7 @@ class FileList(wx.ListCtrl,
 if __name__ == '__main__':
     app = wx.App(False)
     frame = wx.Frame(None)
-    dlg = FileMgrDialog(frame, title="HELLO", defaultFile=u'eclutil.py',
+    dlg = FileMgrDialog(frame, title="HELLO", defaultFile='eclutil.py',
                         style=FMD_DEFAULT_STYLE)
     dlg.ShowModal()
     frame.Destroy()

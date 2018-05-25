@@ -19,15 +19,15 @@ __revision__ = "$Revision: 70097 $"
 # Imports
 import wx
 import os
-import cPickle
+import pickle
 
 # Editra Imports
-import util
-import ed_cmdbar
-import ed_glob
-import profiler
-import ed_msg
-import ebmlib
+from . import util
+from . import ed_cmdbar
+from . import ed_glob
+from . import profiler
+from . import ed_msg
+from . import ebmlib
 
 #-----------------------------------------------------------------------------#
 # Globals
@@ -108,14 +108,14 @@ class SessionManager(object):
         with open(session, 'rb') as f_handle:
             # Load and validate file
             try:
-                flist = cPickle.load(f_handle)
+                flist = pickle.load(f_handle)
                 # TODO: Extend in future to support loading sessions
                 #       for multiple windows.
                 flist = flist.get('win1', list())
                 for item in flist:
-                    if type(item) not in (unicode, str):
+                    if type(item) not in (str, str):
                         raise TypeError("Invalid item in unpickled sequence")
-            except (cPickle.UnpicklingError, TypeError, EOFError), e:
+            except (pickle.UnpicklingError, TypeError, EOFError) as e:
                 util.Log("[ed_session][err] %s" % e)
                 raise e # Re throw
         return flist
@@ -133,9 +133,9 @@ class SessionManager(object):
             try:
                 # TODO multi window support
                 sdata = dict(win1=paths)
-                cPickle.dump(sdata, f_handle)
+                pickle.dump(sdata, f_handle)
                 bOk = True
-            except Exception, msg:
+            except Exception as msg:
                 util.Log("[ed_session][err] Failed to SaveSessionFile: %s" % msg)
 
         return bOk
@@ -158,9 +158,8 @@ class SessionManager(object):
 
 #-----------------------------------------------------------------------------#
 
-class EdSessionMgr(SessionManager):
+class EdSessionMgr(SessionManager, metaclass=ebmlib.Singleton):
     """Editra specific session manager implementation"""
-    __metaclass__ = ebmlib.Singleton
     def __init__(self):
         super(EdSessionMgr, self).__init__(ed_glob.CONFIG['SESSION_DIR'])
 
@@ -221,7 +220,7 @@ class EdSessionBar(ed_cmdbar.CommandBarBase):
 
     def OnChangeSession(self, evt):
         """Current session changed in choice control"""
-        util.Log(u"[ed_session][info] OnChangeSession: %s" % self._sch.StringSelection)
+        util.Log("[ed_session][info] OnChangeSession: %s" % self._sch.StringSelection)
         ed_msg.PostMessage(ed_msg.EDMSG_SESSION_DO_LOAD, 
                            self.GetSelectedSession(),
                            self.TopLevelParent.Id)

@@ -23,8 +23,8 @@ import wx
 import wx.stc as stc
 
 # Local Imports
-import synglob
-import syndata
+from . import synglob
+from . import syndata
 
 #-----------------------------------------------------------------------------#
 

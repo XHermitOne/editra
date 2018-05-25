@@ -30,7 +30,7 @@ import wx.combo
 import glob
 
 # Editra Imports
-import ed_glob
+from . import ed_glob
 
 #----------------------------------------------------------------------------#
 # Global Variables
@@ -108,7 +108,7 @@ class LangListCombo(wx.combo.BitmapComboBox):
         @param default: The default item to show in the combo box
 
         """
-        lang_ids = GetLocaleDict(GetAvailLocales()).values()
+        lang_ids = list(GetLocaleDict(GetAvailLocales()).values())
         lang_items = langlist.CreateLanguagesResourceLists(langlist.LC_ONLY, \
                                                            lang_ids)
         wx.combo.BitmapComboBox.__init__(self, parent, id_,
@@ -133,4 +133,4 @@ if __name__ == '__main__':
             OUT.append((LOC_I.Description, LOC_I.CanonicalName))
 
     for LANG in sorted(OUT):
-        print LANG
+        print(LANG)

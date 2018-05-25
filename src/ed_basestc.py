@@ -24,21 +24,21 @@ import wx
 import wx.stc
 
 # Editra Imports
-import ed_glob
-import ed_style
-import eclib
-import ebmlib
-import ed_msg
-import ed_txt
-from syntax import syntax
-from syntax import synglob
-import autocomp
-from extern import vertedit
-from profiler import Profile_Get
-import plugin
-import iface
-import util
-import ed_marker
+from . import ed_glob
+from . import ed_style
+from . import eclib
+from . import ebmlib
+from . import ed_msg
+from . import ed_txt
+from .syntax import syntax
+from .syntax import synglob
+from . import autocomp
+from .extern import vertedit
+from .profiler import Profile_Get
+from . import plugin
+from . import iface
+from . import util
+from . import ed_marker
 
 #-----------------------------------------------------------------------------#
 
@@ -243,14 +243,14 @@ class EditraBaseStc(wx.stc.StyledTextCtrl, ed_style.StyleMgr):
             # Default Indenter
             line = self.GetCurrentLine()
             text = self.GetTextRange(self.PositionFromLine(line), cpos)
-            if text.strip() == u'':
+            if text.strip() == '':
                 self.AddText(self.GetEOLChar() + text)
                 self.EnsureCaretVisible()
                 return
             indent = self.GetLineIndentation(line)
             i_space = indent / self.GetTabWidth()
             ndent = self.GetEOLChar() + self.GetIndentChar() * i_space
-            txt = ndent + ((indent - (self.GetTabWidth() * i_space)) * u' ')
+            txt = ndent + ((indent - (self.GetTabWidth() * i_space)) * ' ')
             self.AddText(txt)
 
         self.EnsureCaretVisible()
@@ -362,7 +362,7 @@ class EditraBaseStc(wx.stc.StyledTextCtrl, ed_style.StyleMgr):
         if len(self._code['comment']):
             sel = self.GetSelection()
             c_start = self._code['comment'][0]
-            c_end = u''
+            c_end = ''
             if len(self._code['comment']) > 1:
                 c_end = self._code['comment'][1]
 
@@ -370,7 +370,7 @@ class EditraBaseStc(wx.stc.StyledTextCtrl, ed_style.StyleMgr):
             self.BeginUndoAction()
             try:
                 nchars = 0
-                lines = range(start, end+1)
+                lines = list(range(start, end+1))
                 lines.reverse()
                 for line_num in lines:
                     lstart = self.PositionFromLine(line_num)
@@ -380,9 +380,9 @@ class EditraBaseStc(wx.stc.StyledTextCtrl, ed_style.StyleMgr):
                     if len(tmp):
                         if uncomment:
                             if tmp.startswith(c_start):
-                                text = text.replace(c_start, u'', 1)
+                                text = text.replace(c_start, '', 1)
                             if c_end and tmp.endswith(c_end):
-                                text = text.replace(c_end, u'', 1)
+                                text = text.replace(c_end, '', 1)
                             nchars = nchars - len(c_start + c_end)
                         else:
                             text = c_start + text + c_end
@@ -576,18 +576,18 @@ class EditraBaseStc(wx.stc.StyledTextCtrl, ed_style.StyleMgr):
         """Reference to this buffers file object"""
         return self.file
 
-    def FindLexer(self, set_ext=u''):
+    def FindLexer(self, set_ext=''):
         """Sets Text Controls Lexer Based on File Extension
         @param set_ext: explicit extension to use in search
         @postcondition: lexer is configured for file
 
         """
-        if set_ext != u'':
+        if set_ext != '':
             ext = set_ext.lower()
         else:
             ext = self.file.GetExtension().lower()
 
-        if ext == u'':
+        if ext == '':
             fname = self.GetFileName()
             ext = ebmlib.GetFileName(fname).lower()
 
@@ -601,14 +601,14 @@ class EditraBaseStc(wx.stc.StyledTextCtrl, ed_style.StyleMgr):
         if self.GetLexer() == wx.stc.STC_LEX_NULL:
             interp = self.GetLine(0)
             if interp != wx.EmptyString:
-                interp = interp.split(u"/")[-1]
+                interp = interp.split("/")[-1]
                 interp = interp.strip().split()
-                if len(interp) and interp[-1][0] != u"-":
+                if len(interp) and interp[-1][0] != "-":
                     interp = interp[-1]
                 elif len(interp):
                     interp = interp[0]
                 else:
-                    interp = u''
+                    interp = ''
                 # TODO: should check user config to ensure the explict
                 #       extension is still associated with the expected
                 #       file type.
@@ -670,11 +670,11 @@ class EditraBaseStc(wx.stc.StyledTextCtrl, ed_style.StyleMgr):
         """
         m_id = self.GetEOLMode()
         if m_id == wx.stc.STC_EOL_CR:
-            return u'\r'
+            return '\r'
         elif m_id == wx.stc.STC_EOL_CRLF:
-            return u'\r\n'
+            return '\r\n'
         else:
-            return u'\n'
+            return '\n'
 
     def GetFileName(self):
         """Returns the full path name of the current file
@@ -689,9 +689,9 @@ class EditraBaseStc(wx.stc.StyledTextCtrl, ed_style.StyleMgr):
 
         """
         if self.GetUseTabs():
-            return u'\t'
+            return '\t'
         else:
-            return u' ' * self.GetIndent()
+            return ' ' * self.GetIndent()
 
     def GetKeywords(self):
         """Get the keyword set for the current document.
@@ -1012,7 +1012,7 @@ class EditraBaseStc(wx.stc.StyledTextCtrl, ed_style.StyleMgr):
                 continue
             else:
                 if not isinstance(keyw[0], int) or \
-                   not isinstance(keyw[1], basestring):
+                   not isinstance(keyw[1], str):
                     continue
                 else:
                     kwlist += keyw[1]
@@ -1063,8 +1063,8 @@ class EditraBaseStc(wx.stc.StyledTextCtrl, ed_style.StyleMgr):
             if len(prop) != 2:
                 continue
             else:
-                if not isinstance(prop[0], basestring) or not \
-                   isinstance(prop[1], basestring):
+                if not isinstance(prop[0], str) or not \
+                   isinstance(prop[1], str):
                     continue
                 else:
                     self.SetProperty(prop[0], prop[1])
@@ -1116,10 +1116,10 @@ class EditraBaseStc(wx.stc.StyledTextCtrl, ed_style.StyleMgr):
         symList = self._code['compsvc'].GetAutoCompList(command)
         
         # Build a list that can be feed to Scintilla
-        lst = map(unicode, symList)
+        lst = list(map(str, symList))
         if lst is not None and len(lst):
             self.BeginUndoAction()
-            lst = u' '.join(lst)
+            lst = ' '.join(lst)
             if lst.isspace():
                 return
             self.AutoCompShow(pos - self.WordStartPosition(pos, True), lst)
@@ -1274,7 +1274,7 @@ class AutoCompExtension(plugin.Plugin):
             try:
                 if observer.GetFileTypeId() == ftypeid:
                     return observer.GetCompleter(buff)
-            except Exception, msg:
+            except Exception as msg:
                 util.Log("[ed_basestc][err] GetCompleter Extension: %s" % str(msg))
         else:
             return None

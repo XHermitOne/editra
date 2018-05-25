@@ -32,8 +32,8 @@ import wx
 import wx.stc as stc
 
 # Local Imports
-import synglob
-import syndata
+from . import synglob
+from . import syndata
 
 #-----------------------------------------------------------------------------#
 
@@ -190,7 +190,7 @@ class SyntaxData(syndata.SyntaxDataBase):
 
     def GetCommentPattern(self):
         """Returns a list of characters used to comment a block of code """
-        return [u'/*', u'*/']
+        return ['/*', '*/']
 
 #-----------------------------------------------------------------------------#
 
@@ -201,20 +201,20 @@ def AutoIndenter(estc, pos, ichar):
     @param ichar: Indentation character
 
     """
-    rtxt = u''
+    rtxt = ''
     line = estc.GetCurrentLine()
     text = estc.GetTextRange(estc.PositionFromLine(line), pos)
     eolch = estc.GetEOLChar()
 
     indent = estc.GetLineIndentation(line)
-    if ichar == u"\t":
+    if ichar == "\t":
         tabw = estc.GetTabWidth()
     else:
         tabw = estc.GetIndent()
 
     i_space = indent / tabw
     ndent = eolch + ichar * i_space
-    rtxt = ndent + ((indent - (tabw * i_space)) * u' ')
+    rtxt = ndent + ((indent - (tabw * i_space)) * ' ')
 
     if text.endswith('{'):
         rtxt += ichar

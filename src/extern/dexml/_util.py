@@ -60,7 +60,7 @@ class Meta:
                  "order_sensitive":True}
 
     def __init__(self,name,meta_attrs):
-        for (attr,default) in self._defaults.items():
+        for (attr,default) in list(self._defaults.items()):
             setattr(self,attr,meta_attrs.get(attr,default))
         if self.tagname is None:
             self.tagname = name
@@ -89,7 +89,7 @@ class ModelMetaclass(type):
         #  Don't do anything if it's not a subclass of Model
         parents = [b for b in bases if isinstance(b, ModelMetaclass)]
         # HACK
-        import fields
+        from . import fields
 
         if not parents:
             return cls
@@ -114,13 +114,13 @@ class ModelMetaclass(type):
                     field.model_class = cls
                     base_fields[field.field_name] = field
         cls_fields = []
-        for (name,value) in attrs.iteritems():
+        for (name,value) in attrs.items():
             if isinstance(value,fields.Field):
                 base_fields.pop(name,None)
                 value.field_name = name
                 value.model_class = cls
                 cls_fields.append(value)
-        cls._fields = base_fields.values() + cls_fields
+        cls._fields = list(base_fields.values()) + cls_fields
         cls._fields.sort(key=lambda f: f._order_counter)
         #  Register the new class so we can find it by name later on
         mcls.instances[(cls.meta.namespace,cls.meta.tagname)] = cls

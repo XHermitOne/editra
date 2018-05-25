@@ -27,14 +27,14 @@ __revision__ = "$Revision: 71278 $"
 # Imports
 import os
 import sys
-import cPickle
+import pickle
 import wx
 
 # Editra Imports
-from ed_glob import CONFIG, PROG_NAME, VERSION, PRINT_BLACK_WHITE, EOL_MODE_LF
-import util
-import dev_tool
-import ed_msg
+from .ed_glob import CONFIG, PROG_NAME, VERSION, PRINT_BLACK_WHITE, EOL_MODE_LF
+from . import util
+from . import dev_tool
+from . import ed_msg
 
 _ = wx.GetTranslation
 #--------------------------------------------------------------------------#
@@ -188,10 +188,10 @@ class Profile(dict):
         if os.path.exists(path):
             try:
                 fhandle = open(path, 'rb')
-                val = cPickle.load(fhandle)
+                val = pickle.load(fhandle)
                 fhandle.close()
             except (IOError, SystemError, OSError,
-                    cPickle.UnpicklingError, EOFError), msg:
+                    pickle.UnpicklingError, EOFError) as msg:
                 dev_tool.DEBUGP("[profile][err] %s" % str(msg))
             else:
                 if isinstance(val, dict):
@@ -246,11 +246,11 @@ class Profile(dict):
                 return False
             self.Set('MYPROFILE', path)
             fhandle = open(path, 'wb')
-            cPickle.dump(self.copy(), fhandle, cPickle.HIGHEST_PROTOCOL)
+            pickle.dump(self.copy(), fhandle, pickle.HIGHEST_PROTOCOL)
             fhandle.close()
             UpdateProfileLoader()
-        except (IOError, cPickle.PickleError), msg:
-            dev_tool.DEBUGP(u"[profile][err] %s" % msg)
+        except (IOError, pickle.PickleError) as msg:
+            dev_tool.DEBUGP("[profile][err] %s" % msg)
             return False
         else:
             return True
@@ -266,7 +266,7 @@ class Profile(dict):
 
         """
         if update is None:
-            for key, val in _DEFAULTS.iteritems():
+            for key, val in _DEFAULTS.items():
                 if key not in self:
                     self.Set(key, val)
         else:
@@ -291,7 +291,7 @@ def _FromObject(val, fmt):
     @param fmt: Format to convert to (string)
 
     """
-    if fmt == u'font' and isinstance(val, wx.Font):
+    if fmt == 'font' and isinstance(val, wx.Font):
         return "%s,%s" % (val.GetFaceName(), val.GetPointSize())
     else:
         return val
@@ -305,26 +305,26 @@ def _ToObject(index, val, fmt):
 
     """
     tmp = fmt.lower()
-    if tmp == u'font':
+    if tmp == 'font':
         fnt = val.split(',')
         rval = wx.FFont(int(fnt[1]), wx.DEFAULT, face=fnt[0])
-    elif tmp == u'bool':
+    elif tmp == 'bool':
         if isinstance(val, bool):
             rval = val
         else:
             rval = _DEFAULTS.get(index, False)
-    elif tmp == u'size_tuple':
+    elif tmp == 'size_tuple':
         if len(val) == 2 and \
            isinstance(val[0], int) and isinstance(val[1], int):
             rval = val
         else:
             rval = _DEFAULTS.get(index, wx.DefaultSize)
-    elif tmp == u'str':
-        rval = unicode(val)
-    elif tmp == u'int':
+    elif tmp == 'str':
+        rval = str(val)
+    elif tmp == 'int':
         if isinstance(val, int):
             rval = val
-        elif isinstance(val, basestring) and val.isdigit():
+        elif isinstance(val, str) and val.isdigit():
             rval = int(val)
         else:
             rval = _DEFAULTS.get(index)
@@ -347,14 +347,14 @@ def CalcVersionValue(ver_str="0.0.0"):
     """
     ver_str = ''.join([char for char in ver_str
                        if char.isdigit() or char == '.'])
-    ver_lvl = ver_str.split(u".")
+    ver_lvl = ver_str.split(".")
     if len(ver_lvl) < 3:
         return 0
 
     major = int(ver_lvl[0]) * 1000
     minor = int(ver_lvl[1])
     if len(ver_lvl[2]) <= 2:
-        ver_lvl[2] += u'0'
+        ver_lvl[2] += '0'
     micro = float(ver_lvl[2]) / 1000
     return float(major) + float(minor) + micro
 
@@ -366,7 +366,7 @@ def GetLoader():
 
     """
     cbase = util.GetUserConfigBase()
-    loader = os.path.join(cbase, u"profiles", u".loader2")
+    loader = os.path.join(cbase, "profiles", ".loader2")
     return loader
 
 def GetProfileStr():
@@ -378,7 +378,7 @@ def GetProfileStr():
     reader = util.GetFileReader(GetLoader())
     if reader == -1:
         # So return the default
-        return CONFIG['PROFILE_DIR'] + u"default.ppb"
+        return CONFIG['PROFILE_DIR'] + "default.ppb"
 
     profile = reader.readline()
     profile = profile.strip()
@@ -417,7 +417,7 @@ def ProfileVersionStr():
         value = reader.readline()
         value = value.split()
         if len(value) > 0:
-            if value[0] == u'VERSION':
+            if value[0] == 'VERSION':
                 ret_val = value[1]
                 break
         # Give up after 20 lines if version string not found
@@ -451,6 +451,6 @@ def UpdateProfileLoader():
     prof_name = os.path.basename(prof_name)
 
     writer.write(prof_name)
-    writer.write(u"\nVERSION\t" + VERSION)
+    writer.write("\nVERSION\t" + VERSION)
     writer.close()
     return 0

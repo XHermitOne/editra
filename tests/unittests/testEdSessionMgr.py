@@ -52,14 +52,14 @@ class EdSessionMgrTest(unittest.TestCase):
         """Test retrieving the list of saved sessions"""
         slist = self._mgr.GetSavedSessions()
         self.assertTrue(isinstance(slist, list))
-        self.assertEquals(len(slist), 1)
+        self.assertEqual(len(slist), 1)
 
     def testLoadSession(self):
         """Test loading a serialized session file"""
         dsession = self._mgr.DefaultSession
         rval = self._mgr.LoadSession(dsession)
         self.assertTrue(isinstance(rval, list))
-        self.assertEquals(len(rval), 8)
+        self.assertEqual(len(rval), 8)
 
     def testSaveSession(self):
         """Test saving a session file to disk"""
@@ -67,7 +67,7 @@ class EdSessionMgrTest(unittest.TestCase):
         rval = self._mgr.SaveSession('foobar', files)
         self.assertTrue(rval) # Saved successfully
         loaded = self._mgr.LoadSession('foobar')
-        self.assertEquals(len(loaded), 2)
+        self.assertEqual(len(loaded), 2)
         self.assertTrue('foo.py' in loaded)
         self.assertTrue('bar.py' in loaded)
         sessions = self._mgr.GetSavedSessions()
@@ -82,7 +82,7 @@ class EdSessionMgrTest(unittest.TestCase):
     def testSessionNameFromPath(self):
         path = common.GetTempFilePath('__default.session')
         name = self._mgr.SessionNameFromPath(path)
-        self.assertEquals(name, '__default')
+        self.assertEqual(name, '__default')
         # Test missing extension
         self.assertRaises(AssertionError,
                           self._mgr.SessionNameFromPath, path.rsplit('.', 1)[0])

@@ -25,19 +25,19 @@ __all__ = ['ChoiceDialog',]
 # Imports
 import wx
 
-import ecbasewin
+from . import ecbasewin
 
 #--------------------------------------------------------------------------#
 # Globals
-ChoiceDialogNameStr = u"ChoiceDialog"
+ChoiceDialogNameStr = "ChoiceDialog"
 
 #--------------------------------------------------------------------------#
 
 class ChoiceDialog(ecbasewin.ECBaseDlg):
     """Dialog with a wx.Choice control for showing a list of choices"""
     def __init__(self, parent, id=wx.ID_ANY,
-                 msg=u'', title=u'',
-                 choices=None, default=u'',
+                 msg='', title='',
+                 choices=None, default='',
                  pos=wx.DefaultPosition,
                  size=wx.DefaultSize,
                  style=0,
@@ -71,8 +71,8 @@ class ChoiceDialog(ecbasewin.ECBaseDlg):
 
 class ChoicePanel(wx.Panel):
     """Generic Choice dialog panel"""
-    def __init__(self, parent, msg=u'', choices=list(),
-                 default=u'', style=wx.OK|wx.CANCEL):
+    def __init__(self, parent, msg='', choices=list(),
+                 default='', style=wx.OK|wx.CANCEL):
         """Create the panel
         @param parent: Parent Window
         @keyword msg: Display message

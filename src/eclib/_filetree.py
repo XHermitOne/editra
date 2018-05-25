@@ -401,7 +401,7 @@ class FileTree(wx.TreeCtrl):
             fs_encoding = sys.getfilesystemencoding()
             for p in os.listdir(directory):
                 fullpath = joinPath(directory, p)
-                if type(fullpath) != types.UnicodeType:
+                if type(fullpath) != str:
                     fullpath = fullpath.decode(fs_encoding)
                 fappend(fullpath)
         except OSError:

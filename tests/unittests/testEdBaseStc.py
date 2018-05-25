@@ -61,7 +61,7 @@ class EdBaseStcTest(unittest.TestCase):
         fresh_stc = ed_basestc.EditraBaseStc(self.frame)
         eolchr = fresh_stc.GetEOLChar()
         fresh_stc.Destroy()
-        self.assertEquals(eolchr, os.linesep)
+        self.assertEqual(eolchr, os.linesep)
 
     def testLoadFile(self):
         """Test loading a file into the control"""

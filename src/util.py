@@ -22,17 +22,17 @@ import sys
 import mimetypes
 import encodings
 import codecs
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import wx
 
 # Editra Libraries
-import ed_glob
-import ed_event
-import ed_crypt
-import dev_tool
-import syntax.syntax as syntax
-import syntax.synglob as synglob
-import ebmlib
+from . import ed_glob
+from . import ed_event
+from . import ed_crypt
+from . import dev_tool
+from . import syntax.syntax as syntax
+from . import syntax.synglob as synglob
+from . import ebmlib
 
 _ = wx.GetTranslation
 #--------------------------------------------------------------------------#
@@ -88,7 +88,7 @@ class DropTargetFT(wx.PyDropTarget):
             mdc.SetFont(stc.GetDefaultFont())
             mdc.DrawTextList(txt, cords)
             self._tmp = wx.DragImage(mdc.GetAsBitmap())
-        except wx.PyAssertionError, msg:
+        except wx.PyAssertionError as msg:
             Log("[droptargetft][err] %s" % str(msg))
 
     def InitObjects(self):
@@ -222,7 +222,7 @@ class DropTargetFT(wx.PyDropTarget):
         if self._tmp is not None:
             try:
                 self._tmp.EndDrag()
-            except wx.PyAssertionError, msg:
+            except wx.PyAssertionError as msg:
                 Log("[droptargetft][err] %s" % str(msg))
 
     @staticmethod
@@ -247,7 +247,7 @@ class DropTargetFT(wx.PyDropTarget):
                     stc.ScrollLines(1)
                 else:
                     pass
-        except wx.PyAssertionError, msg:
+        except wx.PyAssertionError as msg:
             Log("[droptargetft][err] ScrollBuffer: %s" % msg)
 
 #---- End FileDropTarget ----#
@@ -442,15 +442,15 @@ def GetUserConfigBase():
     if cbase is None:
         cbase = wx.StandardPaths_Get().GetUserDataDir()
         if wx.Platform == '__WXGTK__':
-            if u'.config' not in cbase and not os.path.exists(cbase):
+            if '.config' not in cbase and not os.path.exists(cbase):
                 # If no existing configuration return xdg config path
                 base, cfgdir = os.path.split(cbase)
                 tmp_path = os.path.join(base, '.config')
                 if os.path.exists(tmp_path):
-                    cbase = os.path.join(tmp_path, cfgdir.lstrip(u'.'))
+                    cbase = os.path.join(tmp_path, cfgdir.lstrip('.'))
     return cbase + os.sep
 
-def HasConfigDir(loc=u""):
+def HasConfigDir(loc=""):
     """ Checks if the user has a config directory and returns True
     if the config directory exists or False if it does not.
     @return: whether config dir in question exists on an expected path
@@ -482,7 +482,7 @@ def RepairConfigState(path):
     else:
         # Need to fix some stuff up
         CreateConfigDir()
-        import profiler
+        from . import profiler
         return profiler.Profile_Get("MYPROFILE")
 
 def CreateConfigDir():
@@ -493,9 +493,9 @@ def CreateConfigDir():
     """
     #---- Resolve Paths ----#
     config_dir = GetUserConfigBase()
-    profile_dir = os.path.join(config_dir, u"profiles")
-    dest_file = os.path.join(profile_dir, u"default.ppb")
-    ext_cfg = [u"cache", u"styles", u"plugins"]
+    profile_dir = os.path.join(config_dir, "profiles")
+    dest_file = os.path.join(profile_dir, "default.ppb")
+    ext_cfg = ["cache", "styles", "plugins"]
 
     #---- Create Directories ----#
     if not os.path.exists(config_dir):
@@ -508,7 +508,7 @@ def CreateConfigDir():
         if not HasConfigDir(cfg):
             MakeConfigDir(cfg)
 
-    import profiler
+    from . import profiler
     profiler.TheProfile.LoadDefaults()
     profiler.Profile_Set("MYPROFILE", dest_file)
     profiler.TheProfile.Write(dest_file)
@@ -536,7 +536,7 @@ def ResolvConfigDir(config_dir, sys_only=False):
             return user_config + os.sep
 
     # Check if the system install path has already been resolved once before
-    if ed_glob.CONFIG['INSTALL_DIR'] != u"":
+    if ed_glob.CONFIG['INSTALL_DIR'] != "":
         tmp = os.path.join(ed_glob.CONFIG['INSTALL_DIR'], config_dir)
         tmp = os.path.normpath(tmp) + os.sep
         if os.path.exists(tmp):
@@ -555,14 +555,14 @@ def ResolvConfigDir(config_dir, sys_only=False):
         path =  path + os.sep + config_dir + os.sep
         if os.path.exists(path):
             if not ebmlib.IsUnicode(path):
-                path = unicode(path, sys.getfilesystemencoding())
+                path = str(path, sys.getfilesystemencoding())
             return path
 
     # If we get here we need to do some platform dependent lookup
     # to find everything.
     path = sys.argv[0]
     if not ebmlib.IsUnicode(path):
-        path = unicode(path, sys.getfilesystemencoding())
+        path = str(path, sys.getfilesystemencoding())
 
     # If it is a link get the real path
     if os.path.islink(path):
@@ -571,19 +571,19 @@ def ResolvConfigDir(config_dir, sys_only=False):
     # Tokenize path
     pieces = path.split(os.sep)
 
-    if wx.Platform == u'__WXMSW__':
+    if wx.Platform == '__WXMSW__':
         # On Windows the exe is in same dir as config directories
         pro_path = os.sep.join(pieces[:-1])
 
         if os.path.isabs(pro_path):
             pass
-        elif pro_path == u"":
+        elif pro_path == "":
             pro_path = os.getcwd()
             pieces = pro_path.split(os.sep)
             pro_path = os.sep.join(pieces[:-1])
         else:
             pro_path = os.path.abspath(pro_path)
-    elif wx.Platform == u'__WXMAC__':
+    elif wx.Platform == '__WXMAC__':
         # On OS X the config directories are in the applet under Resources
         stdpath = wx.StandardPaths_Get()
         pro_path = stdpath.GetResourcesDir()
@@ -592,7 +592,7 @@ def ResolvConfigDir(config_dir, sys_only=False):
         pro_path = os.sep.join(pieces[:-2])
         if pro_path.startswith(os.sep):
             pass
-        elif pro_path == u"":
+        elif pro_path == "":
             pro_path = os.getcwd()
             pieces = pro_path.split(os.sep)
             if pieces[-1] not in [ed_glob.PROG_NAME.lower(), ed_glob.PROG_NAME]:
@@ -600,14 +600,14 @@ def ResolvConfigDir(config_dir, sys_only=False):
         else:
             pro_path = os.path.abspath(pro_path)
 
-    if wx.Platform != u'__WXMAC__':
+    if wx.Platform != '__WXMAC__':
         pro_path = pro_path + os.sep + config_dir + os.sep
 
     path = os.path.normpath(pro_path) + os.sep
 
     # Make sure path is unicode
     if not ebmlib.IsUnicode(path):
-        path = unicode(path, sys.getdefaultencoding())
+        path = str(path, sys.getdefaultencoding())
 
     return path
 
@@ -620,7 +620,7 @@ def GetResources(resource):
     rec_dir = ResolvConfigDir(resource)
     if os.path.exists(rec_dir):
         rec_lst = [ rec.title() for rec in os.listdir(rec_dir)
-                    if os.path.isdir(rec_dir + rec) and rec[0] != u"." ]
+                    if os.path.isdir(rec_dir + rec) and rec[0] != "." ]
         return rec_lst
     else:
         return -1
@@ -663,7 +663,7 @@ def GetResourceFiles(resource, trim=True, get_all=False,
 
                 # Trim the last part of an extension if one exists
                 if trim:
-                    rec = ".".join(rec.split(u".")[:-1]).strip()
+                    rec = ".".join(rec.split(".")[:-1]).strip()
 
                 # Make the resource name a title if requested
                 if title and len(rec):
@@ -680,7 +680,7 @@ def GetAllEncodings():
     @return: list of strings
 
     """
-    elist = encodings.aliases.aliases.values()
+    elist = list(encodings.aliases.aliases.values())
     elist = list(set(elist))
     elist.sort()
     elist = [ enc for enc in elist if not enc.endswith('codec') ]
@@ -720,8 +720,8 @@ def GetProxyOpener(proxy_set):
                                             proxy_info['pid'])
     Log("[util][info] Formatted proxy request: %s" % \
         (auth_str.replace('%(passwd)s', '****') % proxy_info))
-    proxy = urllib2.ProxyHandler({"http" : auth_str % proxy_info})
-    opener = urllib2.build_opener(proxy, urllib2.HTTPHandler)
+    proxy = urllib.request.ProxyHandler({"http" : auth_str % proxy_info})
+    opener = urllib.request.build_opener(proxy, urllib.request.HTTPHandler)
     return opener
 
 #---- GUI helper functions ----#
@@ -734,10 +734,10 @@ def SetWindowIcon(window):
     """
     try:
         if wx.Platform == "__WXMSW__":
-            ed_icon = ed_glob.CONFIG['SYSPIX_DIR'] + u"editra.ico"
+            ed_icon = ed_glob.CONFIG['SYSPIX_DIR'] + "editra.ico"
             window.SetIcon(wx.Icon(ed_icon, wx.BITMAP_TYPE_ICO))
         else:
-            ed_icon = ed_glob.CONFIG['SYSPIX_DIR'] + u"editra.png"
+            ed_icon = ed_glob.CONFIG['SYSPIX_DIR'] + "editra.png"
             window.SetIcon(wx.Icon(ed_icon, wx.BITMAP_TYPE_PNG))
     finally:
         pass

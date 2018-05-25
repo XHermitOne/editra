@@ -40,7 +40,7 @@ __all__ = ['AuiPaneNavigator',]
 import wx
 
 # Editra Control Libray Imports
-import ctrlbox
+from . import ctrlbox
 
 #-----------------------------------------------------------------------------#
 

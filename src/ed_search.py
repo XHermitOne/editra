@@ -28,16 +28,16 @@ import unicodedata
 import wx
 
 # Local imports
-import ed_glob
-import ed_txt
-import ed_msg
-import plugin
-import iface
-from profiler import Profile_Get, Profile_Set
-import eclib
-import ebmlib
-import ed_basewin
-import ed_thread
+from . import ed_glob
+from . import ed_txt
+from . import ed_msg
+from . import plugin
+from . import iface
+from .profiler import Profile_Get, Profile_Set
+from . import eclib
+from . import ebmlib
+from . import ed_basewin
+from . import ed_thread
 
 #--------------------------------------------------------------------------#
 # Globals
@@ -69,9 +69,9 @@ class EdSearchEngine(ebmlib.SearchEngine):
         if not ebmlib.IsUnicode(match):
             match = _("DECODING ERROR")
         else:
-            match = u" " + match.lstrip()
+            match = " " + match.lstrip()
 
-        rstring = u"%(fname)s (%(lnum)d): %(match)s"
+        rstring = "%(fname)s (%(lnum)d): %(match)s"
         lnum = lnum + self._offset + 1
         return rstring % dict(fname=fname, lnum=lnum, match=match)
 
@@ -118,7 +118,7 @@ class SearchController(object):
         self._li_sel   = 0
         self._filters  = None
         self._clients = list()
-        self._engine = EdSearchEngine(u"") # For incremental searches
+        self._engine = EdSearchEngine("") # For incremental searches
 
         # Setup
         self._engine.SetResultFormatter(self._engine.FormatResult)
@@ -181,10 +181,10 @@ class SearchController(object):
                 @return: unicode
 
                 """
-                fname = u""
+                fname = ""
                 if self:
                     cbuff = self._stc()
-                    fname = getattr(cbuff, 'GetFileName', lambda: u"")()
+                    fname = getattr(cbuff, 'GetFileName', lambda: "")()
                 return os.path.dirname(fname)
 
             dlg.SetDirectoryGetter(GetCurrentDir)
@@ -296,7 +296,7 @@ class SearchController(object):
         """
         cbuff = self._stc()
         if cbuff is None:
-            return u''
+            return ''
 
         start, end = cbuff.GetSelection()
         rtext = cbuff.GetSelectedText()
@@ -304,7 +304,7 @@ class SearchController(object):
             sline = cbuff.LineFromPosition(start)
             eline = cbuff.LineFromPosition(end)
             if not multiline and (sline != eline):
-                rtext = u''
+                rtext = ''
         return rtext
 
     def GetData(self):
@@ -456,7 +456,7 @@ class SearchController(object):
             self._posinfo['found'] = start
 
             ed_msg.PostMessage(ed_msg.EDMSG_UI_SB_TXT,
-                               (ed_glob.SB_INFO, u""))
+                               (ed_glob.SB_INFO, ""))
         else:
             # try search from top again
             if isdown:
@@ -602,7 +602,7 @@ class SearchController(object):
             if match is not None:
                 try:
                     value = match.expand(replacestring)
-                except re.error, err:
+                except re.error as err:
                     msg = _("Error in regular expression expansion."
                             "The replace action cannot be completed.\n\n"
                             "Error Message: %s") % err.message
@@ -1027,7 +1027,7 @@ class EdSearchCtrl(wx.SearchCtrl):
         if m_len > self.max_menu:
             try:
                 self.rmenu.RemoveItem(m_items[-1])
-            except IndexError, msg:
+            except IndexError as msg:
                 wx.GetApp().GetLog()("[ed_search][err] menu error: %s" % str(msg))
 
     def IsMatchCase(self):
@@ -1166,7 +1166,7 @@ class EdSearchCtrl(wx.SearchCtrl):
         @param evt: SearchCtrl event
 
         """
-        self.SetValue(u"")
+        self.SetValue("")
         self.ShowCancelButton(False)
         evt.Skip()
 
@@ -1209,7 +1209,7 @@ class EdFindResults(plugin.Plugin):
 
     @property
     def __name__(self):
-        return u'Find Results'
+        return 'Find Results'
 
     def AllowMultiple(self):
         """Find Results allows multiple instances"""
@@ -1354,9 +1354,9 @@ class SearchResultScreen(ed_basewin.EdBaseCtrlBox):
         @param evt: UpdateBufferEvent
 
         """
-        start = u">>> %s" % _("Search Started")
+        start = ">>> %s" % _("Search Started")
         if self._meth is not None:
-            start += (u": " + self._meth.im_self.GetOptionsString())
+            start += (": " + self._meth.__self__.GetOptionsString())
         self._list.SetStartEndText(start + os.linesep)
         self._list.Start(250)
 
@@ -1382,7 +1382,7 @@ class SearchResultScreen(ed_basewin.EdBaseCtrlBox):
         lines = max(0, self._list.GetLineCount() - 2)
         msg = _("Search Complete: %d matching lines where found.") % lines
         msg2 = _("Files Searched: %d" % self._list.GetFileCount())
-        end = u">>> %s \t%s" % (msg, msg2)
+        end = ">>> %s \t%s" % (msg, msg2)
         self._list.SetStartEndText(end + os.linesep)
 
     def OnThemeChange(self, msg):
@@ -1453,7 +1453,7 @@ class SearchResultList(eclib.OutputBuffer):
         @param value: search result from search method
 
         """
-        if isinstance(value, basestring):
+        if isinstance(value, str):
             # Regular search result
             super(SearchResultList, self).AppendUpdate(value)
         else:

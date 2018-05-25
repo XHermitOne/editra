@@ -77,9 +77,9 @@ class PyFontPicker(wx.Panel):
 
         self._text = wx.StaticText(self)
         self._text.SetFont(default)
-        self._text.SetLabel(u"%s - %dpt" % (self._font.GetFaceName(), \
+        self._text.SetLabel("%s - %dpt" % (self._font.GetFaceName(), \
                                             self._font.GetPointSize()))
-        self._button = wx.Button(self, label=_("Set Font") + u'...')
+        self._button = wx.Button(self, label=_("Set Font") + '...')
 
         # Layout
         vsizer = wx.BoxSizer(wx.VERTICAL)
@@ -121,7 +121,7 @@ class PyFontPicker(wx.Panel):
             return
         self._font = font
         self._text.SetFont(self._font)
-        self._text.SetLabel(u"%s - %dpt" % (font.GetFaceName(), \
+        self._text.SetLabel("%s - %dpt" % (font.GetFaceName(), \
                                             font.GetPointSize()))
         self.Layout()
         evt = FontChangeEvent(edEVT_FONT_CHANGED, self.GetId(), self._font, self)

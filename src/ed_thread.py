@@ -21,13 +21,12 @@ __revision__ = "$Revision: 67397 $"
 import wx
 
 # Local Imports
-import ebmlib
+from . import ebmlib
 
 #-----------------------------------------------------------------------------#
 
-class EdThreadPool(ebmlib.ThreadPool):
+class EdThreadPool(ebmlib.ThreadPool, metaclass=ebmlib.Singleton):
     """Singleton ThreadPool"""
-    __metaclass__ = ebmlib.Singleton
     def __init__(self):
         super(EdThreadPool, self).__init__(5) # 5 Threads
 

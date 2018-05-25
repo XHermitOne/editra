@@ -25,14 +25,14 @@ import os
 import shutil
 
 # Local Imports
-import fileutil
-import fchecker
+from . import fileutil
+from . import fchecker
 
 #-----------------------------------------------------------------------------#
 
 class FileBackupMgr(object):
     """File backup creator and manager"""
-    def __init__(self, header=None, template=u"%s~"):
+    def __init__(self, header=None, template="%s~"):
         """Create a BackupManager
         @keyword header: header to id backups with (Text files only!!)
         @keyword template: template string for naming backup file with
@@ -44,7 +44,7 @@ class FileBackupMgr(object):
         self.checker = fchecker.FileTypeChecker()
         self.header = header       # Backup id header
         self.template = template   # Filename template
-        self.bkupdir = u""
+        self.bkupdir = ""
 
     def _CheckHeader(self, fname):
         """Check if the backup file has a header that matches the
@@ -60,7 +60,7 @@ class FileBackupMgr(object):
             line = handle.readline()
             handle.close()
             isok = line.startswith(self.header)
-        except Exception, msg:
+        except Exception as msg:
             isok = False
             if handle:
                 handle.close()

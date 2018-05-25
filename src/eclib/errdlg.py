@@ -59,7 +59,7 @@ import traceback
 import wx
 
 # Local Imports
-import ecbasewin
+from . import ecbasewin
 
 #----------------------------------------------------------------------------#
 # Globals
@@ -130,10 +130,10 @@ class ErrorDialog(ecbasewin.ECBaseDlg):
     ID_SEND = wx.NewId()
     ABORT = False
     REPORTER_ACTIVE = False
-    def __init__(self, parent, id=wx.ID_ANY, title=u'',
+    def __init__(self, parent, id=wx.ID_ANY, title='',
                  pos=wx.DefaultPosition, size=wx.DefaultSize,
                  style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER,
-                 name="ErrorReporterDlg", message=u''):
+                 name="ErrorReporterDlg", message=''):
         """Initialize the dialog
         @param parent: Parent Window
         @keyword id: Dialog ID
@@ -229,8 +229,8 @@ class ErrorDialog(ecbasewin.ECBaseDlg):
 
         """
         exc = traceback.format_exception(exctype, value, trace)
-        exc.insert(0, u"*** %s ***%s" % (TimeStamp(), os.linesep))
-        ftrace = u"".join(exc)
+        exc.insert(0, "*** %s ***%s" % (TimeStamp(), os.linesep))
+        ftrace = "".join(exc)
         return ftrace
 
     def SetDescriptionLabel(self, label):
@@ -304,7 +304,7 @@ class ErrorPanel(wx.Panel):
 
         # Attributes
         self.err_msg = msg
-        self.desc = wx.StaticText(self, label=u'')
+        self.desc = wx.StaticText(self, label='')
 
         # Layout
         self.__DoLayout()

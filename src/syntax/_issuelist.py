@@ -23,8 +23,8 @@ __revision__ = "$Revision: 70229 $"
 import wx.stc as stc
 
 #Local Imports
-import synglob
-import syndata
+from . import synglob
+from . import syndata
 
 #-----------------------------------------------------------------------------#
 # Style Id's
@@ -36,7 +36,7 @@ STC_ISSL_RED,
 STC_ISSL_ORANGE,
 STC_ISSL_BLUE,
 STC_ISSL_PURPLE,
-STC_ISSL_PINK) = range(8)
+STC_ISSL_PINK) = list(range(8))
 
 #-----------------------------------------------------------------------------#
 

@@ -22,7 +22,7 @@ import wx
 import wx.stc
 
 # Local Imports
-import completer
+from . import completer
 
 #--------------------------------------------------------------------------#
 # Standard Html Tags
@@ -105,7 +105,7 @@ class Completer(completer.BaseCompleter):
         @param command: command lookup is done on
 
         """
-        if command in [None, u'', u'<']:
+        if command in [None, '', '<']:
             return list()
 
         buff = self.GetBuffer()
@@ -131,8 +131,8 @@ class Completer(completer.BaseCompleter):
             return completer.CreateSymbols(taglst, completer.TYPE_ELEMENT)
 
         # Check for a self closing tag (i.e />)
-        endchk = tmp.strip().replace(u" ", u"").replace(u"\t", u"")
-        if endchk.endswith(u"/>"):
+        endchk = tmp.strip().replace(" ", "").replace("\t", "")
+        if endchk.endswith("/>"):
             return list()
 
         # Try to autocomplete a closing tag (if necessary)
@@ -152,10 +152,10 @@ class Completer(completer.BaseCompleter):
                         if len(tag) and \
                            tag not in ('img', 'br', '?php', '?xml', '?') and \
                            not tag[0] in ('!', '/'):
-                            rtag = u"</" + tag + u">"
+                            rtag = "</" + tag + ">"
 
                             if not parts[-1].endswith('>'):
-                                rtag = u">" + rtag
+                                rtag = ">" + rtag
                             return [ completer.Symbol(rtag, completer.TYPE_ELEMENT) ]
                     break
 
@@ -168,7 +168,7 @@ class Completer(completer.BaseCompleter):
 
         """
         buff = self.GetBuffer()
-        if text.strip().startswith(u"</"):
+        if text.strip().startswith("</"):
             buff.SetCurrentPos(pos) # move caret back between the tags
             # HACK: SetCurrentPos causes text to be selected
             buff.SetSelection(pos, pos)
@@ -184,9 +184,9 @@ def _FindXmlTags(text):
     """
     matches = TAG_RE.findall(text)
     if len(matches):
-        matches.append(u'!--')
+        matches.append('!--')
         matches = list(set(matches))
         matches.sort()
     else:
-        matches = [u'!--', ]
+        matches = ['!--', ]
     return matches

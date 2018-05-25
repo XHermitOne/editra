@@ -28,20 +28,20 @@ import os
 import wx, wx.stc
 
 # Local Imports
-import ed_event
-import ed_glob
-from profiler import Profile_Get as _PGET
-from syntax import syntax
-import util
-import ed_basestc
-import ed_marker
-import ed_msg
-import ed_mdlg
-import ed_txt
-from ed_keyh import KeyHandler, ViKeyHandler
-import eclib
-import ebmlib
-import ed_thread
+from . import ed_event
+from . import ed_glob
+from .profiler import Profile_Get as _PGET
+from .syntax import syntax
+from . import util
+from . import ed_basestc
+from . import ed_marker
+from . import ed_msg
+from . import ed_mdlg
+from . import ed_txt
+from .ed_keyh import KeyHandler, ViKeyHandler
+from . import eclib
+from . import ebmlib
+from . import ed_thread
 
 #-------------------------------------------------------------------------#
 # Globals
@@ -167,7 +167,7 @@ class EditraStc(ed_basestc.EditraBaseStc):
 
        #---- End Init ----#
 
-    __name__ = u"EditraTextCtrl"
+    __name__ = "EditraTextCtrl"
 
     #---- Protected Member Functions ----#
 
@@ -186,7 +186,7 @@ class EditraStc(ed_basestc.EditraBaseStc):
             if x.startswith('STC_CMD_'):
                 cmds.append(x)
         cmdvals = [getattr(wx.stc, x) for x in cmds]
-        cmds = [x.replace('STC_CMD_', u'') for x in cmds]
+        cmds = [x.replace('STC_CMD_', '') for x in cmds]
 
         # Get the commands names used in the macro
         named = list()
@@ -202,7 +202,7 @@ class EditraStc(ed_basestc.EditraBaseStc):
                     code.append(attr)
                     break
 
-        code_txt = u''
+        code_txt = ''
         for fun in code:
             code_txt += "    ctrl.%s()\n" % fun
         code_txt += "    print \"Executed\""    #TEST
@@ -228,7 +228,7 @@ class EditraStc(ed_basestc.EditraBaseStc):
                 lpos = self.GetLineEndPosition(line) - 1
                 endsSpace = False
                 if lpos > 0:
-                    endsSpace = unichr(self.GetCharAt(lpos)).isspace()
+                    endsSpace = chr(self.GetCharAt(lpos)).isspace()
 
                 if not shift_down:
                     self.LineEnd()
@@ -293,7 +293,7 @@ class EditraStc(ed_basestc.EditraBaseStc):
             if msg[0] == 2170:
                 self.AddText(msg[2])
             elif msg[0] == 2001:
-                self.AddText(self.GetEOLChar() + u' ' * (msg[1] - 1))
+                self.AddText(self.GetEOLChar() + ' ' * (msg[1] - 1))
             else:
                 self.SendMsg(msg[0], msg[1], msg[2])
         self.EndUndoAction()
@@ -382,7 +382,7 @@ class EditraStc(ed_basestc.EditraBaseStc):
             char_before = self.GetCharAt(caret_pos - 1)
 
         # check before
-        if char_before and unichr(char_before) in "[]{}()<>":
+        if char_before and chr(char_before) in "[]{}()<>":
             brace_at_caret = caret_pos - 1
 
         # check after
@@ -627,9 +627,9 @@ class EditraStc(ed_basestc.EditraBaseStc):
             return
 
         # If the file is different than the last save point make the backup.
-        suffix = _PGET('AUTOBACKUP_SUFFIX', default=u'.edbkup')
-        bkupmgr = ebmlib.FileBackupMgr(None, u"%s" + suffix)
-        path = _PGET('AUTOBACKUP_PATH', default=u"")
+        suffix = _PGET('AUTOBACKUP_SUFFIX', default='.edbkup')
+        bkupmgr = ebmlib.FileBackupMgr(None, "%s" + suffix)
+        path = _PGET('AUTOBACKUP_PATH', default="")
         if path and os.path.exists(path):
             bkupmgr.SetBackupDirectory(path)
 
@@ -642,7 +642,7 @@ class EditraStc(ed_basestc.EditraBaseStc):
                 writer = bkupmgr.GetBackupWriter(fobj)
                 try:
                     writer(text)
-                except Exception, msg:
+                except Exception as msg:
                     return
                 nevt = ed_event.StatusEvent(ed_event.edEVT_STATUS, idval,
                                             msg, ed_glob.SB_INFO)
@@ -720,7 +720,7 @@ class EditraStc(ed_basestc.EditraBaseStc):
         elif key_code in cmpl.GetAutoCompKeys():
             self.HidePopups()
 
-            uchr = unichr(key_code)
+            uchr = chr(key_code)
             command = self.GetCommandStr() + uchr
             self.PutText(uchr)
 
@@ -729,7 +729,7 @@ class EditraStc(ed_basestc.EditraBaseStc):
 
         elif key_code in cmpl.GetCallTipKeys():
             self.HidePopups()
-            uchr = unichr(key_code)
+            uchr = chr(key_code)
             command = self.GetCommandStr() + uchr
             self.PutText(uchr)
 
@@ -1062,12 +1062,12 @@ class EditraStc(ed_basestc.EditraBaseStc):
     def ExpandAll(self):
         """Expand all folded code blocks"""
         line_count = self.GetLineCount()
-        for line_num in xrange(line_count):
+        for line_num in range(line_count):
             if self.GetFoldLevel(line_num) & wx.stc.STC_FOLDLEVELHEADERFLAG:
                 if not self.GetFoldExpanded(line_num):
                     self.Expand(line_num, True)
 
-    def FindLexer(self, set_ext=u''):
+    def FindLexer(self, set_ext=''):
         """Sets Text Controls Lexer Based on File Extension
         @param set_ext: explicit extension to use in search
         @postcondition: lexer is configured for file
@@ -1192,14 +1192,14 @@ class EditraStc(ed_basestc.EditraBaseStc):
 
         """
         mixed = diff = False
-        eol_map = {u"\n" : wx.stc.STC_EOL_LF,
-                   u"\r\n" : wx.stc.STC_EOL_CRLF,
-                   u"\r" : wx.stc.STC_EOL_CR}
+        eol_map = {"\n" : wx.stc.STC_EOL_LF,
+                   "\r\n" : wx.stc.STC_EOL_CRLF,
+                   "\r" : wx.stc.STC_EOL_CR}
 
-        eol = unichr(self.GetCharAt(self.GetLineEndPosition(0)))
-        if eol == u"\r":
-            tmp = unichr(self.GetCharAt(self.GetLineEndPosition(0) + 1))
-            if tmp == u"\n":
+        eol = chr(self.GetCharAt(self.GetLineEndPosition(0)))
+        if eol == "\r":
+            tmp = chr(self.GetCharAt(self.GetLineEndPosition(0) + 1))
+            if tmp == "\n":
                 eol += tmp
 
         # Is the eol used in the document the same as what is currently set.
@@ -1211,10 +1211,10 @@ class EditraStc(ed_basestc.EditraBaseStc):
         GCAFunct = self.GetCharAt
         for line in range(self.GetLineCount() - 1):
             end = LEPFunct(line)
-            tmp = unichr(GCAFunct(end))
-            if tmp == u"\r":
-                tmp2 = unichr(GCAFunct(LEPFunct(0) + 1))
-                if tmp2 == u"\n":
+            tmp = chr(GCAFunct(end))
+            if tmp == "\r":
+                tmp2 = chr(GCAFunct(LEPFunct(0) + 1))
+                if tmp2 == "\n":
                     tmp += tmp2
             if tmp != eol:
                 mixed = True
@@ -1267,10 +1267,10 @@ class EditraStc(ed_basestc.EditraBaseStc):
         pos = self.GetCurrentPos()
         sel = self.GetSelectedText()
         if mode_id == ed_glob.ID_TAB_TO_SPACE:
-            cmd = (u"\t", u" " * tabw)
+            cmd = ("\t", " " * tabw)
             tabs = False
         else:
-            cmd = (" " * tabw, u"\t")
+            cmd = (" " * tabw, "\t")
             tabs = True
 
         if sel != wx.EmptyString:
@@ -1383,7 +1383,7 @@ class EditraStc(ed_basestc.EditraBaseStc):
         self.BeginUndoAction()
         self.SetTargetStart(start)
         self.SetTargetEnd(end)
-        self.ReplaceTarget(u'')
+        self.ReplaceTarget('')
         self.EndUndoAction()
 
     def LinesJoin(self): # pylint: disable-msg=W0221
@@ -1397,7 +1397,7 @@ class EditraStc(ed_basestc.EditraBaseStc):
         if not eline:
             eline = 1
         lines = list()
-        for line in xrange(sline, eline + 1):
+        for line in range(sline, eline + 1):
             if line != sline:
                 tmp = self.GetLine(line).strip()
             else:
@@ -1405,12 +1405,12 @@ class EditraStc(ed_basestc.EditraBaseStc):
                 if not tmp.isspace():
                     tmp = tmp.rstrip()
                 else:
-                    tmp = tmp.replace("\n", u'').replace("\r", u'')
+                    tmp = tmp.replace("\n", '').replace("\r", '')
             if len(tmp):
                 lines.append(tmp)
         self.SetTargetStart(self.PositionFromLine(sline))
         self.SetTargetEnd(self.GetLineEndPosition(eline))
-        self.ReplaceTarget(u' '.join(lines))
+        self.ReplaceTarget(' '.join(lines))
 
     def LinesJoinSelected(self):
         """Similar to LinesJoin, but operates on selection
@@ -1504,7 +1504,7 @@ class EditraStc(ed_basestc.EditraBaseStc):
         """
         self.recording = True
         evt = ed_event.StatusEvent(ed_event.edEVT_STATUS, self.GetId(),
-                                   _("Recording Macro") + u"...",
+                                   _("Recording Macro") + "...",
                                    ed_glob.SB_INFO)
         wx.PostEvent(self.TopLevelParent, evt)
         super(EditraStc, self).StartRecord()
@@ -1534,8 +1534,8 @@ class EditraStc(ed_basestc.EditraBaseStc):
 
         # Begin stripping trailing whitespace
         self.BeginUndoAction()
-        for line in xrange(self.GetLineCount()):
-            eol = u''
+        for line in range(self.GetLineCount()):
+            eol = ''
             tmp = self.GetLine(line)
 
             # Scintilla stores text in utf8 internally so we need to
@@ -1555,8 +1555,8 @@ class EditraStc(ed_basestc.EditraBaseStc):
 
                 if not eol.isspace():
                     continue
-                elif eol in u' \t':
-                    eol = u''
+                elif eol in ' \t':
+                    eol = ''
             else:
                 continue
 
@@ -1854,7 +1854,7 @@ class EditraStc(ed_basestc.EditraBaseStc):
                     self.AddBookmark(mark)
                 self.EndUndoAction()
                 self.SetSavePoint()
-            except (UnicodeDecodeError, AttributeError, OSError, IOError), msg:
+            except (UnicodeDecodeError, AttributeError, OSError, IOError) as msg:
                 self.LOG("[ed_stc][err] Failed to Reload %s" % cfile)
                 return False, msg
             else:
@@ -1920,7 +1920,7 @@ class EditraStc(ed_basestc.EditraBaseStc):
                     nchars = self.GetTextLength()
                     txt = self.GetStyledText(0, nchars)[0:nchars*2:2]
                     self.File.Write(txt)
-        except Exception, msg:
+        except Exception as msg:
             result = False
             self.LOG("[ed_stc][err] There was an error saving %s" % path)
             self.LOG("[ed_stc][err] ERROR: %s" % str(msg))

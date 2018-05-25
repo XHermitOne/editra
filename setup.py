@@ -39,8 +39,8 @@ import glob
 import shutil
 import zipfile
 import time
-import src.info as info
-import src.syntax.synextreg as synextreg # So we can get file extensions
+from . import src.info as info
+from . import src.syntax.synextreg as synextreg # So we can get file extensions
 
 # Version Check(s)
 if sys.version_info < (2, 5):
@@ -306,7 +306,7 @@ def BuildPy2Exe():
     try:
         import py2exe
     except ImportError:
-        print "\n!! You dont have py2exe installed. !!\n"
+        print("\n!! You dont have py2exe installed. !!\n")
         exit()
 
     # put package on path for py2exe
@@ -352,7 +352,7 @@ def BuildPy2Exe():
 def BuildOSXApp():
     """Build the OSX Applet"""
     # Check for setuptools and ask to download if it is not available
-    import src.extern.ez_setup as ez_setup
+    from . import src.extern.ez_setup as ez_setup
     ez_setup.use_setuptools()
     from setuptools import setup
 
@@ -379,7 +379,7 @@ def BuildOSXApp():
 #                                      'pt_BR', 'ru_RU', 'sr_SR', 'tr_TR',
 #                                      'uk_UA', 'zh_CN'],
        #      NSAppleScriptEnabled="YES",
-             NSHumanReadableCopyright = u"Copyright %s 2005-%d" % (AUTHOR, YEAR)
+             NSHumanReadableCopyright = "Copyright %s 2005-%d" % (AUTHOR, YEAR)
              )
 
     PY2APP_OPTS = dict(iconfile = ICON['Mac'],
@@ -513,7 +513,7 @@ def DoSourcePackage():
             # Only bundle eggs for the given python version
             DATA.append("plugins/*py%d.%d.egg" % sys.version_info[:2])
         except ImportError:
-            print "To build an egg setuptools must be installed"
+            print("To build an egg setuptools must be installed")
     else:
         from distutils.core import setup
 

@@ -24,10 +24,10 @@ __revision__ = "$Revision: 68798 $"
 import wx.stc as stc
 
 # Local Imports
-import synglob
-import syndata
-import _javascript
-import _vbscript
+from . import synglob
+from . import syndata
+from . import _javascript
+from . import _vbscript
 
 #-----------------------------------------------------------------------------#
 
@@ -225,7 +225,7 @@ class SyntaxData(syndata.SyntaxDataBase):
 
     def GetCommentPattern(self):
         """Returns a list of characters used to comment a block of code"""
-        return [u'<!--', u'-->']
+        return ['<!--', '-->']
 
 #-----------------------------------------------------------------------------#
 
@@ -236,7 +236,7 @@ def AutoIndenter(estc, pos, ichar):
     @param ichar: Indentation character
 
     """
-    rtxt = u''
+    rtxt = ''
     line = estc.GetCurrentLine()
     spos = estc.PositionFromLine(line)
     text = estc.GetTextRange(spos, pos)
@@ -253,7 +253,7 @@ def AutoIndenter(estc, pos, ichar):
         estc.AddText(eolch)
         return
 
-    if ichar == u"\t":
+    if ichar == "\t":
         tabw = estc.GetTabWidth()
     else:
         tabw = estc.GetIndent()
@@ -261,23 +261,23 @@ def AutoIndenter(estc, pos, ichar):
     # Standard indent to match previous line
     indent = estc.GetLineIndentation(line)
     levels = indent / tabw
-    end_spaces = ((indent - (tabw * levels)) * u" ")
+    end_spaces = ((indent - (tabw * levels)) * " ")
     rtxt = eolch + (ichar * levels) + end_spaces
 
     # Check if we need some 'special' indentation
     tmp = text.rstrip()
-    if tmp.endswith(u">"):
+    if tmp.endswith(">"):
         # At a tag check for if we need extra indentation
-        tagstart = tmp.rfind(u"<")
+        tagstart = tmp.rfind("<")
         if tagstart >= 0:
             tagval = tmp[tagstart:]
-            if not tagval.startswith(u"</") and \
-               not tagval.endswith(u"/>") and \
-               not tagval.endswith(u"?>"):
+            if not tagval.startswith("</") and \
+               not tagval.endswith("/>") and \
+               not tagval.endswith("?>"):
                 # Cursor is after an opening tag so we need to indent more
                 # First match to the starting tag
                 levels = (tagstart / tabw) # Add an extra level
-                end_spaces = ((tagstart - (tabw * levels)) * u" ")
+                end_spaces = ((tagstart - (tabw * levels)) * " ")
                 rtxt = eolch + (ichar * (levels+1)) + end_spaces
 
     # Put text in the buffer

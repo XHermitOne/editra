@@ -13,7 +13,7 @@
 #----------------------------------------------------------------------
 
 import base64
-import cStringIO
+import io
 import wx
 
 class PyEmbeddedImage(object):
@@ -53,7 +53,7 @@ class PyEmbeddedImage(object):
         data = self.data
         if self.isBase64:
             data = base64.b64decode(self.data)
-        stream = cStringIO.StringIO(data)
+        stream = io.StringIO(data)
         return wx.ImageFromStream(stream)
 
     # added for backwards compatibility

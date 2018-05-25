@@ -22,17 +22,17 @@ import sys
 import re
 import traceback
 import time
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import webbrowser
 import codecs
 import locale
 import wx
 
 # Editra Libraries
-import ed_glob
-import ed_msg
-import eclib
-from ebmlib import IsUnicode, LogFile
+from . import ed_glob
+from . import ed_msg
+from . import eclib
+from .ebmlib import IsUnicode, LogFile
 
 #-----------------------------------------------------------------------------#
 # Globals
@@ -96,7 +96,7 @@ def DEBUGP(statement, *args):
     # Cant print to stdio if using pythonw
     msg_type = msg.Type
     if ed_glob.DEBUG:
-        mstr = unicode(msg)
+        mstr = str(msg)
         mstr = mstr.encode('utf-8', 'replace')
         if not PYTHONW:
             print(mstr)
@@ -136,16 +136,16 @@ class LogMsg(object):
     being expired.
 
     """
-    def __init__(self, msg, msrc=u"unknown", level=u"info"):
+    def __init__(self, msg, msrc="unknown", level="info"):
         """Create a LogMsg object
         @param msg: the log message string
         @keyword msrc: Source of message
         @keyword level: Priority of the message
 
         """
-        assert isinstance(msg, basestring)
-        assert isinstance(msrc, basestring)
-        assert isinstance(level, basestring)
+        assert isinstance(msg, str)
+        assert isinstance(msrc, str)
+        assert isinstance(level, str)
         super(LogMsg, self).__init__()
 
         # Attributes
@@ -181,9 +181,9 @@ class LogMsg(object):
 
     def __str__(self):
         """Returns a nice formatted string version of the message"""
-        s_lst = [u"[%s][%s][%s]%s" % (self.ClockTime, self.Origin,
+        s_lst = ["[%s][%s][%s]%s" % (self.ClockTime, self.Origin,
                                       self.Type, msg.rstrip()) 
-                 for msg in self.Value.split(u"\n")
+                 for msg in self.Value.split("\n")
                  if len(msg.strip())]
         try:
             sys_enc = sys.getfilesystemencoding()
@@ -199,11 +199,11 @@ class LogMsg(object):
 
     def __unicode__(self):
         """Convert to unicode"""
-        rval = u""
+        rval = ""
         try:
             sval = str(self)
             rval = sval.decode(sys.getfilesystemencoding(), 'replace')
-        except UnicodeDecodeError, msg:
+        except UnicodeDecodeError as msg:
             pass
         return rval
 
@@ -211,7 +211,7 @@ class LogMsg(object):
     def ClockTime(self):
         """Formatted timestring of the messages timestamp"""
         ltime = time.localtime(self._msg['tstamp'])
-        tstamp = u"%s:%s:%s" % (str(ltime[3]).zfill(2),
+        tstamp = "%s:%s:%s" % (str(ltime[3]).zfill(2),
                                 str(ltime[4]).zfill(2),
                                 str(ltime[5]).zfill(2))
         return tstamp
@@ -251,7 +251,7 @@ class EdLogFile(LogFile):
     def PurgeOldLogs(self, days):
         try:
             super(EdLogFile, self).PurgeOldLogs(days)
-        except OSError, msg:
+        except OSError as msg:
             DEBUGP("[dev_tool][err] PurgeOldLogs: %s" % msg)
 
 #-----------------------------------------------------------------------------#
@@ -269,7 +269,7 @@ def DecodeString(string, encoding=None):
     if not IsUnicode(string):
         try:
             rtxt = codecs.getdecoder(encoding)(string)[0]
-        except Exception, msg:
+        except Exception as msg:
             rtxt = string
         return rtxt
     else:
@@ -306,7 +306,7 @@ class EdErrorDialog(eclib.ErrorDialog):
         msg = "mailto:%s?subject=Error Report&body=%s"
         addr = "bugs@%s" % (ed_glob.HOME_PAGE.replace("http://", '', 1))
         if wx.Platform != '__WXMAC__':
-            body = urllib2.quote(self.err_msg)
+            body = urllib.parse.quote(self.err_msg)
         else:
             body = self.err_msg
         msg = msg % (addr, body)
@@ -324,11 +324,11 @@ def ExceptionHook(exctype, value, trace):
     """
     # Format the traceback
     exc = traceback.format_exception(exctype, value, trace)
-    exc.insert(0, u"*** %s ***%s" % (eclib.TimeStamp(), os.linesep))
-    ftrace = u"".join(exc)
+    exc.insert(0, "*** %s ***%s" % (eclib.TimeStamp(), os.linesep))
+    ftrace = "".join(exc)
 
     # Ensure that error gets raised to console as well
-    print ftrace
+    print(ftrace)
 
     # If abort has been set and we get here again do a more forcefull shutdown
     if EdErrorDialog.ABORT:

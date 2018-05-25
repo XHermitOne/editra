@@ -25,8 +25,8 @@ import wx
 import wx.stc as stc
 
 #Local Imports
-import synglob
-import syndata
+from . import synglob
+from . import syndata
 
 #-----------------------------------------------------------------------------#
 # Style Id's
@@ -37,7 +37,7 @@ STC_S_NUMBER, \
 STC_S_STRING, \
 STC_S_STRINGEOL, \
 STC_S_OPERATOR, \
-STC_S_KEYWORD = range(7)
+STC_S_KEYWORD = list(range(7))
 
 #-----------------------------------------------------------------------------#
 
@@ -186,7 +186,7 @@ class SyntaxData(syndata.SyntaxDataBase):
 
     def GetCommentPattern(self):
         """Returns a list of characters used to comment a block of code """
-        return [u"#",]
+        return ["#",]
 
 #-----------------------------------------------------------------------------#
 

@@ -119,10 +119,10 @@ def HexToRGB(hex_str):
 
     """
     hexval = hex_str
-    if hexval[0] == u"#":
+    if hexval[0] == "#":
         hexval = hexval[1:]
     ldiff = 6 - len(hexval)
-    hexval += ldiff * u"0"
+    hexval += ldiff * "0"
     # Convert hex values to integer
     red = int(hexval[0:2], 16)
     green = int(hexval[2:4], 16)

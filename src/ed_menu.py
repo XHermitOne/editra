@@ -25,12 +25,12 @@ import os
 import wx
 
 # Editra Libraries
-import ed_glob
-import ed_msg
-import profiler
-import util
-from syntax import syntax
-from syntax import synglob
+from . import ed_glob
+from . import ed_msg
+from . import profiler
+from . import util
+from .syntax import syntax
+from .syntax import synglob
 
 #--------------------------------------------------------------------------#
 # Globals
@@ -50,7 +50,7 @@ class EdMenu(wx.Menu):
         """
         super(EdMenu, self).__init__(title, style)
 
-    def Append(self, id_, text=u'', helpstr=u'', \
+    def Append(self, id_, text='', helpstr='', \
                kind=wx.ITEM_NORMAL, use_bmp=True):
         """Append a MenuItem
         @param id_: New MenuItem ID
@@ -65,7 +65,7 @@ class EdMenu(wx.Menu):
         self.AppendItem(item, use_bmp)
         return item
 
-    def AppendEx(self, id_, text=u'', helpstr=u'',
+    def AppendEx(self, id_, text='', helpstr='',
                  kind=wx.ITEM_NORMAL, use_bmp=True):
         """Like L{Append} but automatically applies keybindings to text
         based on item id.
@@ -87,7 +87,7 @@ class EdMenu(wx.Menu):
             self.SetItemBitmap(item)
         super(EdMenu, self).AppendItem(item)
 
-    def Insert(self, pos, id_, text=u'', helpstr=u'', \
+    def Insert(self, pos, id_, text='', helpstr='', \
                kind=wx.ITEM_NORMAL, use_bmp=True):
         """Insert an item at position and attach a bitmap
         if one is available.
@@ -105,7 +105,7 @@ class EdMenu(wx.Menu):
             self.SetItemBitmap(item)
         return item
 
-    def InsertAfter(self, item_id, id_, label=u'', helpstr=u'',
+    def InsertAfter(self, item_id, id_, label='', helpstr='',
                     kind=wx.ITEM_NORMAL, use_bmp=True):
         """Inserts the given item after the specified item id in
         the menu. If the id cannot be found then the item will appended
@@ -121,7 +121,7 @@ class EdMenu(wx.Menu):
 
         """
         pos = None
-        for item in xrange(self.GetMenuItemCount()):
+        for item in range(self.GetMenuItemCount()):
             mitem = self.FindItemByPosition(item)
             if mitem.GetId() == item_id:
                 pos = item
@@ -132,7 +132,7 @@ class EdMenu(wx.Menu):
             mitem = self.Append(id_, label, helpstr, kind, use_bmp)
         return mitem
 
-    def InsertBefore(self, item_id, id_, label=u'', helpstr=u'',
+    def InsertBefore(self, item_id, id_, label='', helpstr='',
                     kind=wx.ITEM_NORMAL, use_bmp=True):
         """Inserts the given item before the specified item id in
         the menu. If the id cannot be found then the item will appended
@@ -148,7 +148,7 @@ class EdMenu(wx.Menu):
 
         """
         pos = None
-        for item in xrange(self.GetMenuItemCount()):
+        for item in range(self.GetMenuItemCount()):
             mitem = self.FindItemByPosition(item)
             if mitem.GetId() == item_id:
                 pos = item
@@ -159,7 +159,7 @@ class EdMenu(wx.Menu):
             mitem = self.Append(id_, label, helpstr, kind, use_bmp)
         return mitem
 
-    def InsertAlpha(self, id_, label=u'', helpstr=u'',
+    def InsertAlpha(self, id_, label='', helpstr='',
                     kind=wx.ITEM_NORMAL, after=0, use_bmp=True):
         """Attempts to insert the new menuitem into the menu
         alphabetically. The optional parameter 'after' is used
@@ -252,12 +252,12 @@ class KeyBinder(object):
 
         """
         rbind = self.GetRawBinding(item_id)
-        shortcut = u''
+        shortcut = ''
         if rbind is not None:
-            shortcut = u"+".join(rbind)
+            shortcut = "+".join(rbind)
             if len(shortcut):
-                shortcut = u"\t" + shortcut
-        return unicode(shortcut)
+                shortcut = "\t" + shortcut
+        return str(shortcut)
 
     @classmethod
     def GetCurrentProfile(cls):
@@ -283,12 +283,12 @@ class KeyBinder(object):
         @return: list of strings
 
         """
-        recs = util.GetResourceFiles(u'cache', trim=True, get_all=False,
+        recs = util.GetResourceFiles('cache', trim=True, get_all=False,
                                      suffix='.ekeys', title=False)
         if recs == -1:
             recs = list()
 
-        tmp = util.GetResourceFiles(u'ekeys', True, True, '.ekeys', False)
+        tmp = util.GetResourceFiles('ekeys', True, True, '.ekeys', False)
         if tmp != -1:
             recs.extend(tmp)
 
@@ -316,10 +316,10 @@ class KeyBinder(object):
         if rname is None:
             rname = pname
 
-        kprof = u"%s%s.ekeys" % (ed_glob.CONFIG['CACHE_DIR'], rname)
+        kprof = "%s%s.ekeys" % (ed_glob.CONFIG['CACHE_DIR'], rname)
         if not os.path.exists(kprof):
             # Must be a system supplied keyprofile
-            rname = u"%s%s.ekeys" % (ed_glob.CONFIG['KEYPROF_DIR'], rname)
+            rname = "%s%s.ekeys" % (ed_glob.CONFIG['KEYPROF_DIR'], rname)
             if not os.path.exists(rname):
                 # Doesn't exist at syspath either so instead assume it is a new
                 # custom user defined key profile.
@@ -349,7 +349,7 @@ class KeyBinder(object):
 
         """
         menu_id = -1
-        for key, val in cls.keyprofile.iteritems():
+        for key, val in cls.keyprofile.items():
             if val == keyb:
                 menu_id = key
                 break
@@ -389,25 +389,25 @@ class KeyBinder(object):
             if reader != -1:
                 util.Log("[keybinder][info] Loading KeyProfile: %s" % path)
                 for line in reader:
-                    parts = line.split(u'=', 1)
+                    parts = line.split('=', 1)
                     # Check that the line was formatted properly
                     if len(parts) == 2:
                         # Try to find the ID value
                         item_id = _GetValueFromStr(parts[0])
                         if item_id is not None:
                             tmp = [ part.strip()
-                                    for part in parts[1].split(u'+')
+                                    for part in parts[1].split('+')
                                     if len(part.strip()) ]
 
                             # Do some checking if the binding is valid
                             nctrl = len([key for key in tmp
-                                         if key not in (u'Ctrl', u'Alt', u'Shift')])
+                                         if key not in ('Ctrl', 'Alt', 'Shift')])
                             if nctrl:
-                                if parts[1].strip().endswith(u'++'):
-                                    tmp.append(u'+')
+                                if parts[1].strip().endswith('++'):
+                                    tmp.append('+')
                                 kb = tuple(tmp)
-                                if kb in keydict.values():
-                                    for mid, b in keydict.iteritems():
+                                if kb in list(keydict.values()):
+                                    for mid, b in keydict.items():
                                         if kb == b:
                                             del keydict[mid]
                                             break
@@ -438,8 +438,8 @@ class KeyBinder(object):
             writer = util.GetFileWriter(ppath)
             if writer != -1:
                 itemlst = list()
-                for item in KeyBinder.keyprofile.keys():
-                    itemlst.append(u"%s=%s%s" % (_FindStringRep(item),
+                for item in list(KeyBinder.keyprofile.keys()):
+                    itemlst.append("%s=%s%s" % (_FindStringRep(item),
                                                 self.GetBinding(item).lstrip(),
                                                 os.linesep))
                 writer.writelines(sorted(itemlst))
@@ -455,8 +455,8 @@ class KeyBinder(object):
         @param keys: string or list of key strings ['Ctrl', 'S']
 
         """
-        if isinstance(keys, basestring):
-            keys = [ key.strip() for key in keys.split(u'+')
+        if isinstance(keys, str):
+            keys = [ key.strip() for key in keys.split('+')
                      if len(key.strip())]
             keys = tuple(keys)
 
@@ -840,10 +840,10 @@ class EdMenuBar(wx.MenuBar):
         lineformat = self._menus['lineformat'] = EdMenu()
         lineformat.AppendEx(ed_glob.ID_EOL_MAC, _("Old Macintosh (\\r)"),
                           _("Format all EOL characters to %s Mode") % \
-                          _(u"Old Macintosh (\\r)"), wx.ITEM_CHECK)
+                          _("Old Macintosh (\\r)"), wx.ITEM_CHECK)
         lineformat.AppendEx(ed_glob.ID_EOL_UNIX, _("Unix (\\n)"),
                           _("Format all EOL characters to %s Mode") % \
-                          _(u"Unix (\\n)"), wx.ITEM_CHECK)
+                          _("Unix (\\n)"), wx.ITEM_CHECK)
         lineformat.AppendEx(ed_glob.ID_EOL_WIN, _("Windows (\\r\\n)"),
                           _("Format all EOL characters to %s Mode") % \
                           _("Windows (\\r\\n)"), wx.ITEM_CHECK)
@@ -914,7 +914,7 @@ class EdMenuBar(wx.MenuBar):
         """
         helpmenu = EdMenu()
         helpmenu.AppendEx(ed_glob.ID_ABOUT, _("&About..."),
-                        _("About") + u"...")
+                        _("About") + "...")
         helpmenu.AppendEx(ed_glob.ID_HOMEPAGE, _("Project Homepage..."),
                         _("Visit the project homepage %s") % ed_glob.HOME_PAGE)
         helpmenu.AppendEx(ed_glob.ID_DOCUMENTATION,
@@ -999,16 +999,16 @@ class EdMenuBar(wx.MenuBar):
                 empty_binding = not len(binding)
                 if not empty_binding:
                     # Verify binding and clear invalid ones from binder
-                    tmp = [key.title() for key in binding.strip().split(u'+')]
+                    tmp = [key.title() for key in binding.strip().split('+')]
                     nctrl = len([key for key in tmp
-                                if key not in (u'Ctrl', u'Alt', u'Shift')])
+                                if key not in ('Ctrl', 'Alt', 'Shift')])
                     if len(tmp) > 3 or not nctrl:
-                        EdMenuBar.keybinder.SetBinding(item_id, u'')
+                        EdMenuBar.keybinder.SetBinding(item_id, '')
                         continue
 
                     # Reset the binding in the binder to ensure it is
                     # correctly formatted.
-                    binding = u"\t" + u"+".join(tmp)
+                    binding = "\t" + "+".join(tmp)
                     EdMenuBar.keybinder.SetBinding(item_id, binding)
 
                 clbl = item.GetText()
@@ -1050,90 +1050,90 @@ class EdMenuBar(wx.MenuBar):
 #---- Private Objects/Functions ----#
 
 _DEFAULT_BINDING = { # File Menu
-                     ed_glob.ID_NEW : (u"Ctrl", u"N"),
-                     ed_glob.ID_NEW_WINDOW : (u"Ctrl", u"Shift", u"N"),
-                     ed_glob.ID_OPEN : (u"Ctrl", u"O"),
-                     ed_glob.ID_CLOSE : (u"Ctrl", u"W"),
-                     ed_glob.ID_CLOSE_WINDOW : (u"Ctrl", u"Shift", u"W"),
-                     ed_glob.ID_SAVE : (u"Ctrl", u"S"),
-                     ed_glob.ID_SAVEAS : (u"Ctrl", u"Shift", u"S"),
-                     ed_glob.ID_PRINT_SU : (u"Ctrl", u"Shift", u"P"),
-                     ed_glob.ID_PRINT : (u"Ctrl", u"P"),
-                     ed_glob.ID_EXIT : (u"Ctrl", u"Q"),
+                     ed_glob.ID_NEW : ("Ctrl", "N"),
+                     ed_glob.ID_NEW_WINDOW : ("Ctrl", "Shift", "N"),
+                     ed_glob.ID_OPEN : ("Ctrl", "O"),
+                     ed_glob.ID_CLOSE : ("Ctrl", "W"),
+                     ed_glob.ID_CLOSE_WINDOW : ("Ctrl", "Shift", "W"),
+                     ed_glob.ID_SAVE : ("Ctrl", "S"),
+                     ed_glob.ID_SAVEAS : ("Ctrl", "Shift", "S"),
+                     ed_glob.ID_PRINT_SU : ("Ctrl", "Shift", "P"),
+                     ed_glob.ID_PRINT : ("Ctrl", "P"),
+                     ed_glob.ID_EXIT : ("Ctrl", "Q"),
 
                      # Edit Menu
-                     ed_glob.ID_UNDO : (u"Ctrl", u"Z"),
-                     ed_glob.ID_REDO : (u"Ctrl", u"Shift", u"Z"),
-                     ed_glob.ID_CUT : (u"Ctrl", u"X"),
-                     ed_glob.ID_COPY : (u"Ctrl", u"C"),
-                     ed_glob.ID_PASTE : (u"Ctrl", u"V"),
-                     ed_glob.ID_PASTE_AFTER : (u"Ctrl", u"Shift", u"V"),
-                     ed_glob.ID_CYCLE_CLIPBOARD : (u"Ctrl", u"I"),
-                     ed_glob.ID_SELECTALL : (u"Ctrl", u"A"),
-                     ed_glob.ID_COLUMN_MODE : (u"Ctrl", u"Shift", u"|"),
-                     ed_glob.ID_LINE_AFTER : (u"Ctrl", u"L"),
-                     ed_glob.ID_LINE_BEFORE : (u"Ctrl", u"Shift", u"L"),
-                     ed_glob.ID_CUT_LINE : (u"Ctrl", u"D"),
-                     ed_glob.ID_DELETE_LINE : (u"Ctrl", u"Shift", "D"),
-                     ed_glob.ID_COPY_LINE : (u"Ctrl", u"Y"),
-                     ed_glob.ID_DUP_LINE : (u"Ctrl", u"Shift", u"C"),
-                     ed_glob.ID_JOIN_LINES : (u"Ctrl", u"J"),
-                     ed_glob.ID_TRANSPOSE : (u"Ctrl", u"T"),
-                     ed_glob.ID_LINE_MOVE_UP : (u"Ctrl", u"Shift", u"Up"),
-                     ed_glob.ID_LINE_MOVE_DOWN : (u"Ctrl", u"Shift", u"Down"),
-                     ed_glob.ID_ADD_BM : (u"Ctrl", u"B"),
-                     ed_glob.ID_SHOW_AUTOCOMP : (u"Ctrl", u"Space"),
-                     ed_glob.ID_SHOW_CALLTIP : (u"Ctrl", u"9"),
-                     ed_glob.ID_FIND : (u"Ctrl", u"Shift", u"F"),
-                     ed_glob.ID_FIND_PREVIOUS : (u"Shift", u"F3"),
-                     ed_glob.ID_FIND_NEXT : (u"F3",),
-                     ed_glob.ID_FIND_REPLACE : (u"Ctrl", u"R"),
-                     ed_glob.ID_QUICK_FIND : (u"Ctrl", u"F"),
-                     ed_glob.ID_FIND_SELECTED : (u"Ctrl", u"F3"),
+                     ed_glob.ID_UNDO : ("Ctrl", "Z"),
+                     ed_glob.ID_REDO : ("Ctrl", "Shift", "Z"),
+                     ed_glob.ID_CUT : ("Ctrl", "X"),
+                     ed_glob.ID_COPY : ("Ctrl", "C"),
+                     ed_glob.ID_PASTE : ("Ctrl", "V"),
+                     ed_glob.ID_PASTE_AFTER : ("Ctrl", "Shift", "V"),
+                     ed_glob.ID_CYCLE_CLIPBOARD : ("Ctrl", "I"),
+                     ed_glob.ID_SELECTALL : ("Ctrl", "A"),
+                     ed_glob.ID_COLUMN_MODE : ("Ctrl", "Shift", "|"),
+                     ed_glob.ID_LINE_AFTER : ("Ctrl", "L"),
+                     ed_glob.ID_LINE_BEFORE : ("Ctrl", "Shift", "L"),
+                     ed_glob.ID_CUT_LINE : ("Ctrl", "D"),
+                     ed_glob.ID_DELETE_LINE : ("Ctrl", "Shift", "D"),
+                     ed_glob.ID_COPY_LINE : ("Ctrl", "Y"),
+                     ed_glob.ID_DUP_LINE : ("Ctrl", "Shift", "C"),
+                     ed_glob.ID_JOIN_LINES : ("Ctrl", "J"),
+                     ed_glob.ID_TRANSPOSE : ("Ctrl", "T"),
+                     ed_glob.ID_LINE_MOVE_UP : ("Ctrl", "Shift", "Up"),
+                     ed_glob.ID_LINE_MOVE_DOWN : ("Ctrl", "Shift", "Down"),
+                     ed_glob.ID_ADD_BM : ("Ctrl", "B"),
+                     ed_glob.ID_SHOW_AUTOCOMP : ("Ctrl", "Space"),
+                     ed_glob.ID_SHOW_CALLTIP : ("Ctrl", "9"),
+                     ed_glob.ID_FIND : ("Ctrl", "Shift", "F"),
+                     ed_glob.ID_FIND_PREVIOUS : ("Shift", "F3"),
+                     ed_glob.ID_FIND_NEXT : ("F3",),
+                     ed_glob.ID_FIND_REPLACE : ("Ctrl", "R"),
+                     ed_glob.ID_QUICK_FIND : ("Ctrl", "F"),
+                     ed_glob.ID_FIND_SELECTED : ("Ctrl", "F3"),
 
                      # View Menu
-                     ed_glob.ID_ZOOM_IN : (u"Ctrl", u"+"),
-                     ed_glob.ID_ZOOM_OUT : (u"Ctrl", u"-"),
-                     ed_glob.ID_ZOOM_NORMAL : (u"Ctrl", u"0"),
-                     ed_glob.ID_GOTO_LINE : (u"Ctrl", u"G"),
-                     ed_glob.ID_GOTO_MBRACE : (u"Ctrl", u"Shift", u"B"),
-                     ed_glob.ID_TOGGLE_FOLD : (u"Ctrl", u"Shift", u"T"),
-                     ed_glob.ID_NEXT_POS : (u"Ctrl", u"Shift", u">"),
-                     ed_glob.ID_PRE_POS : (u"Ctrl", u"Shift", u"<"),
-                     ed_glob.ID_NEXT_MARK : (u"Alt", u"Right"), # Win/Linux
-                     ed_glob.ID_PRE_MARK : (u"Alt", u"Left"), # Win/Linux
-                     ed_glob.ID_SHOW_SHELF : (u"Ctrl", u"Alt", u"S"),
-                     ed_glob.ID_PANELIST : (u"Alt", u"1"), # Win/Linux
-                     ed_glob.ID_MAXIMIZE_EDITOR : (u"Ctrl", u"M"),
+                     ed_glob.ID_ZOOM_IN : ("Ctrl", "+"),
+                     ed_glob.ID_ZOOM_OUT : ("Ctrl", "-"),
+                     ed_glob.ID_ZOOM_NORMAL : ("Ctrl", "0"),
+                     ed_glob.ID_GOTO_LINE : ("Ctrl", "G"),
+                     ed_glob.ID_GOTO_MBRACE : ("Ctrl", "Shift", "B"),
+                     ed_glob.ID_TOGGLE_FOLD : ("Ctrl", "Shift", "T"),
+                     ed_glob.ID_NEXT_POS : ("Ctrl", "Shift", ">"),
+                     ed_glob.ID_PRE_POS : ("Ctrl", "Shift", "<"),
+                     ed_glob.ID_NEXT_MARK : ("Alt", "Right"), # Win/Linux
+                     ed_glob.ID_PRE_MARK : ("Alt", "Left"), # Win/Linux
+                     ed_glob.ID_SHOW_SHELF : ("Ctrl", "Alt", "S"),
+                     ed_glob.ID_PANELIST : ("Alt", "1"), # Win/Linux
+                     ed_glob.ID_MAXIMIZE_EDITOR : ("Ctrl", "M"),
 
                      # Format Menu
-                     ed_glob.ID_TOGGLECOMMENT : (u"Ctrl", u"1"),
-                     ed_glob.ID_INDENT : (u"Tab",),
-                     ed_glob.ID_UNINDENT : (u"Shift", u"Tab"),
-                     ed_glob.ID_USE_SOFTTABS : (u"Ctrl", u"Shift", u"I"),
+                     ed_glob.ID_TOGGLECOMMENT : ("Ctrl", "1"),
+                     ed_glob.ID_INDENT : ("Tab",),
+                     ed_glob.ID_UNINDENT : ("Shift", "Tab"),
+                     ed_glob.ID_USE_SOFTTABS : ("Ctrl", "Shift", "I"),
 
                      # Tools Menu
-                     ed_glob.ID_COMMAND : (u"Ctrl", u"E"),
-                     ed_glob.ID_SESSION_BAR : (u"Ctrl", u"K"),
-                     ed_glob.ID_RUN_LAUNCH : (u"F5",),
-                     ed_glob.ID_LAUNCH_LAST : (u"Shift", u"F5")
+                     ed_glob.ID_COMMAND : ("Ctrl", "E"),
+                     ed_glob.ID_SESSION_BAR : ("Ctrl", "K"),
+                     ed_glob.ID_RUN_LAUNCH : ("F5",),
+                     ed_glob.ID_LAUNCH_LAST : ("Shift", "F5")
                      }
 
 # Set some platform specific keybindings
 if wx.Platform == '__WXMAC__':
-    _DEFAULT_BINDING[ed_glob.ID_NEXT_MARK] = (u"Ctrl", u"Down")
-    _DEFAULT_BINDING[ed_glob.ID_PRE_MARK] = (u"Ctrl", u"Up")
-    _DEFAULT_BINDING[ed_glob.ID_FIND_PREVIOUS] = (u"Ctrl", u"Shift", u"G")
-    _DEFAULT_BINDING[ed_glob.ID_FIND_NEXT] = (u"Ctrl", u"G")
-    _DEFAULT_BINDING[ed_glob.ID_GOTO_LINE] = (u"Ctrl", u"Shift", u"E")
-    _DEFAULT_BINDING[ed_glob.ID_PANELIST] = (u"Alt", u"Tab")
-    _DEFAULT_BINDING[ed_glob.ID_MAXIMIZE_EDITOR] = (u"Alt", u"M")
-    _DEFAULT_BINDING[ed_glob.ID_FIND_SELECTED] = (u"Ctrl", u"3")
+    _DEFAULT_BINDING[ed_glob.ID_NEXT_MARK] = ("Ctrl", "Down")
+    _DEFAULT_BINDING[ed_glob.ID_PRE_MARK] = ("Ctrl", "Up")
+    _DEFAULT_BINDING[ed_glob.ID_FIND_PREVIOUS] = ("Ctrl", "Shift", "G")
+    _DEFAULT_BINDING[ed_glob.ID_FIND_NEXT] = ("Ctrl", "G")
+    _DEFAULT_BINDING[ed_glob.ID_GOTO_LINE] = ("Ctrl", "Shift", "E")
+    _DEFAULT_BINDING[ed_glob.ID_PANELIST] = ("Alt", "Tab")
+    _DEFAULT_BINDING[ed_glob.ID_MAXIMIZE_EDITOR] = ("Alt", "M")
+    _DEFAULT_BINDING[ed_glob.ID_FIND_SELECTED] = ("Ctrl", "3")
 elif wx.Platform == '__WXMSW__':
      # FIXME: On Windows if Tab is bound to a menu item it is no longer
      #        usable elsewhere such as in the stc control. On Mac/Gtk there
      #        are not problems with it.
-    _DEFAULT_BINDING[ed_glob.ID_INDENT] = (u"",)
+    _DEFAULT_BINDING[ed_glob.ID_INDENT] = ("",)
 else:
     pass
 

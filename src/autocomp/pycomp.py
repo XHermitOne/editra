@@ -31,10 +31,10 @@ from token import NAME, DEDENT, STRING
 import wx
 from wx.py import introspect
 
-from StringIO import StringIO
+from io import StringIO
 
 # Local imports
-import completer
+from . import completer
 
 #--------------------------------------------------------------------------#
 
@@ -72,7 +72,7 @@ class Completer(completer.BaseCompleter):
         """
         if command is None or (len(command) and command[0].isdigit()):
             if calltip:
-                return u""
+                return ""
             return list()
 
         try:
@@ -96,13 +96,13 @@ class Completer(completer.BaseCompleter):
 
             # Dump any other modules that got brought in during eval
             # so that they get properly updated on next pass through.
-            nsnapshot = sys.modules.keys()
+            nsnapshot = list(sys.modules.keys())
             nimport = list(set(nsnapshot).difference(set(snapshot)))
             for k in nimport:
                 del sys.modules[k]
 
             if calltip:
-                return cmpl.get_completions(command + u'(', u'', calltip)
+                return cmpl.get_completions(command + '(', '', calltip)
             else:
                 # Get Auto-completion List
                 complst = cmpl.get_completions(command)
@@ -113,17 +113,17 @@ class Completer(completer.BaseCompleter):
                         "attribute" : completer.TYPE_ATTRIBUTE,
                         "property" : completer.TYPE_PROPERTY}
                 for sig in complst:
-                    word = sig['word'].rstrip(u'(.')
+                    word = sig['word'].rstrip('(.')
                     tval = tmap.get(sig['type'], completer.TYPE_UNKNOWN)
                     sigs.append(completer.Symbol(word, tval))
                 sigs.sort(key=lambda x: x.Name.upper())
                 return sigs
 
-        except BaseException, msg:
+        except BaseException as msg:
             self._log("[pycomp][err] _GetCompletionInfo: %s, %s" % \
                       (sys.exc_info()[0], sys.exc_info()[1]))
             if calltip:
-                return u""
+                return ""
             else:
                 return list()
         
@@ -163,13 +163,13 @@ class Completer(completer.BaseCompleter):
         else:
             calltiptext = alltext.split("\n")[0]
 
-        if type(calltiptext) != types.UnicodeType:
+        if type(calltiptext) != str:
             # Ensure it is unicode
             try:
                 stcbuff = self.GetBuffer()
                 encoding = stcbuff.GetEncoding()
                 calltiptext = calltiptext.decode(encoding)
-            except Exception, msg:
+            except Exception as msg:
                 dbg("%s" % msg)
 
         return calltiptext
@@ -203,16 +203,16 @@ class PyCompleter(object):
         #       when running in editra with DEBUG output.
 #        dbg("[pycomp][info] Generated source: %s" % src)
         try: 
-            exec src in self.compldict
-        except Exception, msg:
+            exec(src, self.compldict)
+        except Exception as msg:
             dbg("[pycomp][err] src exec: %s" % msg)
         else:
             dbg("[pycomp][info] Successfully executed source code")
 
         for loc in [ l[1] for l in scope.locals]:
             try: 
-                exec loc in self.compldict
-            except Exception, msg:
+                exec(loc, self.compldict)
+            except Exception as msg:
                 dbg("[pycomp][err] local exec %s [%s]" % (msg, loc))
             else:
                 dbg("[pycomp][info] Successfully executed: %s" % loc)
@@ -225,7 +225,7 @@ class PyCompleter(object):
         def _ctor(obj):
             """Get the constructor for an object"""
             try:
-                return obj.__init__.im_func
+                return obj.__init__.__func__
             except AttributeError:
                 for base in obj.__bases__:
                     constructor = getattr(base, '__init__', None)
@@ -234,19 +234,19 @@ class PyCompleter(object):
             return None
 
         arg_offset = 1
-        if type(func_obj) == types.ClassType:
+        if type(func_obj) == type:
             func_obj = _ctor(func_obj)
         elif type(func_obj) == types.MethodType:
-            func_obj = func_obj.im_func
+            func_obj = func_obj.__func__
         else: 
             arg_offset = 0
         
         arg_text = ''
         if type(func_obj) in [types.FunctionType, types.LambdaType]:
             try:
-                fcode = func_obj.func_code
+                fcode = func_obj.__code__
                 real_args = fcode.co_varnames[arg_offset:fcode.co_argcount]
-                defaults = func_obj.func_defaults or ''
+                defaults = func_obj.__defaults__ or ''
                 defaults = [ "=%s" % name for name in defaults ]
                 defaults = [""] * (len(real_args) - len(defaults)) + defaults
                 items = [ arg + default 
@@ -257,7 +257,7 @@ class PyCompleter(object):
                     items.append("***")
                 arg_text = (','.join(items)) + ')'
 
-            except Exception, msg:
+            except Exception as msg:
                 dbg("[pycomp][err] get_arguments: %s" % msg)
 
         if len(arg_text) == 0:
@@ -302,8 +302,8 @@ class PyCompleter(object):
                     # better at getting tips for c modules
                     tip = introspect.getCallTip(_sanitize(stmt), 
                                                 self.compldict)[2]
-                    if not isinstance(tip, basestring):
-                        tip = u""
+                    if not isinstance(tip, str):
+                        tip = ""
                     if not tip:
                         # Internal calltip code
                         result = eval(_sanitize(stmt.rstrip('(')), self.compldict)
@@ -383,14 +383,14 @@ class PyCompleter(object):
 #                            print typestr, meth
 
                         completions.append(comp)
-                except Exception, msg:
+                except Exception as msg:
                     dbg("[pycomp][err] inner completion: %s [stmt='%s']:" % (msg, stmt))
 
             return completions
-        except Exception, msg:
+        except Exception as msg:
             dbg("[pycomp][err] get_completions: %s [stmt='%s']" % (msg, stmt))
             if ctip:
-                return u""
+                return ""
             return list()
 
 #-----------------------------------------------------------------------------#
@@ -408,7 +408,7 @@ class Scope(object):
 
         # Attributes
         self.subscopes = list()
-        self.docstr = u''
+        self.docstr = ''
         self.locals = list()
         self.parent = None
         self.name = name
@@ -745,16 +745,16 @@ class PyParser(object):
 
         """
         self.scope = self.scope.pop(indent)
-        tokentype, fname, findent = self.next()
+        tokentype, fname, findent = next(self)
         if tokentype != NAME:
             return None
 
-        tokentype, open_paren, tindent = self.next()
+        tokentype, open_paren, tindent = next(self)
         if open_paren != '(':
             return None
 
         params = self._parenparse()
-        tokentype, colon, tindent = self.next()
+        tokentype, colon, tindent = next(self)
         if colon != ':':
             return None
 
@@ -873,7 +873,7 @@ class PyParser(object):
         else:
             return assign
 
-    def next(self):
+    def __next__(self):
         """Get tokens of next line in parse
         @return: tuple of (type, token, indent)
 
@@ -943,7 +943,7 @@ class PyParser(object):
         try:
             freshscope = True
             while True:
-                tokentype, token, indent = self.next()
+                tokentype, token, indent = next(self)
                 if tokentype == DEDENT or token == "pass":
                     self.scope = self.scope.pop(indent)
                 elif token == 'def':
@@ -990,7 +990,7 @@ class PyParser(object):
                         if stmt != None:
                             # XXX Safety Check don't allow assignments to 
                             # item attributes unless the attribute is self
-                            if u'.' not in name or name.startswith('self.'):
+                            if '.' not in name or name.startswith('self.'):
                                 self.scope.local("%s = %s" % (name, stmt))
                     freshscope = False
         except StopIteration: #thrown on EOF

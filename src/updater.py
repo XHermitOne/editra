@@ -28,17 +28,17 @@ import os
 import sys
 import stat
 import re
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import threading
 import wx
 import wx.lib.delayedresult as delayedresult
 
 # Editra Libraries
-import ed_glob
-import ed_event
-from profiler import CalcVersionValue, Profile_Get
-import util
-import ebmlib
+from . import ed_glob
+from . import ed_event
+from .profiler import CalcVersionValue, Profile_Get
+from . import util
+from . import ebmlib
 
 #--------------------------------------------------------------------------#
 # Globals
@@ -81,7 +81,7 @@ class UpdateService(object):
                 proxy = util.GetProxyOpener(proxy_set)
                 h_file = proxy.open(url)
             else:
-                h_file = urllib2.urlopen(url)
+                h_file = urllib.request.urlopen(url)
 
         finally:
             return h_file
@@ -126,7 +126,7 @@ class UpdateService(object):
 
         """
         url = self.GetCurrFileURL()
-        return url.split(u'/')[-1]
+        return url.split('/')[-1]
 
     def GetCurrentVersionStr(self):
         """Parses the project website front page for the most
@@ -167,7 +167,7 @@ class UpdateService(object):
         @return: all text from the given url
 
         """
-        text = u''
+        text = ''
         try:
             h_file = self.__GetUrlHandle(url)
             text = h_file.read()
@@ -379,8 +379,8 @@ class UpdateProgress(wx.Gauge, UpdateService):
 
         """
         dl_loc = wx.GetHomeDir() + os.sep
-        if os.path.exists(dl_loc + u"Desktop"):
-            dl_loc = dl_loc + u"Desktop" + os.sep
+        if os.path.exists(dl_loc + "Desktop"):
+            dl_loc = dl_loc + "Desktop" + os.sep
         return dl_loc
 
     def GetMode(self):
@@ -495,7 +495,7 @@ class UpdateProgress(wx.Gauge, UpdateService):
         @return: success status of download
 
         """
-        dl_ok = self.GetUpdateFiles(u"".join(args))
+        dl_ok = self.GetUpdateFiles("".join(args))
         return dl_ok
 
     def _ResultNotifier(self, delayedResult):
@@ -522,7 +522,7 @@ class UpdateProgress(wx.Gauge, UpdateService):
                 self._dl_result = result
             else:
                 pass
-        except (OSError, IOError, UnicodeDecodeError), msg:
+        except (OSError, IOError, UnicodeDecodeError) as msg:
             self.LOG("[updater][err] UpdateProgress: Error on thread exit")
             self.LOG("[updater][err] UpdateProgress: error = %s" % str(msg))
 
@@ -588,7 +588,7 @@ class DownloadDialog(wx.Frame):
         self._sizer = wx.GridBagSizer()
         bmp = wx.ArtProvider.GetBitmap(str(ed_glob.ID_WEB), wx.ART_TOOLBAR)
         mdc = wx.MemoryDC(bmp)
-        tmp_bmp = wx.Image(ed_glob.CONFIG['SYSPIX_DIR'] + u"editra.png",
+        tmp_bmp = wx.Image(ed_glob.CONFIG['SYSPIX_DIR'] + "editra.png",
                            wx.BITMAP_TYPE_PNG)
         tmp_bmp.Rescale(20, 20, wx.IMAGE_QUALITY_HIGH)
         mdc.DrawBitmap(tmp_bmp.ConvertToBitmap(), 11, 11)
@@ -615,7 +615,7 @@ class DownloadDialog(wx.Frame):
         self.SetInitialSize()
 
         self.SetStatusWidths([-1, 100])
-        self.SetStatusText(_("Downloading") + u"...", self.SB_INFO)
+        self.SetStatusText(_("Downloading") + "...", self.SB_INFO)
 
         #---- Bind Events ----#
         self.Bind(wx.EVT_BUTTON, self.OnButton)
@@ -691,7 +691,7 @@ class DownloadDialog(wx.Frame):
                                    self.SB_DOWNLOADED)
             else:
                 self.LOG("[updater][evt] DownloadDialog:: Download finished")
-                self.SetStatusText(u'', self.SB_DOWNLOADED)
+                self.SetStatusText('', self.SB_DOWNLOADED)
                 if self._progress.GetDownloadResult():
                     self.LOG("[updater][info] DownloadDialog: Download Successful")
                     self.SetStatusText(_("Finished"), self.SB_INFO)

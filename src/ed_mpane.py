@@ -23,10 +23,10 @@ __revision__ = "$Revision: 72278 $"
 import wx
 
 # Editra Libraries
-import ed_glob
-import ed_pages
-import ed_cmdbar
-import eclib
+from . import ed_glob
+from . import ed_pages
+from . import ed_cmdbar
+from . import eclib
 
 #-----------------------------------------------------------------------------#
 

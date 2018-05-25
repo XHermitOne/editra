@@ -23,19 +23,19 @@ import wx
 import os
 
 # Editra Libraries
-import ed_glob
-import ed_menu
-import ed_msg
-import ed_stc
-import ed_tab
-from doctools import DocPositionMgr
-from profiler import Profile_Get
-from util import Log, SetClipboardText
-import syntax.synglob as synglob
-from ebmlib import GetFileModTime, ContextMenuManager, GetFileName
+from . import ed_glob
+from . import ed_menu
+from . import ed_msg
+from . import ed_stc
+from . import ed_tab
+from .doctools import DocPositionMgr
+from .profiler import Profile_Get
+from .util import Log, SetClipboardText
+from . import syntax.synglob as synglob
+from .ebmlib import GetFileModTime, ContextMenuManager, GetFileName
 
 # External libs
-from extern.stcspellcheck import STCSpellCheck
+from .extern.stcspellcheck import STCSpellCheck
 
 #--------------------------------------------------------------------------#
 
@@ -97,7 +97,7 @@ class EdEditorView(ed_stc.EditraStc, ed_tab.EdTabBase):
         # that is created only.
         if not EdEditorView.DOCMGR.IsInitialized():
             EdEditorView.DOCMGR.InitPositionCache(ed_glob.CONFIG['CACHE_DIR'] + \
-                                                  os.sep + u'positions')
+                                                  os.sep + 'positions')
 
         self._spell.clearAll()
         self._spell.setDefaultLanguage(spref.get('dict', 'en_US'))
@@ -201,10 +201,10 @@ class EdEditorView(ed_stc.EditraStc, ed_tab.EdTabBase):
         """Reload the current file"""
         cfile = self.GetFileName()
         ret = True
-        rmsg = u""
+        rmsg = ""
         try:
             ret, rmsg = self.ReloadFile()
-        except Exception, msg:
+        except Exception as msg:
             # Unexpected error
             wx.MessageBox(_("Failed to reload file\n\nError:\n%s") % msg,
                           _("File read error"), wx.ICON_ERROR|wx.OK|wx.CENTER)
@@ -246,7 +246,7 @@ class EdEditorView(ed_stc.EditraStc, ed_tab.EdTabBase):
         @return: (unicode) string
 
         """
-        return u"EditraTextCtrl"
+        return "EditraTextCtrl"
 
     def GetTabImage(self):
         """Get the Bitmap to use for the tab
@@ -298,9 +298,9 @@ class EdEditorView(ed_stc.EditraStc, ed_tab.EdTabBase):
         if not len(title):
             title = fname = self.GetTabLabel()
 
-        if self.GetModify() and not title.startswith(u'*'):
-            title = u"*" + title
-        return u"%s - file://%s" % (title, fname)
+        if self.GetModify() and not title.startswith('*'):
+            title = "*" + title
+        return "%s - file://%s" % (title, fname)
 
     def CanCloseTab(self):
         """Called when checking if tab can be closed or not
@@ -618,7 +618,7 @@ class EdEditorView(ed_stc.EditraStc, ed_tab.EdTabBase):
 
         """
         name = self.GetFileName()
-        if name == u"":
+        if name == "":
             name = self.GetTabLabel()
 
         dlg = wx.MessageDialog(self,

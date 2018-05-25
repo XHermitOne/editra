@@ -39,8 +39,8 @@ class SyntaxFunctionsTest(unittest.TestCase):
         filters = syntax.GenFileFilters()
         self.assertTrue(isinstance(filters, list))
         for f in filters:
-            self.assertTrue(isinstance(f, basestring))
-        self.assertTrue(filters[-1][-1] != u"|")
+            self.assertTrue(isinstance(f, str))
+        self.assertTrue(filters[-1][-1] != "|")
 
     def testGetLexerMenu(self):
         """Test creating the lexer menu"""
@@ -50,18 +50,18 @@ class SyntaxFunctionsTest(unittest.TestCase):
     def testGetExtensionFromId(self):
         """Test getting a file extension from a language id"""
         ext = syntax.GetExtFromId(synglob.ID_LANG_PYTHON)
-        self.assertTrue(isinstance(ext, basestring))
+        self.assertTrue(isinstance(ext, str))
 
     def testGetIdFromExt(self):
         """Test getting a file display name"""
         tid = syntax.GetIdFromExt('py')
-        self.assertEquals(tid, synglob.ID_LANG_PYTHON)
+        self.assertEqual(tid, synglob.ID_LANG_PYTHON)
 
         tid = syntax.GetIdFromExt('cpp')
-        self.assertEquals(tid, synglob.ID_LANG_CPP)
+        self.assertEqual(tid, synglob.ID_LANG_CPP)
 
         tid = syntax.GetIdFromExt('zzz')
-        self.assertEquals(tid, synglob.ID_LANG_TXT)
+        self.assertEqual(tid, synglob.ID_LANG_TXT)
 
     def testGetLexerList(self):
         """Test getting the list of available languages"""
@@ -69,7 +69,7 @@ class SyntaxFunctionsTest(unittest.TestCase):
         self.assertTrue(isinstance(langs, list))
         self.assertTrue(synglob.LANG_PYTHON in langs)
         for lang in langs:
-            self.assertTrue(isinstance(lang, basestring))
+            self.assertTrue(isinstance(lang, str))
 
     def testSyntaxIds(self):
         """Test getting the Syntax Id List"""

@@ -29,8 +29,8 @@ import ebmlib
 
 class FileTypeCheckerTest(unittest.TestCase):
     def setUp(self):
-        self.fpath = common.GetDataFilePath(u'test_read_utf8.txt')
-        self.bpath = common.GetDataFilePath(u'image_test.png')
+        self.fpath = common.GetDataFilePath('test_read_utf8.txt')
+        self.bpath = common.GetDataFilePath('image_test.png')
         self.checker = ebmlib.FileTypeChecker()
 
     def tearDown(self):

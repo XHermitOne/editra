@@ -66,8 +66,8 @@ import os
 import wx
 
 # Local Imports
-import ctrlbox
-import platebtn
+from . import ctrlbox
+from . import platebtn
 
 #--------------------------------------------------------------------------#
 # Globals
@@ -189,9 +189,9 @@ class FindEvent(wx.PyCommandEvent):
         # Attributes
         self._flags = flags
         self._loc = 0
-        self._find = u''
-        self._replace = u''
-        self._dir = u''
+        self._find = ''
+        self._replace = ''
+        self._dir = ''
         self._filters = None
         self._count = 0
 
@@ -263,7 +263,7 @@ class FindEvent(wx.PyCommandEvent):
         @param filters: string or list of strings
 
         """
-        if isinstance(filters, basestring):
+        if isinstance(filters, str):
             self._filters = filters.split()
         else:
             self._filters = filters
@@ -368,7 +368,7 @@ class FindReplaceDlgBase:
 
         """
         # Attributes
-        if isinstance(title, basestring):
+        if isinstance(title, str):
             self._ftitle = title
             self._rtitle = title
         else:
@@ -595,7 +595,7 @@ class MiniFindReplaceDlg(wx.MiniFrame, FindReplaceDlgBase):
         @keyword style: Dialog Style
 
         """
-        wx.MiniFrame.__init__(self, parent, wx.ID_ANY, u'',
+        wx.MiniFrame.__init__(self, parent, wx.ID_ANY, '',
                               style=wx.DEFAULT_DIALOG_STYLE)
         FindReplaceDlgBase.__init__(self, parent, fdata, title, style)
 
@@ -619,7 +619,7 @@ class FindReplaceDlg(wx.Dialog, FindReplaceDlgBase):
         @keyword style: Dialog Style
 
         """
-        wx.Dialog.__init__(self, parent, wx.ID_ANY, u'',
+        wx.Dialog.__init__(self, parent, wx.ID_ANY, '',
                            style=wx.DEFAULT_DIALOG_STYLE)
         FindReplaceDlgBase.__init__(self, parent, fdata, title, style)
 
@@ -737,8 +737,8 @@ class FindPanel(wx.Panel):
         self._sizers = dict()
         self._paths = dict()
         self._fdata = fdata
-        self._dgetter = lambda : u""
-        self._lastSearch = u''
+        self._dgetter = lambda : ""
+        self._lastSearch = ''
 
         # Layout
         self.__DoLayout()
@@ -782,9 +782,9 @@ class FindPanel(wx.Panel):
 
         # Platform dependant labels
         if wx.Platform == '__WXMSW__':
-            findlbl = wx.StaticText(self, ID_FIND_LBL, _("Find what") + u":")
+            findlbl = wx.StaticText(self, ID_FIND_LBL, _("Find what") + ":")
         else:
-            findlbl = wx.StaticText(self, ID_FIND_LBL, _("Find") + u":")
+            findlbl = wx.StaticText(self, ID_FIND_LBL, _("Find") + ":")
 
         # Search Field
         fhsizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -795,7 +795,7 @@ class FindPanel(wx.Panel):
         # Replace field
         rhsizer = wx.BoxSizer(wx.HORIZONTAL)
         rhsizer.Add(self._rtxt, 1, wx.EXPAND)
-        rlbl = wx.StaticText(self, ID_REPLACE_LBL, _("Replace with") + u":")
+        rlbl = wx.StaticText(self, ID_REPLACE_LBL, _("Replace with") + ":")
         self._sizers[ID_REPLACE_LBL] = wx.BoxSizer(wx.VERTICAL)
         self._sizers[ID_REPLACE_LBL].AddMany([((5, 5), 0),
                                              (rlbl, 0, wx.ALIGN_CENTER_VERTICAL),
@@ -806,11 +806,11 @@ class FindPanel(wx.Panel):
         # Look in field
         self._sizers['look'] = wx.BoxSizer(wx.VERTICAL)
         li_sz = wx.BoxSizer(wx.HORIZONTAL)
-        dirbtn = wx.Button(self, ID_CHOOSE_DIR, u"...", style=wx.BU_EXACTFIT)
+        dirbtn = wx.Button(self, ID_CHOOSE_DIR, "...", style=wx.BU_EXACTFIT)
         dirbtn.SetToolTipString(_("Choose Folder"))
         li_sz.AddMany([(self._lookin, 1, wx.ALIGN_CENTER_VERTICAL), ((5, 5), 0),
                        (dirbtn, 0, wx.ALIGN_CENTER_VERTICAL)])
-        li_lbl = wx.StaticText(self, label=_("Look in") + u":")
+        li_lbl = wx.StaticText(self, label=_("Look in") + ":")
         self._sizers['look'].AddMany([(li_lbl, 0, wx.ALIGN_LEFT),
                                       ((3, 3), 0),
                                       (li_sz, 0, wx.EXPAND),
@@ -938,13 +938,13 @@ class FindPanel(wx.Panel):
                 hide.append(ID_REPLACE_ALL)
 
         for ctrl in show:
-            if isinstance(ctrl, basestring):
+            if isinstance(ctrl, str):
                 self._sizers[ctrl].Show(True)
             else:
                 self._sizers[ctrl].ShowItems(True)
 
         for ctrl in hide:
-            if isinstance(ctrl, basestring):
+            if isinstance(ctrl, str):
                 self._sizers[ctrl].Show(False)
             else:
                 self._sizers[ctrl].ShowItems(False)
@@ -1009,13 +1009,13 @@ class FindPanel(wx.Panel):
             return None
 
         # If its a path we already have then just return its index
-        if path in self._paths.values():
-            for idx, pname in self._paths.iteritems():
+        if path in list(self._paths.values()):
+            for idx, pname in self._paths.items():
                 if path == pname:
                     return idx
 
         # Get the short directory name
-        the_dir = u''
+        the_dir = ''
         for dname in reversed(path.split(os.sep)):
             if len(dname):
                 the_dir = dname
@@ -1069,7 +1069,7 @@ class FindPanel(wx.Panel):
             if stype >= LOCATION_IN_FILES:
                 # For IN_CURRENT_DIR it is up to client to determine directory
                 # based on what current means to the application.
-                evt.SetDirectory(self._paths.get(lookin_idx, u''))
+                evt.SetDirectory(self._paths.get(lookin_idx, ''))
 
             wx.PostEvent(self.GetParent(), evt)
             return True
@@ -1124,10 +1124,10 @@ class FindPanel(wx.Panel):
             self._UpdateContext()
             choice = self._lookin.GetSelection()
             if choice >= LOCATION_IN_FILES:
-                tts = self._paths.get(choice, u'')
+                tts = self._paths.get(choice, '')
                 self._lookin.SetToolTipString(tts)
             else:
-                self._lookin.SetToolTipString(u'')
+                self._lookin.SetToolTipString('')
         else:
             evt.Skip()
 
@@ -1233,7 +1233,7 @@ class FindPanel(wx.Panel):
 
         """
         if not callable(dgetter):
-            dgetter = lambda : u""
+            dgetter = lambda : ""
         self._dgetter = dgetter
 
     def SetFileFilters(self, filters):

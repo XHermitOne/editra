@@ -21,9 +21,9 @@ __revision__ = "$Revision: 68340 $"
 #--------------------------------------------------------------------------#
 # Dependencies
 import wx
-import ed_glob
-import ed_msg
-from profiler import Profile_Get
+from . import ed_glob
+from . import ed_msg
+from .profiler import Profile_Get
 
 _ = wx.GetTranslation
 #--------------------------------------------------------------------------#

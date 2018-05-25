@@ -43,7 +43,7 @@ class SyntaxMgrTest(unittest.TestCase):
     def testGetLangId(self):
         """Test fetching the filetype id associated with the given extension"""
         lid = self.mgr.GetLangId('py')
-        self.assertEquals(lid, synglob.ID_LANG_PYTHON)
+        self.assertEqual(lid, synglob.ID_LANG_PYTHON)
 
     def testIsModLoaded(self):
         """Test checking if a module is already loaded"""
@@ -92,5 +92,5 @@ class SyntaxMgrTest(unittest.TestCase):
             comment = data.CommentPattern
             self.assertTrue(isinstance(comment, list))
             if len(comment):
-                self.assertTrue(isinstance(comment[0], basestring))
+                self.assertTrue(isinstance(comment[0], str))
 

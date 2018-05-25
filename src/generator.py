@@ -30,13 +30,13 @@ import wx.stc
 import time
 
 # Editra Libraries
-import ed_glob
-import ed_menu
-from ed_style import StyleItem
-import util
-import plugin
-import ebmlib
-import eclib
+from . import ed_glob
+from . import ed_menu
+from .ed_style import StyleItem
+from . import util
+from . import plugin
+from . import ebmlib
+from . import eclib
 
 #--------------------------------------------------------------------------#
 # Globals
@@ -102,7 +102,7 @@ class Generator(plugin.Plugin):
                 menu_i = observer.GetMenuEntry(menu)
                 if menu_i:
                     menu_items.append((menu_i.GetItemLabel(), menu_i))
-            except Exception, msg:
+            except Exception as msg:
                 util.Log("[generator][err] %s" % str(msg))
 
         # Construct the menu
@@ -181,7 +181,7 @@ class Html(plugin.Plugin):
         @return: Unicode string of html
 
         """
-        return unicode(self.__str__())
+        return str(self.__str__())
 
     def Generate(self, stc_ctrl):
         """Generates and returns the document
@@ -281,9 +281,9 @@ class Html(plugin.Plugin):
         @return: menu entry for this generator
 
         """
-        return wx.MenuItem(menu, self._id, _("Generate %s") % u"HTML",
+        return wx.MenuItem(menu, self._id, _("Generate %s") % "HTML",
                            _("Generate a %s version of the " \
-                             "current document") % u"HTML")
+                             "current document") % "HTML")
 
     def OptimizeCss(self):
         """Optimizes the CSS Set
@@ -375,25 +375,25 @@ class CssItem:
         css_body = wx.EmptyString
         if self._font != wx.EmptyString:
             font = self._font.split(',')
-            css_body += u"\tfont-family: %s, %s;\n" % (font[0], FONT_FALLBACKS)
+            css_body += "\tfont-family: %s, %s;\n" % (font[0], FONT_FALLBACKS)
         if self._size != wx.EmptyString:
             size = self._size.split(',')
-            css_body += u"\tfont-size: %s;\n" % str(size[0])
+            css_body += "\tfont-size: %s;\n" % str(size[0])
         if self._fore != wx.EmptyString:
             fore = self._fore.split(',')
-            css_body += u"\tcolor: %s;\n" % fore[0]
+            css_body += "\tcolor: %s;\n" % fore[0]
         if self._back != wx.EmptyString:
             back = self._back.split(',')
-            css_body += u"\tbackground-color: %s;\n" % back[0]
+            css_body += "\tbackground-color: %s;\n" % back[0]
 
         # Add additional style modifiers
         for item in self._decor:
-            if item == u'bold':
-                css_body += u"\tfont-weight: %s;\n" % item
-            elif item == u'italic':
-                css_body += u"\tfont-style: %s;\n" % item
-            elif item == u'underline':
-                css_body += u"\ttext-decoration: %s;\n" % item
+            if item == 'bold':
+                css_body += "\tfont-weight: %s;\n" % item
+            elif item == 'italic':
+                css_body += "\tfont-style: %s;\n" % item
+            elif item == 'underline':
+                css_body += "\ttext-decoration: %s;\n" % item
             else:
                 pass
 
@@ -411,7 +411,7 @@ class CssItem:
         """
         decor = list()
         for val in [ self._back, self._fore, self._font, self._size ]:
-            tmp = val.split(u',')
+            tmp = val.split(',')
             if len(tmp) < 2:
                 continue
             else:
@@ -535,7 +535,7 @@ class LaTeX(plugin.Plugin):
 
         """
         tex = list()
-        tmp = u''
+        tmp = ''
         start = parse_pos = 0
         last_pos = self._stc.GetLineEndPosition(self._stc.GetLineCount())
 
@@ -558,7 +558,7 @@ class LaTeX(plugin.Plugin):
         TransformText = self.TransformText
 
         # Build LaTeX
-        for parse_pos in xrange(last_pos + 1):
+        for parse_pos in range(last_pos + 1):
             curr_id = GetStyleAt(parse_pos)
             if parse_pos > 1:
                 # This is the performance bottleneck, changing the text
@@ -617,7 +617,7 @@ class LaTeX(plugin.Plugin):
         self._dstyle.SetSize(default_si.GetSize().split(',')[0])
         body = self.GenDoc()
         preamble = self.GenPreamble()
-        return ("tex", u"".join([preamble, body]))
+        return ("tex", "".join([preamble, body]))
 
     def GenPreamble(self):
         """Generates the Preamble of the document
@@ -664,9 +664,9 @@ class LaTeX(plugin.Plugin):
         @param menu: menu to create MenuItem for
 
         """
-        return wx.MenuItem(menu, self._id, _("Generate %s") % u"LaTeX",
+        return wx.MenuItem(menu, self._id, _("Generate %s") % "LaTeX",
                            _("Generate an %s version of the " \
-                             "current document") % u"LaTeX")
+                             "current document") % "LaTeX")
 
     def HexToRGB(self, hex_str):
         """Returns a comma separated rgb string representation
@@ -675,10 +675,10 @@ class LaTeX(plugin.Plugin):
 
         """
         r_hex = hex_str
-        if r_hex[0] == u"#":
+        if r_hex[0] == "#":
             r_hex = r_hex[1:]
         ldiff = 6 - len(r_hex)
-        r_hex += ldiff * u"0"
+        r_hex += ldiff * "0"
         # Convert hex values to integer
         red = round(float(float(int(r_hex[0:2], 16)) / 255), 2)
         green = round(float(float(int(r_hex[2:4], 16)) / 255), 2)
@@ -700,12 +700,12 @@ class LaTeX(plugin.Plugin):
             return
 
         # Templates
-        uline_tmp = u"\\underline{%s}"
-        ital_tmp = u"\\emph{%s}"
-        bold_tmp = u"\\textbf{%s}"
-        fore_tmp = u"\\textcolor[rgb]{%s}{%s}"
-        back_tmp = u"\\colorbox[rgb]{%s}{#1}"
-        cmd_tmp = u"\\newcommand{%s}[1]{%s}"
+        uline_tmp = "\\underline{%s}"
+        ital_tmp = "\\emph{%s}"
+        bold_tmp = "\\textbf{%s}"
+        fore_tmp = "\\textcolor[rgb]{%s}{%s}"
+        back_tmp = "\\colorbox[rgb]{%s}{#1}"
+        cmd_tmp = "\\newcommand{%s}[1]{%s}"
 
         # Get Style Attributes
         fore = s_item.GetFore()
@@ -721,15 +721,15 @@ class LaTeX(plugin.Plugin):
         if size == wx.EmptyString:
             size = self._dstyle.GetSize()
 
-        back = back_tmp % self.HexToRGB(back.split(u',')[0])
-        fore = fore_tmp % (self.HexToRGB(fore.split(u',')[0]), back)
-        if u"bold" in unicode(s_item):
+        back = back_tmp % self.HexToRGB(back.split(',')[0])
+        fore = fore_tmp % (self.HexToRGB(fore.split(',')[0]), back)
+        if "bold" in str(s_item):
             fore = bold_tmp % fore
-        if u"underline" in unicode(s_item):
+        if "underline" in str(s_item):
             fore = uline_tmp % fore
-        if u"italic" in unicode(s_item):
+        if "italic" in str(s_item):
             fore = ital_tmp % fore
-        cmd = cmd_tmp % ((u"\\" + cmd_name), u"\\texttt{\\ttfamily{%s}}" % fore)
+        cmd = cmd_tmp % (("\\" + cmd_name), "\\texttt{\\ttfamily{%s}}" % fore)
         self._cmds[cmd_name] = cmd
 
     def TransformText(self, txt):
@@ -749,7 +749,7 @@ class LaTeX(plugin.Plugin):
         tmp = list()
         for char in txt:
             tmp.append(ch_map.get(char, char))
-        return u''.join(tmp)
+        return ''.join(tmp)
 
 #-----------------------------------------------------------------------------#
 
@@ -790,7 +790,7 @@ class Rtf(plugin.Plugin):
         """
         # Buffer hasn't been set
         if self._stc is None:
-            return u''
+            return ''
 
         # Optimizations
         stc = self._stc
@@ -813,7 +813,7 @@ class Rtf(plugin.Plugin):
         GetStyleAt = stc.GetStyleAt
 
         # Parse all characters/style bytes in document
-        for parse_pos in xrange(last_pos + 1):
+        for parse_pos in range(last_pos + 1):
             sty_id = GetStyleAt(parse_pos)
             end = parse_pos
 
@@ -839,7 +839,7 @@ class Rtf(plugin.Plugin):
 
         head = "{\\rtf1\\ansi\\deff0{\\fonttbl{\\f0 %s;}}" % \
                 stc.GetDefaultFont().GetFaceName()
-        return u"%s%s%s}" % (head, self._colortbl, "".join(tmp_txt))
+        return "%s%s%s}" % (head, self._colortbl, "".join(tmp_txt))
 
     #---- End Protected Member Functions ----#
 
@@ -867,9 +867,9 @@ class Rtf(plugin.Plugin):
         @return: menu entry item for this generator
 
         """
-        return wx.MenuItem(menu, self._id, _("Generate %s") % u"RTF",
+        return wx.MenuItem(menu, self._id, _("Generate %s") % "RTF",
                            _("Generate a %s version of the " \
-                             "current document") % u"RTF")
+                             "current document") % "RTF")
 
     def TransformText(self, text):
         """Transforms the given text by converting it to RTF format
@@ -879,7 +879,7 @@ class Rtf(plugin.Plugin):
         chmap = { "\t" : "\\tab ", "{" : "\\{", "}" : "\\}",
                   "\\" : "\\\\", "\n" : "\\par\n", "\r" : "\\par\n"}
         text = text.replace('\r\n', '\n')
-        tmp = u''
+        tmp = ''
         for char in text:
             tmp = tmp + chmap.get(char, char)
         return tmp
@@ -906,10 +906,10 @@ class RtfColorTbl:
         @return: rtf color table object as an rtf formatted string
 
         """
-        rstr = u''
+        rstr = ''
         for item in self._index:
             rstr = rstr + self._tbl[item]
-        return u"{\\colortbl%s}" % rstr
+        return "{\\colortbl%s}" % rstr
 
     def AddColor(self, si_color):
         """Takes a style item and adds it to the table if
@@ -918,7 +918,7 @@ class RtfColorTbl:
 
         """
         if si_color not in self._index:
-            rgb = eclib.HexToRGB(si_color.split(u',')[0])
+            rgb = eclib.HexToRGB(si_color.split(',')[0])
             color = "\\red%d\\green%d\\blue%d;" % tuple(rgb)
             self._index.append(si_color)
             self._tbl[si_color] = color

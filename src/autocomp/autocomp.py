@@ -30,7 +30,7 @@ import wx
 import wx.stc as stc
 
 # Local imports
-import simplecomp
+from . import simplecomp
 
 #--------------------------------------------------------------------------#
 
@@ -53,13 +53,13 @@ class AutoCompService(object):
         """
         lex_value = buff.GetLexer()
         if lex_value == stc.STC_LEX_PYTHON:
-            import pycomp
+            from . import pycomp
             compl = pycomp.Completer
         elif lex_value in (stc.STC_LEX_HTML, stc.STC_LEX_XML):
-            import htmlcomp
+            from . import htmlcomp
             compl = htmlcomp.Completer
         elif lex_value == stc.STC_LEX_CSS:
-            import csscomp
+            from . import csscomp
             compl = csscomp.Completer
         else:
             return simplecomp.Completer(buff)
@@ -103,9 +103,8 @@ def GetAutoCompList(self, command):
     rlist.sort()
     return rlist
 
-class CompleterFactory(object):
+class CompleterFactory(object, metaclass=MetaCompleter):
     """Factory for creating composite completer objects"""
-    __metaclass__ = MetaCompleter
     def __new__(cls, base, buff):
         """Return an instance of the passed in class type"""
         self = base(buff)

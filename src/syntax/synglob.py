@@ -28,12 +28,12 @@ import wx.stc as stc
 # The language identifiers and the EXT_MAP have been moved out of this
 # module in order to be independent of Editra and wx, but they are
 # still needed here...
-from synextreg import *
+from .synextreg import *
 
 #-----------------------------------------------------------------------------#
 # Feature Identifiers
-FEATURE_AUTOINDENT = u"AutoIndenter"
-FEATURE_STYLETEXT = u"StyleText"
+FEATURE_AUTOINDENT = "AutoIndenter"
+FEATURE_STYLETEXT = "StyleText"
 
 #-----------------------------------------------------------------------------#
 
@@ -145,7 +145,7 @@ def GetDescriptionFromId(lang_id):
     rval = LANG_TXT
     # Guard against async code that may be modifying globals
     globs = dict(globals())
-    for key, val in globs.iteritems():
+    for key, val in globs.items():
         if val == lang_id and key.startswith('ID_LANG'):
             rval = globs.get(key[3:], LANG_TXT)
             break
@@ -162,8 +162,8 @@ def GetIdFromDescription(desc):
     desc = desc.lower()
     # Guard against async code that may be modifying globals
     globs = dict(globals())
-    for key, val in globs.iteritems():
-        if isinstance(val, unicode):
+    for key, val in globs.items():
+        if isinstance(val, str):
             if val.lower() == desc and key.startswith('LANG_'):
                 rval = globs.get("ID_" + key, ID_LANG_TXT)
                 break

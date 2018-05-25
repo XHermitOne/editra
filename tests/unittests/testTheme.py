@@ -57,7 +57,7 @@ class ThemeTest(unittest.TestCase):
         """
         bmp = self.bmpprov.GetBitmap(ed_glob.ID_COPY, wx.ART_MENU)
         self.assertTrue(bmp.IsOk(), repr(bmp))
-        self.assertEquals(bmp.GetSize(), wx.Size(16,16))
+        self.assertEqual(bmp.GetSize(), wx.Size(16,16))
 
         # Try for non existant bitmap
         bmp = self.bmpprov.GetBitmap(-1, wx.ART_MENU)
@@ -67,7 +67,7 @@ class ThemeTest(unittest.TestCase):
         """Test all library resources"""
         # Test all art resources
         bad = list()
-        for artid, res in ed_theme.ART.iteritems():
+        for artid, res in ed_theme.ART.items():
             if artid in (ed_glob.ID_ZOOM_IN,
                          ed_glob.ID_ZOOM_OUT,
                          ed_glob.ID_ZOOM_NORMAL,

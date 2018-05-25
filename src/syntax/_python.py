@@ -23,34 +23,34 @@ import wx.stc as stc
 import keyword
 
 # Local Imports
-import synglob
-import syndata
+from . import synglob
+from . import syndata
 
 #-----------------------------------------------------------------------------#
 
 #---- Keyword Specifications ----#
 
 # Indenter keywords
-INDENT_KW = (u"def", u"if", u"elif", u"else", u"for", u"while",
-             u"class", u"try", u"except", u"finally", u"with")
-UNINDENT_KW = (u"return", u"raise", u"break", u"continue",
-               u"pass", u"exit", u"quit")
+INDENT_KW = ("def", "if", "elif", "else", "for", "while",
+             "class", "try", "except", "finally", "with")
+UNINDENT_KW = ("return", "raise", "break", "continue",
+               "pass", "exit", "quit")
 
 # Python Keywords
 KEYWORDS = keyword.kwlist
 KEYWORDS.extend(['True', 'False', 'None', 'self'])
-PY_KW = (0, u" ".join(KEYWORDS))
+PY_KW = (0, " ".join(KEYWORDS))
 
 # Highlighted builtins
 try:
-    import __builtin__
+    import builtins
     BUILTINS = dir(__builtin__)
 except:
     BUILTINS = list()
 #BUILTINS.append('self')
 BUILTINS = list(set(BUILTINS))
 
-PY_BIN = (1, u" ".join(sorted(BUILTINS)))
+PY_BIN = (1, " ".join(sorted(BUILTINS)))
 
 #---- Syntax Style Specs ----#
 SYNTAX_ITEMS = [ (stc.STC_P_DEFAULT, 'default_style'),
@@ -101,7 +101,7 @@ class SyntaxData(syndata.SyntaxDataBase):
 
     def GetCommentPattern(self):
         """Returns a list of characters used to comment a block of code """
-        return [u'#']
+        return ['#']
 
 #-----------------------------------------------------------------------------#
 
@@ -120,7 +120,7 @@ def AutoIndenter(estc, pos, ichar):
 
     # Cursor is in the indent area somewhere
     if inspace:
-        estc.AddText(eolch + text.replace(eolch, u""))
+        estc.AddText(eolch + text.replace(eolch, ""))
         return
 
     # Check if the cursor is in column 0 and just return newline.
@@ -130,7 +130,7 @@ def AutoIndenter(estc, pos, ichar):
 
     # In case of open bracket: Indent next to open bracket
     def BackTrack(tmp_text, tline):
-        bcount = [ tmp_text.count(brac) for brac in u")}]({[" ]
+        bcount = [ tmp_text.count(brac) for brac in ")}]({[" ]
         bRecurse = False
         for idx, val in enumerate(bcount[:3]):
             if val > bcount[idx+3]:
@@ -147,27 +147,27 @@ def AutoIndenter(estc, pos, ichar):
     text = BackTrack(text, line)
     pos = PosOpenBracket(text)
     if pos > -1:
-        rval = eolch + (pos + 1) * u" "
+        rval = eolch + (pos + 1) * " "
         estc.AddText(rval)
         return
 
     indent = estc.GetLineIndentation(line)
-    if ichar == u"\t":
+    if ichar == "\t":
         tabw = estc.GetTabWidth()
     else:
         tabw = estc.GetIndent()
 
     i_space = indent / tabw
-    end_spaces = ((indent - (tabw * i_space)) * u" ")
+    end_spaces = ((indent - (tabw * i_space)) * " ")
 
-    tokens = filter(None, text.strip().split())
+    tokens = [_f for _f in text.strip().split() if _f]
     if tokens and not inspace:
-        if tokens[-1].endswith(u":"):
-            if tokens[0].rstrip(u":") in INDENT_KW:
+        if tokens[-1].endswith(":"):
+            if tokens[0].rstrip(":") in INDENT_KW:
                 i_space += 1
-        elif tokens[-1].endswith(u"\\"):
+        elif tokens[-1].endswith("\\"):
             i_space += 1
-        elif len(tokens[-1]) and tokens[-1][-1] in u"}])":
+        elif len(tokens[-1]) and tokens[-1][-1] in "}])":
             ptok = tokens[-1][-1]
             paren_pos = pos - (len(text) - text.rfind(ptok))
             oparen, cparen = estc.GetBracePair(paren_pos)
@@ -175,12 +175,12 @@ def AutoIndenter(estc, pos, ichar):
                 line = estc.LineFromPosition(cparen)
                 indent = estc.GetLineIndentation(line)
                 i_space = indent / tabw
-                end_spaces = ((indent - (tabw * i_space)) * u" ")
+                end_spaces = ((indent - (tabw * i_space)) * " ")
         elif tokens[0] in UNINDENT_KW:
             i_space = max(i_space - 1, 0)
 
     rval = eolch + (ichar * i_space) + end_spaces
-    if inspace and ichar != u"\t":
+    if inspace and ichar != "\t":
         rpos = indent - (pos - spos)
         if rpos < len(rval) and rpos > 0:
             rval = rval[:-rpos]
@@ -211,15 +211,15 @@ def PosOpenBracket(text):
     """
     # Store positions of '(', '[','{', ')', ']', '}'
     brackets = [[], [], [], [], [], []]
-    quotes = u"'" + u'"'
+    quotes = "'" + '"'
     in_string = False
     for pos, char in enumerate(text):
         if in_string:
             in_string = not char == quote
         else:
-            if char == u'#':
+            if char == '#':
                 break
-            typ = u'([{)]}'.find(char)
+            typ = '([{)]}'.find(char)
             if typ > -1:
                 brackets[typ].append(pos)
             else:

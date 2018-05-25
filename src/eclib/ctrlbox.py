@@ -70,15 +70,15 @@ __all__ = ["ControlBox", "CTRLBOX_NAME_STR",
 import wx
 
 # Local Imports
-from eclutil import AdjustColour, DrawCircleCloseBmp
+from .eclutil import AdjustColour, DrawCircleCloseBmp
 
 #--------------------------------------------------------------------------#
 # Globals
 
 #-- Control Name Strings --#
-CTRLBAR_NAME_STR = u'EditraControlBar'
-CTRLBOX_NAME_STR = u'EditraControlBox'
-SEGBAR_NAME_STR = u'EditraSegmentBar'
+CTRLBAR_NAME_STR = 'EditraControlBar'
+CTRLBOX_NAME_STR = 'EditraControlBox'
+SEGBAR_NAME_STR = 'EditraSegmentBar'
 
 #-- Control Style Flags --#
 
@@ -449,7 +449,7 @@ class ControlBar(wx.PyPanel):
         """
         self._sizer.AddStretchSpacer(2)
 
-    def AddTool(self, tid, bmp, help=u'', align=-1):
+    def AddTool(self, tid, bmp, help='', align=-1):
         """Add a simple bitmap button tool to the control bar
         @param tid: Tool Id
         @param bmp: Tool bitmap
@@ -707,7 +707,7 @@ class SegmentBar(ControlBar):
                 self._tip_timer.Stop()
         evt.Skip()
 
-    def AddSegment(self, id, bmp, label=u''):
+    def AddSegment(self, id, bmp, label=''):
         """Add a segment to the bar
         @param id: button id
         @param bmp: wx.Bitmap

@@ -22,8 +22,8 @@ __revision__ = "$Revision: 68798 $"
 import wx.stc as stc
 
 # Local Imports
-import synglob
-import syndata
+from . import synglob
+from . import syndata
 
 #-----------------------------------------------------------------------------#
 
@@ -84,8 +84,8 @@ class SyntaxData(syndata.SyntaxDataBase):
     def GetCommentPattern(self):
         """Returns a list of characters used to comment a block of code """
         if self.LangId == synglob.ID_LANG_MATLAB:
-            return [u'%']
+            return ['%']
         elif self.LangId == synglob.ID_LANG_OCTAVE:
-            return [u'#']
+            return ['#']
         else:
             return list()

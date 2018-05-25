@@ -23,10 +23,10 @@ __revision__ = "$Revision: 66815 $"
 #--------------------------------------------------------------------------#
 # Dependancies
 import wx
-import ed_glob
-from profiler import Profile_Get
-import syntax.syntax as syntax
-import ed_theme
+from . import ed_glob
+from .profiler import Profile_Get
+from . import syntax.syntax as syntax
+from . import ed_theme
 
 #--------------------------------------------------------------------------#
 
@@ -103,7 +103,7 @@ class EditraArt(wx.ArtProvider):
         # If using default theme let the system provide the art when possible
         # this is mostly for GTK where there is a native art provider that can
         # provide theme icons.
-        if Profile_Get('ICONS', 'str').lower() == u'default' and art_id in DEFAULT:
+        if Profile_Get('ICONS', 'str').lower() == 'default' and art_id in DEFAULT:
             if client == wx.ART_MENU:
                 size = (16, 16)
             elif client == wx.ART_TOOLBAR:

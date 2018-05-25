@@ -22,16 +22,16 @@ import re
 import wx
 
 # Editra Libraries
-import ed_msg
-import iface
-import plugin
-from profiler import Profile_Get, Profile_Set
-import ed_glob
-import util
-import eclib
-import ebmlib
-import ed_basewin
-from ed_marker import Bookmark
+from . import ed_msg
+from . import iface
+from . import plugin
+from .profiler import Profile_Get, Profile_Set
+from . import ed_glob
+from . import util
+from . import eclib
+from . import ebmlib
+from . import ed_basewin
+from .ed_marker import Bookmark
 
 #-----------------------------------------------------------------------------#
 # Globals
@@ -44,7 +44,7 @@ class EdBookmarks(plugin.Plugin):
     """Shelf interface implementation for the bookmark manager"""
     plugin.Implements(iface.ShelfI)
 
-    __name__ = u'Bookmarks'
+    __name__ = 'Bookmarks'
 
     @staticmethod
     def AllowMultiple():
@@ -106,7 +106,7 @@ class EdBookmarks(plugin.Plugin):
                 # Store the stc bookmark handle
                 mark.Handle = data.get('handle', None)
                 # Store an alias for the bookmark
-                name = u""
+                name = ""
                 cline = buf.GetCurrentLine()
                 if line == cline:
                     name = buf.GetSelectedText()
@@ -175,7 +175,7 @@ class BookmarkWindow(ed_basewin.EdBaseCtrlBox):
 
     def OnDelAllBm(self, evt):
         """Delete all bookmarks"""
-        items = range(self._list.ItemCount)
+        items = list(range(self._list.ItemCount))
         self.DeleteBookmarks(items)
 
     def OnDelBm(self, evt):
@@ -282,7 +282,7 @@ class BookmarkList(eclib.EBaseListCtrl):
     def OnGetItemText(self, item, column):
         """Override for virtual control"""
         marks = EdBookmarks.GetMarks()
-        val = u""
+        val = ""
         if item < len(marks):
             mark = marks[item]
             if column == BookmarkList.BOOKMARK:
@@ -292,5 +292,5 @@ class BookmarkList(eclib.EBaseListCtrl):
             elif column == BookmarkList.FILE_NAME:
                 val = mark.Filename
             elif column == BookmarkList.LINE_NUM:
-                val = unicode(mark.Line + 1)
+                val = str(mark.Line + 1)
         return val

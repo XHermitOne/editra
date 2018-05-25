@@ -49,7 +49,7 @@ def getInfoTxt(path):
         rtxt = fhandle.read()
         rtxt = rtxt.strip()
     except IOError:
-        print("Bad file path: " + path)
+        print(("Bad file path: " + path))
     finally:
         fhandle.close()
 

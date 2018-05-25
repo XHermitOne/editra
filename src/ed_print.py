@@ -27,9 +27,9 @@ import wx
 import wx.stc
 
 # Editra Imports
-import ed_glob
-import util
-import extern.stcprint as stcprint
+from . import ed_glob
+from . import util
+from . import extern.stcprint as stcprint
 
 _ = wx.GetTranslation
 #--------------------------------------------------------------------------#

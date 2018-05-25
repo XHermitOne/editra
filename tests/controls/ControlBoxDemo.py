@@ -27,7 +27,7 @@ import wx
 import eclib
 
 # Local imports
-import IconFile
+from . import IconFile
 
 #-----------------------------------------------------------------------------#
 # Globals
@@ -129,7 +129,7 @@ class ControlBarPanel(eclib.ControlBox):
     def OnButton(self, evt):
         self.log.write("Button tool clicked: Id=%d" % evt.GetId())
         frame = MakeTestFrame(self, "Random Test Frame", self.log,
-                              bool(long(time.time()) % 2))
+                              bool(int(time.time()) % 2))
         frame.Show()
 
     def OnTimer(self, evt):
@@ -151,9 +151,9 @@ class SegmentPanel(eclib.ControlBox):
                                               eclib.CTRLBAR_STYLE_NO_DIVIDERS)
         for num in range(5):
             if num % 2:
-                segbar.AddSegment(wx.NewId(), IconFile.Home.GetBitmap(), label=u'Home')
+                segbar.AddSegment(wx.NewId(), IconFile.Home.GetBitmap(), label='Home')
             else:
-                segbar.AddSegment(wx.NewId(), IconFile.Monkey.GetBitmap(), label=u'Monkey')
+                segbar.AddSegment(wx.NewId(), IconFile.Monkey.GetBitmap(), label='Monkey')
 
         segbar.SetSegmentOption(4, eclib.SEGBTN_OPT_CLOSEBTNR)
         segbar.SetSegmentOption(3, eclib.SEGBTN_OPT_CLOSEBTNL)
@@ -206,7 +206,7 @@ class TestLog:
         pass
 
     def write(self, msg):
-        print msg
+        print(msg)
 
 #-----------------------------------------------------------------------------#
 

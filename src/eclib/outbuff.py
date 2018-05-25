@@ -100,8 +100,8 @@ else:
 
 #--------------------------------------------------------------------------#
 # Globals
-OUTPUTBUFF_NAME_STR = u'EditraOutputBuffer'
-THREADEDBUFF_NAME_STR = u'EditraThreadedBuffer'
+OUTPUTBUFF_NAME_STR = 'EditraOutputBuffer'
+THREADEDBUFF_NAME_STR = 'EditraThreadedBuffer'
 
 # Style Codes
 OPB_STYLE_DEFAULT = 0  # Default Black text styling
@@ -184,7 +184,7 @@ class OutputBufferEvent(wx.PyCommandEvent):
 
         """
         try:
-            tmsg = unicode(msg)
+            tmsg = str(msg)
         except:
             tmsg = None
         self._errmsg = msg
@@ -269,9 +269,9 @@ class OutputBuffer(wx.stc.StyledTextCtrl):
         """
         self._updating.acquire()
         self.SetReadOnly(False)
-        txt = u''.join(self._updates[:])
+        txt = ''.join(self._updates[:])
         start = self.GetLength()
-        if u'\0' in txt:
+        if '\0' in txt:
             # HACK: handle displaying NULLs in the STC
             self.AddStyledText('\0'.join(txt.encode('utf-8'))+'\0')
         else:
@@ -332,7 +332,7 @@ class OutputBuffer(wx.stc.StyledTextCtrl):
 
         """
         self._updating.acquire()
-        if not (type(value) is types.UnicodeType):
+        if not (type(value) is str):
             value = value.decode(sys.getfilesystemencoding())
         self._updates.append(value)
         self._updating.release()
@@ -689,7 +689,7 @@ class ProcessThreadBase(threading.Thread):
         self._proc = None
         self._parent = parent       # Parent Window/Event Handler
         self._sig_abort = signal.SIGTERM    # default signal to kill process
-        self._last_cmd = u""        # Last run command
+        self._last_cmd = ""        # Last run command
 
     #---- Properties ----#
     LastCommand = property(lambda self: self._last_cmd,
@@ -704,7 +704,7 @@ class ProcessThreadBase(threading.Thread):
         """
         if subprocess.mswindows:
             # Windows nonblocking pipe read implementation
-            read = u''
+            read = ''
             try:
                 handle = msvcrt.get_osfhandle(self._proc.stdout.fileno())
                 avail = ctypes.c_long()
@@ -721,9 +721,9 @@ class ProcessThreadBase(threading.Thread):
                     else:
                         # Process has Exited
                         return False
-            except ValueError, msg:
+            except ValueError as msg:
                 return False
-            except (subprocess.pywintypes.error, Exception), msg:
+            except (subprocess.pywintypes.error, Exception) as msg:
                 if msg[0] in (109, errno.ESHUTDOWN):
                     return False
         else:
@@ -745,7 +745,7 @@ class ProcessThreadBase(threading.Thread):
                     read = self._proc.stdout.read(4096)
                     if read == '':
                         return False
-                except IOError, msg:
+                except IOError as msg:
                     return False
             finally:
                 if not self._proc.stdout.closed:
@@ -779,7 +779,7 @@ class ProcessThreadBase(threading.Thread):
             try:
                 try:
                     self._proc.stdout.close()
-                except Exception, msg:
+                except Exception as msg:
                     pass
             finally:
                 self._proc.stdout = None
@@ -787,20 +787,20 @@ class ProcessThreadBase(threading.Thread):
             # Try to kill the group
             try:
                 os.kill(pid, self._sig_abort)
-            except OSError, msg:
+            except OSError as msg:
                 pass
 
             # If still alive shoot it again
             if self._proc.poll() is not None:
                 try:
                     os.kill(-pid, signal.SIGKILL)
-                except OSError, msg:
+                except OSError as msg:
                     pass
 
             # Try and wait for it to cleanup
             try:
                 os.waitpid(pid, os.WNOHANG)
-            except OSError, msg:
+            except OSError as msg:
                 pass
 
         else:
@@ -833,7 +833,7 @@ class ProcessThreadBase(threading.Thread):
         err = None
         try:
             self._proc = self.DoPopen()
-        except OSError, msg:
+        except OSError as msg:
             # NOTE: throws WindowsError on Windows which is a subclass of
             #       OSError, so it will still get caught here.
             if self.Parent:
@@ -914,7 +914,7 @@ class ProcessThread(ProcessThreadBase):
         super(ProcessThread, self).__init__(parent)
 
         if isinstance(args, list):
-            args = u' '.join([arg.strip() for arg in args])
+            args = ' '.join([arg.strip() for arg in args])
 
         # Attributes
         self._cwd = cwd             # Path at which to run from
@@ -923,10 +923,10 @@ class ProcessThread(ProcessThreadBase):
 
         # Make sure the environment is sane it must be all strings
         nenv = dict(env) # make a copy to manipulate
-        for k, v in env.iteritems():
-            if isinstance(v, types.UnicodeType):
+        for k, v in env.items():
+            if isinstance(v, str):
                 nenv[k] = v.encode(sys.getfilesystemencoding())
-            elif not isinstance(v, basestring):
+            elif not isinstance(v, str):
                 nenv.pop(k)
         self._env = nenv
 
@@ -940,7 +940,7 @@ class ProcessThread(ProcessThreadBase):
         """
         # using shell, Popen will need a string, else it must be a sequence
         # use shlex for complex command line tokenization/parsing
-        command = u' '.join([item.strip() for item in [self._cmd['cmd'],
+        command = ' '.join([item.strip() for item in [self._cmd['cmd'],
                                                        self._cmd['file'],
                                                        self._cmd['args']]])
         command = command.strip()
@@ -992,7 +992,7 @@ class ProcessThread(ProcessThreadBase):
 
         """
         if isinstance(args, list):
-            u' '.join(item.strip() for item in args)
+            ' '.join(item.strip() for item in args)
         self._cmd['args'] = args.strip()
 
     def SetCommand(self, cmd):

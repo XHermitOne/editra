@@ -30,7 +30,7 @@ import wx
 import ctypes
 import os
 import platform
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import stat
 import subprocess
 
@@ -75,7 +75,7 @@ def AddFileExtension(path, ext):
     @param ext: file extension
 
     """
-    assert isinstance(ext, basestring)
+    assert isinstance(ext, str)
     if not ext.startswith('.'):
         ext = '.' + ext
     if not path.endswith(ext):
@@ -115,7 +115,7 @@ def GetAbsPath(path):
     """
     rpath = os.path.abspath(path)
     # Resolve short path notation on Windows when possible
-    if WIN and win32api is not None and u"~" in rpath:
+    if WIN and win32api is not None and "~" in rpath:
         try:
             rpath = win32api.GetLongPathNameW(rpath)
         except Exception:
@@ -166,19 +166,19 @@ def GetPathFromURI(path):
     @return: normalized path
 
     """
-    if path.startswith(u"file:"):
-        path = path.replace(u"file:", u"")
-        path = path.lstrip(u"/")
+    if path.startswith("file:"):
+        path = path.replace("file:", "")
+        path = path.lstrip("/")
         if platform.system().lower() in ('windows', 'microsoft'):
-            path = path.replace(u"/", u"\\")
-            if len(path) >= 2 and path[1] != u':':
+            path = path.replace("/", "\\")
+            if len(path) >= 2 and path[1] != ':':
                 # A valid windows file uri should start with the drive
                 # letter. If not make the assumption that it should be
                 # the C: drive.
-                path = u"C:\\\\" + path
+                path = "C:\\\\" + path
         else:
-            path = u"/" + path
-        path = urllib2.unquote(path)
+            path = "/" + path
+        path = urllib.parse.unquote(path)
 
     return path
 
@@ -428,7 +428,7 @@ def MakeNewFile(path, name):
 
     try:
         open(fname, 'w').close()
-    except (IOError, OSError), msg:
+    except (IOError, OSError) as msg:
         return (False, str(msg))
 
     return (True, fname)
@@ -447,7 +447,7 @@ def MakeNewFolder(path, name):
     folder = GetUniqueName(path, name)
     try:
         os.mkdir(folder)
-    except (OSError, IOError), msg:
+    except (OSError, IOError) as msg:
         return (False, str(msg))
 
     return (True, folder)

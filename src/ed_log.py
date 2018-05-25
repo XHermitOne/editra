@@ -26,13 +26,13 @@ import re
 import wx
 
 # Editra Libraries
-import ed_msg
-import eclib
-import iface
-import plugin
-from profiler import Profile_Get
-import ed_glob
-import ed_basewin
+from . import ed_msg
+from . import eclib
+from . import iface
+from . import plugin
+from .profiler import Profile_Get
+from . import ed_glob
+from . import ed_basewin
 
 #-----------------------------------------------------------------------------#
 # Globals
@@ -46,7 +46,7 @@ class EdLogViewer(plugin.Plugin):
     """Shelf interface implementation for the log viewer"""
     plugin.Implements(iface.ShelfI)
 
-    __name__ = u'Editra Log'
+    __name__ = 'Editra Log'
 
     @staticmethod
     def AllowMultiple():
@@ -269,9 +269,9 @@ class LogBuffer(eclib.OutputBuffer):
             self.AddFilter(org)
 
         if self._filter == SHOW_ALL_MSG:
-            self.AppendUpdate(unicode(logmsg) + unicode(os.linesep))
+            self.AppendUpdate(str(logmsg) + str(os.linesep))
         elif self._filter == logmsg.Origin:
-            msg = u"[%s][%s]%s" % (logmsg.ClockTime, logmsg.Type, logmsg.Value)
-            self.AppendUpdate(msg + unicode(os.linesep))
+            msg = "[%s][%s]%s" % (logmsg.ClockTime, logmsg.Type, logmsg.Value)
+            self.AppendUpdate(msg + str(os.linesep))
         else:
             pass

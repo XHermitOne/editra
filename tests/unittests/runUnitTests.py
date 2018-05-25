@@ -69,7 +69,7 @@ def _make_clean_opt_string():
     return opt_string
 
 def output(string):
-    print string
+    print(string)
 
 #-----------------------------------------------------------------------------#
 
@@ -106,16 +106,16 @@ class UnitTestSuite:
         # make sure they all exist
         if _module_specs != None: # TODO: got to be a better place to put this
             for _mod in _module_specs:
-                if not _module_names.has_key(_mod.lower()):
+                if _mod.lower() not in _module_names:
                     parser.error("Module %s not found under test" % (_mod))
 
         # now import the modules
         if _module_specs == None:
-            self.modules = [ __import__(name) for name in _module_names.values() ]
+            self.modules = [ __import__(name) for name in list(_module_names.values()) ]
         elif _spec_type == "include":
             self.modules = [ __import__(name) for name in _module_specs ]
         elif _spec_type == "exclude":
-            self.modules = [ __import__(name) for name in _module_names.values()
+            self.modules = [ __import__(name) for name in list(_module_names.values())
                                             if name not in _module_specs ]
         # convert modules into suites
         self.suites = []
@@ -225,7 +225,7 @@ class UnitTestRunData:
         self.countFailures  = 0
         self.countErrors    = 0
         self.rawData = {}
-        for _module_name, _result in self.results.iteritems():
+        for _module_name, _result in self.results.items():
             # TODO: revisit all this processing, is everything necessary?
             tmp = {}
             # parse results individually
@@ -305,7 +305,7 @@ def runUnitTestsAndOutputResults():
         output("%d tests erred in total!" % (result_data.countErrors))
     output("\n----------------------\n")
     
-    data_items = result_data.rawData.items()
+    data_items = list(result_data.rawData.items())
     data_items.sort()
     
     output("Module Data")
@@ -345,7 +345,7 @@ if __name__ == '__main__':
         try:
             sys.stdout = open(options.outfilename,'w')
         except IOError:
-            print "Error opening output file, defaulting to original stdout"
+            print("Error opening output file, defaulting to original stdout")
             sys.stdout = origstdout
 
     app = common.EdApp(False)

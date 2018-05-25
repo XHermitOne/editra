@@ -55,7 +55,7 @@ class VertEdit(object):
         self.stack = deque()
         self.jitter = None
         self.SetBlockColor(blockBackColour)
-        self.modmask = long(self.e.ModEventMask)
+        self.modmask = int(self.e.ModEventMask)
 
         # Event Handlers
 #        self.e.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
@@ -123,7 +123,7 @@ class VertEdit(object):
     def fn_ins(self, col, text, line):
         colEnd = self.e.GetColumn(self.e.GetLineEndPosition(line))
         if col > colEnd:
-            text = u" " * (col - colEnd) + text
+            text = " " * (col - colEnd) + text
             col = colEnd
 
         self.e.CurrentPos = pos = self.e.FindColumn(line, col)
@@ -140,7 +140,7 @@ class VertEdit(object):
 
         self.e.SetTargetStart(pos1)
         self.e.SetTargetEnd(pos2)
-        self.e.ReplaceTarget(u'')
+        self.e.ReplaceTarget('')
         return True
 
     def OnModified(self, evt):
@@ -194,8 +194,8 @@ class VertEdit(object):
         self.state = STATE_SELECTION
         self.insCol = None
         self.curLine = self.e.LineFromPosition(self.e.CurrentPos)
-        self.lines = frozenset(range(min(self.origLine, self.curLine),
-                                     max(self.origLine, self.curLine) + 1))
+        self.lines = frozenset(list(range(min(self.origLine, self.curLine),
+                                     max(self.origLine, self.curLine) + 1)))
         self.jitter = None
 
         if singleLine:

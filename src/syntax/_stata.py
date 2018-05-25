@@ -21,9 +21,9 @@ __revision__ = "$Revision: 0$"
 import wx.stc as stc
 
 # Local imports
-import synglob
-import syndata
-from _cpp import AutoIndenter
+from . import synglob
+from . import syndata
+from ._cpp import AutoIndenter
 
 #-----------------------------------------------------------------------------#
 
@@ -431,4 +431,4 @@ class SyntaxData(syndata.SyntaxDataBase):
     # TODO: this doesnt' look right...
     def GetCommentPattern(self):
         """Returns a list of characters used to comment a block of code """
-        return [u'//', u'/*', u'*/',u'*' ]
+        return ['//', '/*', '*/','*' ]

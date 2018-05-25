@@ -21,9 +21,9 @@ __revision__ = "$Revision: 71697 $"
 import wx
 
 # Local Imports
-import ed_msg
-import eclib
-import util
+from . import ed_msg
+from . import eclib
+from . import util
 
 #--------------------------------------------------------------------------#
 
@@ -95,9 +95,9 @@ class EDBaseFileTree(eclib.FileTree):
 
 class EdBaseDialog(eclib.ECBaseDlg):
     """Editra Dialog Base Class"""
-    def __init__(self, parent, id=wx.ID_ANY, title=u"",
+    def __init__(self, parent, id=wx.ID_ANY, title="",
                  pos=wx.DefaultPosition, size=wx.DefaultSize, 
-                 style=wx.DEFAULT_DIALOG_STYLE, name=u"EdBaseDialog"):
+                 style=wx.DEFAULT_DIALOG_STYLE, name="EdBaseDialog"):
         super(EdBaseDialog, self).__init__(parent, id, title, pos,
                                            size, style, name)
 
@@ -105,9 +105,9 @@ class EdBaseDialog(eclib.ECBaseDlg):
 
 class EdBaseFrame(wx.Frame):
     """Editra Frame Base Class"""
-    def __init__(self, parent, id=wx.ID_ANY, title=u"",
+    def __init__(self, parent, id=wx.ID_ANY, title="",
                  pos=wx.DefaultPosition, size=wx.DefaultSize,
-                 style=wx.DEFAULT_FRAME_STYLE, name=u"EdBaseFrame"):
+                 style=wx.DEFAULT_FRAME_STYLE, name="EdBaseFrame"):
         super(EdBaseFrame, self).__init__(parent, id, title, pos,
                                           size, style, name)
 
@@ -151,7 +151,7 @@ class EdBaseCtrlBox(eclib.ControlBox):
                     for child in cbar.GetChildren():
                         child.SetFont(font)
 
-    def AddPlateButton(self, lbl=u"", bmp=-1,
+    def AddPlateButton(self, lbl="", bmp=-1,
                        align=wx.ALIGN_LEFT, cbarpos=wx.TOP):
         """Add an eclib.PlateButton to the ControlBar specified by
         cbarpos.
@@ -181,7 +181,7 @@ class EdBaseCtrlBox(eclib.ControlBox):
         return cbar
 
 class EdBaseCtrlBar(eclib.ControlBar):
-    def AddPlateButton(self, lbl=u"", bmp=-1, align=wx.ALIGN_LEFT):
+    def AddPlateButton(self, lbl="", bmp=-1, align=wx.ALIGN_LEFT):
         """Add an eclib.PlateButton 
         @keyword lbl: Button Label
         @keyword bmp: Bitmap or EditraArtProvider ID
