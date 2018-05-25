@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 ###############################################################################
 # Name: Editra                                                                #
 # Purpose: Editra's main launch script                                        #
@@ -33,12 +33,12 @@ except ImportError:
     try:
         import Editra as esrc
         IS_LOCAL = False
-    except ImportError, msg:
-        print "There was an error while tring to import Editra"
-        print ("Make sure that Editra is on your PYTHONPATH and that "
-               "you have wxPython installed.")
-        print "ERROR MSG: "
-        print str(msg)
+    except ImportError as msg:
+        print("There was an error while tring to import Editra")
+        print("Make sure that Editra is on your PYTHONPATH and that "
+              "you have wxPython installed.")
+        print("ERROR MSG: ")
+        print(str(msg))
         os._exit(1)
 
 #--------------------------------------------------------------------------#
@@ -71,7 +71,7 @@ def main():
             del sys.modules['src']
 
     sys.path.insert(0, SRC_DIR)
-    import Editra
+    from src import Editra
     Editra.Main()
 
 

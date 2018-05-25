@@ -26,7 +26,7 @@ __revision__ = "$Revision: 71189 $"
 import os
 import wx
 import wx.lib.langlistctrl as langlist
-import wx.combo
+import wx.adv
 import glob
 
 # Editra Imports
@@ -98,7 +98,7 @@ def GetLangId(lang_n):
     return lang_desc.get(lang_n, wx.LANGUAGE_DEFAULT)
 
 #---- Language List Combo Box----#
-class LangListCombo(wx.combo.BitmapComboBox):
+class LangListCombo(wx.adv.BitmapComboBox):
     """Combines a langlist and a BitmapComboBox"""
     def __init__(self, parent, id_, default=None):
         """Creates a combobox with a list of all translations for the

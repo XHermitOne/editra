@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 ###############################################################################
 # Name: Editra.py                                                             #
 # Purpose: Implements Editras App object and the Main method                  #
@@ -28,8 +28,11 @@ import sys
 # of places Editra has become incompatible with wxPython 2.8.1.1 and earlier.
 # So ensure correct version of wxPython can be loaded
 if not hasattr(sys, 'frozen') and 'wx' not in sys.modules:
-    import wxversion
-    wxversion.ensureMinimal('2.8')
+    try:
+        import wxversion
+        wxversion.ensureMinimal('2.8')
+    except ImportError:
+        print('wxversion Import error')
 
 import codecs
 import base64
@@ -44,7 +47,7 @@ import wx
 try:
     import wx.lib.eventStack as events
 except:
-    from . import extern.events as events
+    from .extern import events
 
 # Try and import a system installed version of pkg_resources else fallback to
 # the one bundled with Editra's source.
@@ -183,7 +186,7 @@ class Editra(wx.App, events.AppEventHandlerMixin):
             wx.ArtProvider.PushProvider(ed_art.EditraArt())
 
         # Check if libenchant has been loaded or need to be
-        from . import extern.stcspellcheck as stcspellcheck
+        from .extern import stcspellcheck
         checker = stcspellcheck.STCSpellCheck
         if not checker.isEnchantOk():
             spref = profiler.Profile_Get('SPELLCHECK', default=dict())

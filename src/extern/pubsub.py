@@ -54,7 +54,7 @@ much cleaner separation of concerns. But time is over, time to move on.
 #---------------------------------------------------------------------------
 
 # for function and method parameter counting:
-from types   import InstanceType
+# from types   import InstanceType
 from inspect import getargspec, ismethod, isfunction
 # for weakly bound methods:
 from new     import instancemethod as InstanceMethod

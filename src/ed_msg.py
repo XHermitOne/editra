@@ -31,7 +31,7 @@ __all__ = ['PostMessage', 'Subscribe', 'Unsubscribe']
 
 #--------------------------------------------------------------------------#
 # Imports
-from wx import PyDeadObjectError
+import wx
 from .extern.pubsub import Publisher
 
 #--------------------------------------------------------------------------#
@@ -466,7 +466,7 @@ def RequestResult(msgtype, args=list()):
                 rval = meth(args)
             else:
                 rval = meth()
-        except PyDeadObjectError:
+        except RuntimeError:
             to_remove.append(meth)
 
         if not isinstance(rval, NullValue):

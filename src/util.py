@@ -22,7 +22,9 @@ import sys
 import mimetypes
 import encodings
 import codecs
-import urllib.request, urllib.error, urllib.parse
+import urllib.request
+import urllib.error
+import urllib.parse
 import wx
 
 # Editra Libraries
@@ -30,8 +32,8 @@ from . import ed_glob
 from . import ed_event
 from . import ed_crypt
 from . import dev_tool
-from . import syntax.syntax as syntax
-from . import syntax.synglob as synglob
+from .syntax import syntax
+from .syntax import synglob
 from . import ebmlib
 
 _ = wx.GetTranslation
