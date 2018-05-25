@@ -29,7 +29,7 @@ from . import ed_glob
 from . import util
 from . import plugin
 from .profiler import Profile_Get, Profile_Set
-from . import syntax.synglob as synglob
+from .syntax import synglob
 from .syntax.syntax import SYNTAX_IDS
 
 #--------------------------------------------------------------------------#

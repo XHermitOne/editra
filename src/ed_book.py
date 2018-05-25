@@ -22,7 +22,7 @@ __revision__ = "$Revision: 69245 $"
 import wx
 
 # Editra Imports
-from . import extern.aui as aui
+from .extern import aui
 from . import ed_msg
 from .profiler import Profile_Get
 

@@ -64,7 +64,7 @@ class MetaData(type):
         cls.meta = Meta(cls, meta_attrs)
         return cls
 
-class FactoryMixin(metaclass=MetaData):
+class FactoryMixin:
     """Factory implementation.
     All classes derived from classes using this mixin should declare a nested
     subclass 'meta' that has at least one member 'id' that is used to identify
@@ -95,6 +95,8 @@ class FactoryMixin(metaclass=MetaData):
             return dict(id=None, size=0)
 
     """
+    __metaclass__ = MetaData
+
     @classmethod
     def FactoryCreate(cls, identifier, *args, **kwargs):
         """Create an object of the appropriate type

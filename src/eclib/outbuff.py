@@ -90,7 +90,7 @@ import wx
 import wx.stc
 
 # Platform specific modules needed for killing processes
-if subprocess.mswindows:
+if subprocess._mswindows:
     import msvcrt
     import ctypes
 else:

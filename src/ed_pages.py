@@ -27,8 +27,8 @@ import wx
 from . import ed_glob
 from .profiler import Profile_Get, Profile_Set
 from . import ed_editv
-from . import syntax.synglob as synglob
-from . import syntax.syntax as syntax
+from .syntax import synglob
+from .syntax import syntax
 from . import ed_search
 from . import util
 from . import ed_msg

@@ -57,7 +57,8 @@ much cleaner separation of concerns. But time is over, time to move on.
 # from types   import InstanceType
 from inspect import getargspec, ismethod, isfunction
 # for weakly bound methods:
-from new     import instancemethod as InstanceMethod
+# from new     import instancemethod as InstanceMethod
+from types import MethodType
 from weakref import ref as WeakRef
 
 # -----------------------------------------------------------------------------
@@ -163,7 +164,7 @@ class _WeakMethod:
         if self.objRef() is None:
             return None
         else:
-            return InstanceMethod(self.fun, self.objRef(), self.cls)
+            return MethodType(self.fun, self.objRef(), self.cls)
         
     def __eq__(self, method2):
         """Two WeakMethod objects compare equal if they refer to the same method

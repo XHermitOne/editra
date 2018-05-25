@@ -40,7 +40,7 @@ from . import ed_shelf
 from . import ed_statbar
 from . import ed_mdlg
 from . import prefdlg
-from . import syntax.syntax as syntax
+from .syntax import syntax
 from . import generator
 from . import plugin
 from . import ed_fmgr

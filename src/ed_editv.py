@@ -31,7 +31,7 @@ from . import ed_tab
 from .doctools import DocPositionMgr
 from .profiler import Profile_Get
 from .util import Log, SetClipboardText
-from . import syntax.synglob as synglob
+from .syntax import synglob
 from .ebmlib import GetFileModTime, ContextMenuManager, GetFileName
 
 # External libs

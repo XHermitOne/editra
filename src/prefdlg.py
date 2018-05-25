@@ -36,12 +36,12 @@ from . import ed_event
 from . import ed_crypt
 from . import updater
 from . import util
-from . import syntax.syntax as syntax
+from .syntax import syntax
 from . import ed_msg
 from . import ed_txt
 from . import eclib
 from . import ed_menu
-from . import extern.stcspellcheck as stcspellcheck
+from .extern import stcspellcheck
 
 #----------------------------------------------------------------------------#
 # Globals

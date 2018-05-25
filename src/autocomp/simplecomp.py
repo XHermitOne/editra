@@ -27,7 +27,7 @@ from . import completer
 
 class Completer(completer.BaseCompleter):
     """Generic word completer provider"""
-    wordCharacters = "".join(['_', string.letters])
+    wordCharacters = "".join(['_', string.ascii_letters])
 
     def __init__(self, stc_buffer):
         super(Completer, self).__init__(stc_buffer)

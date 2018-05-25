@@ -277,7 +277,7 @@ class UpdateProgress(wx.Gauge, UpdateService):
     ID_TIMER = wx.NewId()
 
     def __init__(self, parent, id_, range_=100,
-                 style=wx.GA_HORIZONTAL | wx.GA_PROGRESSBAR):
+                 style=wx.GA_HORIZONTAL | wx.GA_SMOOTH):
         """Initiliazes the bar in a disabled state."""
         wx.Gauge.__init__(self, parent, id_, range_, style=style)
         UpdateService.__init__(self)

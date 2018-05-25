@@ -40,6 +40,7 @@ import locale
 import getopt
 import shutil
 import wx
+import wx.adv
 
 # The event handler mixin is now part of wxPython proper, but there hasn't
 # been an official release with it yet, so try to import the official module
@@ -157,7 +158,7 @@ class Editra(wx.App, events.AppEventHandlerMixin):
                 self._log("[app][info] Starting Ipc server...")
                 # Set the session key and save it to the users profile so
                 # that other instances can access the server
-                key = base64.b64encode(os.urandom(8), 'zZ')
+                key = base64.b64encode(os.urandom(8), b'zZ')
                 uname = wx.GetUserName()
                 if ebmlib.IsUnicode(uname):
                     uname = uname.encode(sys.getfilesystemencoding(), 'replace')
@@ -267,8 +268,8 @@ class Editra(wx.App, events.AppEventHandlerMixin):
         if profiler.Profile_Get('APPSPLASH'):
             from . import edimage
             splash_img = edimage.splashwarn.GetBitmap()
-            self.splash = wx.SplashScreen(splash_img, wx.SPLASH_CENTRE_ON_PARENT | \
-                                          wx.SPLASH_NO_TIMEOUT, 0, None, wx.ID_ANY)
+            self.splash = wx.adv.SplashScreen(splash_img, wx.adv.SPLASH_CENTRE_ON_PARENT | \
+                                          wx.adv.SPLASH_NO_TIMEOUT, 0, None, wx.ID_ANY)
             self.splash.Show()
 
         return True

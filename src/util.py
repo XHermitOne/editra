@@ -400,7 +400,7 @@ def GetFileReader(file_name, enc='utf-8'):
 
     """
     try:
-        file_h = file(file_name, "rb")
+        file_h = open(file_name, "rb")
     except (IOError, OSError):
         dev_tool.DEBUGP("[file_reader] Failed to open file %s" % file_name)
         return -1
@@ -442,7 +442,7 @@ def GetUserConfigBase():
     """Get the base user configuration directory path"""
     cbase = ed_glob.CONFIG['CONFIG_BASE']
     if cbase is None:
-        cbase = wx.StandardPaths_Get().GetUserDataDir()
+        cbase = wx.StandardPaths.Get().GetUserDataDir()
         if wx.Platform == '__WXGTK__':
             if '.config' not in cbase and not os.path.exists(cbase):
                 # If no existing configuration return xdg config path

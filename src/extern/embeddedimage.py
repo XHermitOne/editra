@@ -39,7 +39,8 @@ class PyEmbeddedImage(object):
         self.isBase64 = isBase64
 
     def GetBitmap(self):
-        return wx.BitmapFromImage(self.GetImage())
+        # return wx.BitmapFromImage(self.GetImage())
+        return wx.Bitmap(self.GetImage())
 
     def GetData(self):
         return self.data
@@ -53,8 +54,9 @@ class PyEmbeddedImage(object):
         data = self.data
         if self.isBase64:
             data = base64.b64decode(self.data)
-        stream = io.StringIO(data)
-        return wx.ImageFromStream(stream)
+        stream = io.BytesIO(data) #io.StringIO(data)
+        # return wx.ImageFromStream(stream)
+        return wx.Image(stream)
 
     # added for backwards compatibility
     getBitmap = GetBitmap

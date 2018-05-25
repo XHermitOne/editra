@@ -25,7 +25,7 @@ __revision__ = "$Revision: 66815 $"
 import wx
 from . import ed_glob
 from .profiler import Profile_Get
-from . import syntax.syntax as syntax
+from .syntax import syntax
 from . import ed_theme
 
 #--------------------------------------------------------------------------#

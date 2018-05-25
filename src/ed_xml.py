@@ -19,7 +19,7 @@ __revision__ = "$Revision: 72624 $"
 # Imports
 import types
 from xml.dom import minidom
-from . import extern.dexml as dexml
+from .extern import dexml
 from .extern.dexml.fields import *
 
 from . import util

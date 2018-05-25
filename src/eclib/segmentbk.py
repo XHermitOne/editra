@@ -71,7 +71,7 @@ EVT_SB_PAGE_CLOSED = wx.PyEventBinder(edEVT_SB_PAGE_CLOSED, 1)
 
 edEVT_SB_PAGE_CONTEXT_MENU = wx.NewEventType()
 EVT_SB_PAGE_CONTEXT_MENU = wx.PyEventBinder(edEVT_SB_PAGE_CONTEXT_MENU, 1)
-class SegmentBookEvent(wx.NotebookEvent):
+class SegmentBookEvent(wx.BookCtrlEvent):
     """SegmentBook event"""
     def __init__(self, etype=wx.wxEVT_NULL, id=-1, sel=-1, old_sel=-1):
         super(SegmentBookEvent, self).__init__(etype, id, sel, old_sel)
