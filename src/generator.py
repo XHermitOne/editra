@@ -23,33 +23,35 @@ __author__ = "Cody Precord <cprecord@editra.org>"
 __svnid__ = "$Id: generator.py 70229 2012-01-01 01:27:10Z CJP $"
 __revision__ = "$Revision: 70229 $"
 
-#--------------------------------------------------------------------------#
+# --------------------------------------------------------------------------#
 # Imports
 import wx
 import wx.stc
 import time
 
 # Editra Libraries
-from . import ed_glob
-from . import ed_menu
-from .ed_style import StyleItem
-from . import util
-from . import plugin
-from . import ebmlib
-from . import eclib
+from src import ed_glob
+from src import ed_menu
+from src.ed_style import StyleItem
+from src import util
+from src import plugin
+from src import ebmlib
+from src import eclib
 
-#--------------------------------------------------------------------------#
+# --------------------------------------------------------------------------#
 # Globals
 _ = wx.GetTranslation
 
 FONT_FALLBACKS = "Trebuchet, Tahoma, sans-serif"
 
-#--------------------------------------------------------------------------#
+# --------------------------------------------------------------------------#
 # Plugin Interface
-class GeneratorI(plugin.Interface):
-    """Plugins that are to be used for generating code/document need
-    to implement this interface.
 
+
+class GeneratorI(plugin.Interface):
+    """
+    Plugins that are to be used for generating code/document need
+    to implement this interface.
     """
     def Generate(self, stc):
         """Generates the code. The txt_ctrl parameter is a reference

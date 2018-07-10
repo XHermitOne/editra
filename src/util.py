@@ -516,8 +516,10 @@ def CreateConfigDir():
     profiler.TheProfile.Write(dest_file)
     profiler.UpdateProfileLoader()
 
+
 def ResolvConfigDir(config_dir, sys_only=False):
-    """Checks for a user config directory and if it is not
+    """
+    Checks for a user config directory and if it is not
     found it then resolves the absolute path of the executables
     directory from the relative execution path. This is then used
     to find the location of the specified directory as it relates
@@ -527,7 +529,6 @@ def ResolvConfigDir(config_dir, sys_only=False):
     @keyword sys_only: only get paths of system config directory or user one
     @note: This method is probably much more complex than it needs to be but
            the code has proven itself.
-
     """
     # Try to get a User config directory
     if not sys_only:
@@ -538,7 +539,7 @@ def ResolvConfigDir(config_dir, sys_only=False):
             return user_config + os.sep
 
     # Check if the system install path has already been resolved once before
-    if ed_glob.CONFIG['INSTALL_DIR'] != "":
+    if ed_glob.CONFIG['INSTALL_DIR'] != '':
         tmp = os.path.join(ed_glob.CONFIG['INSTALL_DIR'], config_dir)
         tmp = os.path.normpath(tmp) + os.sep
         if os.path.exists(tmp):
@@ -554,7 +555,7 @@ def ResolvConfigDir(config_dir, sys_only=False):
         if not ebmlib.IsUnicode(path):
             path = path.decode(sys.getfilesystemencoding())
         path = os.sep.join(path.split(os.sep)[:-2])
-        path =  path + os.sep + config_dir + os.sep
+        path = path + os.sep + config_dir + os.sep
         if os.path.exists(path):
             if not ebmlib.IsUnicode(path):
                 path = str(path, sys.getfilesystemencoding())
@@ -579,7 +580,7 @@ def ResolvConfigDir(config_dir, sys_only=False):
 
         if os.path.isabs(pro_path):
             pass
-        elif pro_path == "":
+        elif pro_path == '':
             pro_path = os.getcwd()
             pieces = pro_path.split(os.sep)
             pro_path = os.sep.join(pieces[:-1])
@@ -594,7 +595,7 @@ def ResolvConfigDir(config_dir, sys_only=False):
         pro_path = os.sep.join(pieces[:-2])
         if pro_path.startswith(os.sep):
             pass
-        elif pro_path == "":
+        elif pro_path == '':
             pro_path = os.getcwd()
             pieces = pro_path.split(os.sep)
             if pieces[-1] not in [ed_glob.PROG_NAME.lower(), ed_glob.PROG_NAME]:
@@ -612,6 +613,7 @@ def ResolvConfigDir(config_dir, sys_only=False):
         path = str(path, sys.getdefaultencoding())
 
     return path
+
 
 def GetResources(resource):
     """Returns a list of resource directories from a given toplevel config dir

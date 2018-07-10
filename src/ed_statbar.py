@@ -11,14 +11,13 @@ Custom StatusBar for Editra that contains a progress bar that responds to
 messages from ed_msg to display progress of different actions.
 
 @summary: Editra's StatusBar class
-
 """
 
 __author__ = "Cody Precord <cprecord@editra.org>"
 __svnid__ = "$Id: ed_statbar.py 70229 2012-01-01 01:27:10Z CJP $"
 __revision__ = "$Revision: 70229 $"
 
-#--------------------------------------------------------------------------#
+# --------------------------------------------------------------------------
 # Imports
 import wx
 import wx.stc
@@ -32,23 +31,23 @@ from .syntax.synglob import GetDescriptionFromId
 from .eclib import ProgressStatusBar, EncodingDialog
 from .extern.decorlib import anythread
 
-#--------------------------------------------------------------------------#
- 
+# --------------------------------------------------------------------------
 _ = wx.GetTranslation
+# --------------------------------------------------------------------------
 
-#--------------------------------------------------------------------------#
 
 class EdStatBar(ProgressStatusBar):
-    """Custom status bar that handles dynamic field width adjustment and
+    """
+    Custom status bar that handles dynamic field width adjustment and
     automatic expiration of status messages.
-
     """
     ID_CLEANUP_TIMER = wx.NewId()
+
     def __init__(self, parent):
-        super(EdStatBar, self).__init__(parent, style=wx.ST_SIZEGRIP)
+        super(EdStatBar, self).__init__(parent, style=wx.STB_SIZEGRIP)
 
         # Attributes
-        self._pid = parent.GetId() # Save parents id for filtering msgs
+        self._pid = parent.GetId()  # Save parents id for filtering msgs
         self._widths = list()
         self._cleanup_timer = wx.Timer(self, EdStatBar.ID_CLEANUP_TIMER)
         self._eolmenu = wx.Menu()
@@ -56,16 +55,16 @@ class EdStatBar(ProgressStatusBar):
         self._log = wx.GetApp().GetLog()
 
         # Setup
-        self.SetFieldsCount(6) # Info, vi stuff, line/progress
+        self.SetFieldsCount(6)  # Info, vi stuff, line/progress
         self.SetStatusWidths([-1, 90, 40, 40, 40, 155])
-        self._eolmenu.Append(ed_glob.ID_EOL_MAC, "CR",
-                             _("Change line endings to %s") % "CR",
+        self._eolmenu.Append(ed_glob.ID_EOL_MAC, 'CR',
+                             _('Change line endings to %s') % 'CR',
                              kind=wx.ITEM_CHECK)
-        self._eolmenu.Append(ed_glob.ID_EOL_WIN, "CRLF",
-                             _("Change line endings to %s") % "CRLF",
+        self._eolmenu.Append(ed_glob.ID_EOL_WIN, 'CRLF',
+                             _('Change line endings to %s') % 'CRLF',
                              kind=wx.ITEM_CHECK)
-        self._eolmenu.Append(ed_glob.ID_EOL_UNIX, "LF",
-                             _("Change line endings to %s") % "LF",
+        self._eolmenu.Append(ed_glob.ID_EOL_UNIX, 'LF',
+                             _('Change line endings to %s') % 'LF',
                              kind=wx.ITEM_CHECK)
 
         # Event Handlers
@@ -85,7 +84,9 @@ class EdStatBar(ProgressStatusBar):
         ed_msg.Subscribe(self.OnUpdateDoc, ed_msg.EDMSG_UI_STC_LEXER)
 
     def OnDestroy(self, evt):
-        """Unsubscribe from messages"""
+        """
+        Unsubscribe from messages
+        """
         if self._lexmenu:
             self._lexmenu.Destroy()
         if self._eolmenu:
@@ -97,10 +98,10 @@ class EdStatBar(ProgressStatusBar):
         evt.Skip()
 
     def __SetStatusText(self, txt, field):
-        """Safe method to use for setting status text with CallAfter.
+        """
+        Safe method to use for setting status text with CallAfter.
         @param txt: string
         @param field: int
-
         """
         try:
             super(EdStatBar, self).SetStatusText(txt, field)
@@ -123,13 +124,13 @@ class EdStatBar(ProgressStatusBar):
             # in GetPartialTextExtents()
             pass
         except TypeError as err:
-            self._log("[edstatbar][err] Bad status message: %s" % str(txt))
-            self._log("[edstatbar][err] %s" % err)
+            self._log('[edstatbar][err] Bad status message: %s' % str(txt))
+            self._log('[edstatbar][err] %s' % err)
 
     def AdjustFieldWidths(self):
-        """Adjust each field width of status bar basing on the field text
+        """
+        Adjust each field width of status bar basing on the field text
         @return: None
-
         """
         widths = [-1]
         # Calculate required widths
@@ -154,13 +155,15 @@ class EdStatBar(ProgressStatusBar):
             self.SetStatusWidths(self._widths)
 
     def GetMainWindow(self):
-        """Method required for L{ed_msg.mwcontext}"""
+        """
+        Method required for L{ed_msg.mwcontext}
+        """
         return self.TopLevelParent
 
     def OnExpireMessage(self, evt):
-        """Handle Expiring the status message when the oneshot timer
+        """
+        Handle Expiring the status message when the oneshot timer
         tells us it has expired.
-
         """
         if evt.GetId() == EdStatBar.ID_CLEANUP_TIMER:
             wx.CallAfter(self.__SetStatusText, '', ed_glob.SB_INFO)
@@ -168,10 +171,10 @@ class EdStatBar(ProgressStatusBar):
             evt.Skip()
 
     def OnLeftDClick(self, evt):
-        """Handlers mouse left double click on status bar
+        """
+        Handlers mouse left double click on status bar
         @param evt: wx.MouseEvent
         @note: Assumes parent is MainWindow instance
-
         """
         pt = evt.GetPosition()
         if self.GetFieldRect(ed_glob.SB_ROWCOL).Contains(pt):
@@ -182,9 +185,9 @@ class EdStatBar(ProgressStatusBar):
             evt.Skip()
 
     def OnLeftUp(self, evt):
-        """Handle left clicks on the status bar
+        """
+        Handle left clicks on the status bar
         @param evt: wx.MouseEvent
-
         """
         pt = evt.GetPosition()
         if self.GetFieldRect(ed_glob.SB_EOL).Contains(pt):
@@ -194,8 +197,8 @@ class EdStatBar(ProgressStatusBar):
             nb = self.GetTopLevelParent().GetNotebook()
             buff = nb.GetCurrentCtrl()
             dlg = EncodingDialog(nb,
-                                 msg=_("Change the encoding of the current document."),
-                                 title=_("Change Encoding"),
+                                 msg=_('Change the encoding of the current document.'),
+                                 title=_('Change Encoding'),
                                  default=buff.GetEncoding())
             bmp = wx.ArtProvider.GetBitmap(str(ed_glob.ID_DOCPROP),
                                            wx.ART_OTHER)
@@ -227,9 +230,9 @@ class EdStatBar(ProgressStatusBar):
             evt.Skip()
 
     def OnProgress(self, msg):
-        """Set the progress bar's state
+        """
+        Set the progress bar's state
         @param msg: Message Object
-
         """
         mdata = msg.GetData()
         # Don't do anything if the message is not for this frame
@@ -253,9 +256,9 @@ class EdStatBar(ProgressStatusBar):
 
     @ed_msg.mwcontext
     def OnUpdateDoc(self, msg):
-        """Update document related fields
+        """
+        Update document related fields
         @param msg: Message Object
-
         """
         self.UpdateFields()
         if msg.GetType() == ed_msg.EDMSG_UI_NB_CHANGED:
@@ -263,48 +266,48 @@ class EdStatBar(ProgressStatusBar):
 
     @anythread
     def DoUpdateText(self, msg):
-        """Thread safe update of status text. Proxy for OnUpdateText because
+        """
+        Thread safe update of status text. Proxy for OnUpdateText because
         pubsub seems to have issues with passing decorator methods for
         listeners.
         @param msg: Message Object
-
         """
         # Only process if this status bar is in the active window and shown
         parent = self.GetTopLevelParent()
-        if (parent.IsActive() or wx.GetApp().GetTopWindow() == parent):
+        if parent.IsActive() or wx.GetApp().GetTopWindow() == parent:
             field, txt = msg.GetData()
             self.UpdateFields()
             wx.CallAfter(self.__SetStatusText, txt, field)
 
     def OnUpdateText(self, msg):
-        """Update the status bar text based on the received message
+        """
+        Update the status bar text based on the received message
         @param msg: Message Object
-
         """
         self.DoUpdateText(msg)
 
     def PushStatusText(self, txt, field):
-        """Set the status text
+        """
+        Set the status text
         @param txt: Text to put in bar
         @param field: int
-
         """
         wx.CallAfter(self.__SetStatusText, txt, field)
 
     def SetStatusText(self, txt, field):
-        """Set the status text
+        """
+        Set the status text
         @param txt: Text to put in bar
         @param field: int
-
         """
         wx.CallAfter(self.__SetStatusText, txt, field)
 
     def UpdateFields(self):
-        """Update document fields based on the currently selected
+        """
+        Update document fields based on the currently selected
         document in the editor.
         @postcondition: encoding and lexer fields are updated
         @todo: update when readonly hooks are implemented
-
         """
         nb = self.GetParent().GetNotebook()
         if nb is None:
@@ -319,9 +322,9 @@ class EdStatBar(ProgressStatusBar):
                          GetDescriptionFromId(cbuff.GetLangId()),
                          ed_glob.SB_LEXER)
 
-            eol = { wx.stc.STC_EOL_CR : "CR",
-                    wx.stc.STC_EOL_LF : "LF",
-                    wx.stc.STC_EOL_CRLF : "CRLF" }
+            eol = {wx.stc.STC_EOL_CR: 'CR',
+                   wx.stc.STC_EOL_LF: 'LF',
+                   wx.stc.STC_EOL_CRLF: 'CRLF'}
             wx.CallAfter(self.__SetStatusText,
                          eol[cbuff.GetEOLMode()],
                          ed_glob.SB_EOL)

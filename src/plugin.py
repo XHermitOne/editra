@@ -460,8 +460,8 @@ class PluginManager(object):
         self.LOG = wx.GetApp().GetLog()
         self.RemoveUninstalled()
 
-        self._config = self.LoadPluginConfig() # Enabled/Disabled Plugins
-        self._pi_path = list(set([ed_glob.CONFIG['PLUGIN_DIR'], 
+        self._config = self.LoadPluginConfig()  # Enabled/Disabled Plugins
+        self._pi_path = list(set([ed_glob.CONFIG['PLUGIN_DIR'],
                                   ed_glob.CONFIG['SYS_PLUGIN_DIR']]))
         sys.path.extend(self._pi_path)
         self._env = self.CreateEnvironment(self._pi_path)
@@ -525,9 +525,9 @@ class PluginManager(object):
 
         return plugin
 
-    #---- End Private Members ----#
+    # ---- End Private Members ----
 
-    #---- Public Class Functions ----#
+    # ---- Public Class Functions ----
     def AppendPath(self, path):
         """Append a path to the environment path for the plugin manager 
         to look for plugins on. The path is only added to the environment
@@ -552,9 +552,9 @@ class PluginManager(object):
         @note: pkgutils does not like Unicode! only send encoded strings
 
         """
-        if pkg_resources != None:
-            path = [ EncodeString(pname, sys.getfilesystemencoding())
-                     for pname in path ]
+        if pkg_resources is not None:
+            # path = [EncodeString(pname, sys.getfilesystemencoding())
+            #        for pname in path]
 
             try:
                 env = pkg_resources.Environment(path)

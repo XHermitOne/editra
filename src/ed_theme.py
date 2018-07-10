@@ -12,30 +12,31 @@ themes to be created, installed, and managed as plugins, which means that they
 can be installed as single file instead of dozens of individual image files.
 
 @summary: Editra's theme interface and implementation
-
 """
 
 __author__ = "Cody Precord <cprecord@editra.org>"
 __svnid__ = "$Id: ed_theme.py 72247 2012-07-28 22:32:37Z CJP $"
 __revision__ = "$Revision: 72247 $"
 
-#--------------------------------------------------------------------------#
+# --------------------------------------------------------------------------
 # Imports
 import os
 import wx
 
 # Local Imports
-from . import ed_glob
-from . import util
-from . import plugin
-from .profiler import Profile_Get, Profile_Set
-from .syntax import synglob
-from .syntax.syntax import SYNTAX_IDS
+from src import ed_glob
+from src import util
+from src import plugin
+from src.profiler import Profile_Get, Profile_Set
+from src.syntax import synglob
+from src.syntax.syntax import SYNTAX_IDS
 
-#--------------------------------------------------------------------------#
+# --------------------------------------------------------------------------
+
 
 class ThemeI(plugin.Interface):
-    """Interface for defining an icon theme in Editra
+    """
+    Interface for defining an icon theme in Editra
     When a icon theme is active Editra's ArtProvider will ask the active
     theme that implements this interface to give it a bitmap. The requests
     for bitmaps will be numerical ID values that come from ed_glob. These
@@ -45,28 +46,28 @@ class ThemeI(plugin.Interface):
 
     @see: L{ed_glob}
     @see: L{syntax.synglob}
-
     """
     def GetName(self):
-        """Return the name of this theme. This is used to identify the
+        """
+        Return the name of this theme. This is used to identify the
         theme when the provider looks for resources based on user preferences
 
         @return: name string
-
         """
 
     def GetMenuBitmap(self, bmp_id):
-        """Get the menu bitmap associated with the object id
+        """
+        Get the menu bitmap associated with the object id
         If this theme does not have a resource to provide for this
         object return a wx.NullBitmap.
 
         @return: 16x16 pixel bitmap
-
         """
         return wx.NullBitmap
 
     def GetFileBitmap(self, bmp_id):
-        """Get the filetype bitmap associated with the object id, the
+        """
+        Get the filetype bitmap associated with the object id, the
         valid object ids are defined in the module syntax.synglob and
         are used to request images for menu's and page tabs. The theme
         implimenting this interface should at least be able to
@@ -77,24 +78,24 @@ class ThemeI(plugin.Interface):
         object return a wx.NullBitmap.
 
         @return: 16x16 pixel bitmap
-
         """
         return wx.NullBitmap
 
     def GetOtherBitmap(self, bmp_id):
-        """Get the bitmap from the 'other' icon resources. Valid id's are
+        """
+        Get the bitmap from the 'other' icon resources. Valid id's are
         identified by a mapping in the ART dictionary.
         
         If this theme does not have a resource to provide for this
         object return a wx.NullBitmap.
 
         @return: wx.Bitmap
-
         """
         return wx.NullBitmap
 
     def GetToolbarBitmap(self, bmp_id):
-        """Get the toolbar bitmap associated with the object id. The
+        """
+        Get the toolbar bitmap associated with the object id. The
         toolbar icons must be returned as a 32x32 pixel bitmap any
         scaling that is needed will be handled by the art provider that
         requests the resource.
@@ -103,22 +104,22 @@ class ThemeI(plugin.Interface):
         object return a wx.NullBitmap.
 
         @return: 32x32 pixel bitmap
-
         """
         return wx.NullBitmap
 
-#-----------------------------------------------------------------------------#
+
+# -----------------------------------------------------------------------------
 
 class BitmapProvider(plugin.Plugin):
-    """Plugin that fetches requested icons from the current active theme.
-
+    """
+    Plugin that fetches requested icons from the current active theme.
     """
     observers = plugin.ExtensionPoint(ThemeI)
 
     def __GetCurrentProvider(self):
-        """Gets the provider of the current theme resources
+        """
+        Gets the provider of the current theme resources
         @return: ThemeI object
-
         """
         theme = Profile_Get('ICONS', 'str', '')
         for prov in self.observers:
@@ -132,7 +133,9 @@ class BitmapProvider(plugin.Plugin):
         return None
 
     def _GetTango(self, bmp_id, client):
-        """Try to get the icon from the default tango theme"""
+        """
+        Try to get the icon from the default tango theme
+        """
         theme = None
         bmp = wx.NullBitmap
         for prov in self.observers:
@@ -154,21 +157,21 @@ class BitmapProvider(plugin.Plugin):
         return bmp
 
     def GetThemes(self):
-        """Gets a list of the installed and activated themes
-        @return: list of strings
-
         """
-        return [ name.GetName() for name in self.observers ]
+        Gets a list of the installed and activated themes
+        @return: list of strings
+        """
+        return [name.GetName() for name in self.observers]
 
     def GetBitmap(self, bmp_id, client):
-        """Gets a 16x16 or 32x32 pixel bitmap depending on client value.
+        """
+        Gets a 16x16 or 32x32 pixel bitmap depending on client value.
         May return a NullBitmap if no suitable bitmap can be
         found.
 
         @param bmp_id: id of bitmap to lookup
         @param client: wxART_MENU, wxART_TOOLBAR
         @see: L{ed_glob}
-
         """
         prov = self.__GetCurrentProvider()
         if prov is not None:
@@ -193,136 +196,140 @@ class BitmapProvider(plugin.Plugin):
 
         return wx.NullBitmap
 
-#-----------------------------------------------------------------------------#
-# Default theme data maps
-ART = { ed_glob.ID_ABOUT  : 'about.png',
-        ed_glob.ID_ADD    : 'add.png',
-        ed_glob.ID_ADD_BM : 'bmark_add.png',
-        ed_glob.ID_ADVANCED : 'advanced.png',
-        ed_glob.ID_BACKWARD : 'backward.png',
-        ed_glob.ID_BIN_FILE : 'bin_file.png',
-        ed_glob.ID_CDROM  : 'cdrom.png',
-        ed_glob.ID_CONTACT : 'mail.png',
-        ed_glob.ID_COPY   : 'copy.png',
-        ed_glob.ID_COMPUTER : 'computer.png',
-        ed_glob.ID_CUT    : 'cut.png',
-        ed_glob.ID_DELETE : 'delete.png',
-        ed_glob.ID_DELETE_ALL : 'delete_all.png',
-        ed_glob.ID_DOCPROP : 'doc_props.png',
-        ed_glob.ID_DOCUMENTATION : 'docs.png',
-        ed_glob.ID_DOWN   : 'down.png',
-        ed_glob.ID_EXIT   : 'quit.png',
-        ed_glob.ID_FILE   : 'file.png',
-        ed_glob.ID_FIND   : 'find.png',
-        ed_glob.ID_FIND_REPLACE : 'findr.png',
-        ed_glob.ID_FIND_RESULTS : 'find.png',
-        ed_glob.ID_FLOPPY : 'floppy.png',
-        ed_glob.ID_FOLDER : 'folder.png',
-        ed_glob.ID_FONT   : 'font.png',
-        ed_glob.ID_FORWARD : 'forward.png',
-        ed_glob.ID_HARDDISK : 'harddisk.png',
-        ed_glob.ID_HOMEPAGE : 'web.png',
-        ed_glob.ID_HTML_GEN : 'html_gen.png',
-        ed_glob.ID_INDENT : 'indent.png',
-        ed_glob.ID_LOGGER : 'log.png',
-        ed_glob.ID_NEW    : 'new.png',
-        ed_glob.ID_NEW_FOLDER : 'newfolder.png',
-        ed_glob.ID_NEW_WINDOW: 'newwin.png',
-        ed_glob.ID_NEXT_MARK : 'bmark_next.png',
-        ed_glob.ID_NEXT_POS : 'forward.png',
-        ed_glob.ID_OPEN    : 'open.png',
-        ed_glob.ID_PACKAGE : 'package.png',
-        ed_glob.ID_PASTE   : 'paste.png',
-        ed_glob.ID_PLUGMGR : 'plugin.png',
-        ed_glob.ID_PRE_MARK : 'bmark_pre.png',
-        ed_glob.ID_PRE_POS : 'backward.png',
-        ed_glob.ID_PREF    : 'pref.png',
-        ed_glob.ID_PRINT   : 'print.png',
-        ed_glob.ID_PRINT_PRE : 'printpre.png',
-        ed_glob.ID_PYSHELL : 'pyshell.png',
-        ed_glob.ID_REDO    : 'redo.png',
-        ed_glob.ID_REFRESH : 'refresh.png',
-        ed_glob.ID_REMOVE  : 'remove.png',
-        ed_glob.ID_RTF_GEN : 'rtf_gen.png',
-        ed_glob.ID_SAVE    : 'save.png',
-        ed_glob.ID_SAVEALL : 'saveall.png',
-        ed_glob.ID_SAVEAS  : 'saveas.png',
-        ed_glob.ID_SELECTALL : 'selectall.png',
-        ed_glob.ID_STOP    : 'stop.png',
-        ed_glob.ID_STYLE_EDIT : 'style_edit.png',
-        ed_glob.ID_TEX_GEN : 'tex_gen.png',
-        ed_glob.ID_THEME  : 'theme.png',
-        ed_glob.ID_UNDO   : 'undo.png',
-        ed_glob.ID_UNINDENT : 'outdent.png',
-        ed_glob.ID_UP     : 'up.png',
-        ed_glob.ID_USB    : 'usb.png',
-        ed_glob.ID_WEB    : 'web.png',
-        ed_glob.ID_ZOOM_IN : 'zoomi.png',
-        ed_glob.ID_ZOOM_OUT : 'zoomo.png',
-        ed_glob.ID_ZOOM_NORMAL : 'zoomd.png',
-        ed_glob.ID_READONLY : 'readonly.png',
 
-        # code elements
-        ed_glob.ID_CLASS_TYPE : 'class.png',
-        ed_glob.ID_FUNCT_TYPE : 'function.png',
-        ed_glob.ID_ELEM_TYPE : 'element.png',
-        ed_glob.ID_VARIABLE_TYPE : 'variable.png',
-        ed_glob.ID_ATTR_TYPE : 'attribute.png',
-        ed_glob.ID_PROPERTY_TYPE : 'property.png',
-        ed_glob.ID_METHOD_TYPE : 'method.png'
-}
+# -----------------------------------------------------------------------------
+# Default theme data maps
+ART = {ed_glob.ID_ABOUT: 'about.png',
+       ed_glob.ID_ADD: 'add.png',
+       ed_glob.ID_ADD_BM: 'bmark_add.png',
+       ed_glob.ID_ADVANCED: 'advanced.png',
+       ed_glob.ID_BACKWARD: 'backward.png',
+       ed_glob.ID_BIN_FILE: 'bin_file.png',
+       ed_glob.ID_CDROM: 'cdrom.png',
+       ed_glob.ID_CONTACT: 'mail.png',
+       ed_glob.ID_COPY: 'copy.png',
+       ed_glob.ID_COMPUTER: 'computer.png',
+       ed_glob.ID_CUT: 'cut.png',
+       ed_glob.ID_DELETE: 'delete.png',
+       ed_glob.ID_DELETE_ALL: 'delete_all.png',
+       ed_glob.ID_DOCPROP: 'doc_props.png',
+       ed_glob.ID_DOCUMENTATION: 'docs.png',
+       ed_glob.ID_DOWN: 'down.png',
+       ed_glob.ID_EXIT: 'quit.png',
+       ed_glob.ID_FILE: 'file.png',
+       ed_glob.ID_FIND: 'find.png',
+       ed_glob.ID_FIND_REPLACE: 'findr.png',
+       ed_glob.ID_FIND_RESULTS: 'find.png',
+       ed_glob.ID_FLOPPY: 'floppy.png',
+       ed_glob.ID_FOLDER: 'folder.png',
+       ed_glob.ID_FONT: 'font.png',
+       ed_glob.ID_FORWARD: 'forward.png',
+       ed_glob.ID_HARDDISK: 'harddisk.png',
+       ed_glob.ID_HOMEPAGE: 'web.png',
+       ed_glob.ID_HTML_GEN: 'html_gen.png',
+       ed_glob.ID_INDENT: 'indent.png',
+       ed_glob.ID_LOGGER: 'log.png',
+       ed_glob.ID_NEW: 'new.png',
+       ed_glob.ID_NEW_FOLDER: 'newfolder.png',
+       ed_glob.ID_NEW_WINDOW: 'newwin.png',
+       ed_glob.ID_NEXT_MARK: 'bmark_next.png',
+       ed_glob.ID_NEXT_POS: 'forward.png',
+       ed_glob.ID_OPEN: 'open.png',
+       ed_glob.ID_PACKAGE: 'package.png',
+       ed_glob.ID_PASTE: 'paste.png',
+       ed_glob.ID_PLUGMGR: 'plugin.png',
+       ed_glob.ID_PRE_MARK: 'bmark_pre.png',
+       ed_glob.ID_PRE_POS: 'backward.png',
+       ed_glob.ID_PREF: 'pref.png',
+       ed_glob.ID_PRINT: 'print.png',
+       ed_glob.ID_PRINT_PRE: 'printpre.png',
+       ed_glob.ID_PYSHELL: 'pyshell.png',
+       ed_glob.ID_REDO: 'redo.png',
+       ed_glob.ID_REFRESH: 'refresh.png',
+       ed_glob.ID_REMOVE: 'remove.png',
+       ed_glob.ID_RTF_GEN: 'rtf_gen.png',
+       ed_glob.ID_SAVE: 'save.png',
+       ed_glob.ID_SAVEALL: 'saveall.png',
+       ed_glob.ID_SAVEAS: 'saveas.png',
+       ed_glob.ID_SELECTALL: 'selectall.png',
+       ed_glob.ID_STOP: 'stop.png',
+       ed_glob.ID_STYLE_EDIT: 'style_edit.png',
+       ed_glob.ID_TEX_GEN: 'tex_gen.png',
+       ed_glob.ID_THEME: 'theme.png',
+       ed_glob.ID_UNDO: 'undo.png',
+       ed_glob.ID_UNINDENT: 'outdent.png',
+       ed_glob.ID_UP: 'up.png',
+       ed_glob.ID_USB: 'usb.png',
+       ed_glob.ID_WEB: 'web.png',
+       ed_glob.ID_ZOOM_IN: 'zoomi.png',
+       ed_glob.ID_ZOOM_OUT: 'zoomo.png',
+       ed_glob.ID_ZOOM_NORMAL: 'zoomd.png',
+       ed_glob.ID_READONLY: 'readonly.png',
+
+       # code elements
+       ed_glob.ID_CLASS_TYPE: 'class.png',
+       ed_glob.ID_FUNCT_TYPE: 'function.png',
+       ed_glob.ID_ELEM_TYPE: 'element.png',
+       ed_glob.ID_VARIABLE_TYPE: 'variable.png',
+       ed_glob.ID_ATTR_TYPE: 'attribute.png',
+       ed_glob.ID_PROPERTY_TYPE: 'property.png',
+       ed_glob.ID_METHOD_TYPE: 'method.png'
+       }
 
 # File Type Art
-MIME_ART = { synglob.ID_LANG_ADA : 'ada.png',
-             synglob.ID_LANG_BASH : 'shell.png',
-             synglob.ID_LANG_BOO : 'boo.png',
-             synglob.ID_LANG_BOURNE : 'shell.png',
-             synglob.ID_LANG_C : 'c.png',
-             synglob.ID_LANG_CPP : 'cpp.png',
-             synglob.ID_LANG_CSH : 'shell.png',
-             synglob.ID_LANG_CSS : 'css.png',
-             synglob.ID_LANG_DIFF : 'diff.png',
-             synglob.ID_LANG_HTML : 'html.png',
-             synglob.ID_LANG_JAVA : 'java.png',
-             synglob.ID_LANG_KSH : 'shell.png',
-             synglob.ID_LANG_LATEX : 'tex.png',
-             synglob.ID_LANG_MAKE : 'makefile.png',
-             synglob.ID_LANG_PASCAL : 'pascal.png',
-             synglob.ID_LANG_PERL : 'perl.png',
-             synglob.ID_LANG_PHP : 'php.png',
-             synglob.ID_LANG_PS : 'postscript.png',
-             synglob.ID_LANG_PYTHON : 'python.png',
-             synglob.ID_LANG_RUBY : 'ruby.png',
-             synglob.ID_LANG_TCL : 'tcl.png',
-             synglob.ID_LANG_TEX : 'tex.png',
-             synglob.ID_LANG_TXT : 'text.png',
-             synglob.ID_LANG_XML : 'xml.png'
- }
+MIME_ART = {synglob.ID_LANG_ADA: 'ada.png',
+            synglob.ID_LANG_BASH: 'shell.png',
+            synglob.ID_LANG_BOO: 'boo.png',
+            synglob.ID_LANG_BOURNE: 'shell.png',
+            synglob.ID_LANG_C: 'c.png',
+            synglob.ID_LANG_CPP: 'cpp.png',
+            synglob.ID_LANG_CSH: 'shell.png',
+            synglob.ID_LANG_CSS: 'css.png',
+            synglob.ID_LANG_DIFF: 'diff.png',
+            synglob.ID_LANG_HTML: 'html.png',
+            synglob.ID_LANG_JAVA: 'java.png',
+            synglob.ID_LANG_KSH: 'shell.png',
+            synglob.ID_LANG_LATEX: 'tex.png',
+            synglob.ID_LANG_MAKE: 'makefile.png',
+            synglob.ID_LANG_PASCAL: 'pascal.png',
+            synglob.ID_LANG_PERL: 'perl.png',
+            synglob.ID_LANG_PHP: 'php.png',
+            synglob.ID_LANG_PS: 'postscript.png',
+            synglob.ID_LANG_PYTHON: 'python.png',
+            synglob.ID_LANG_RUBY: 'ruby.png',
+            synglob.ID_LANG_TCL: 'tcl.png',
+            synglob.ID_LANG_TEX: 'tex.png',
+            synglob.ID_LANG_TXT: 'text.png',
+            synglob.ID_LANG_XML: 'xml.png'
+            }
 
-#-----------------------------------------------------------------------------#
+
+# -----------------------------------------------------------------------------
 
 class TangoTheme(plugin.Plugin):
-    """Represents the Tango Icon theme for Editra"""
+    """
+    Represents the Tango Icon theme for Editra
+    """
     plugin.Implements(ThemeI)
 
     name = 'Tango'
 
     def __GetArtPath(self, client, mime=False):
-        """Gets the path of the resource directory to get
+        """
+        Gets the path of the resource directory to get
         the bitmaps from.
         @param client: wx.ART_MENU/wx.ART_TOOLBAR
         @keyword mime: is this a filetype icon lookup
         @return: path of art resource
         @rtype: string
-
         """
-        clients = { wx.ART_MENU : "menu",
-                    wx.ART_TOOLBAR : "toolbar",
-                    wx.ART_OTHER : "other" }
+        clients = {wx.ART_MENU: 'menu',
+                   wx.ART_TOOLBAR: 'toolbar',
+                   wx.ART_OTHER: 'other'}
 
         # Get the path
         if ed_glob.CONFIG['THEME_DIR'] == '':
-            theme = util.ResolvConfigDir(os.path.join("pixmaps", "theme"))
+            theme = util.ResolvConfigDir(os.path.join('pixmaps', 'theme'))
             ed_glob.CONFIG['THEME_DIR'] = theme
 
         if mime:
@@ -340,16 +347,16 @@ class TangoTheme(plugin.Plugin):
             return None
 
     def GetName(self):
-        """Get the name of this theme
+        """
+        Get the name of this theme
         @return: string
-
         """
         return TangoTheme.name
 
     def GetMenuBitmap(self, bmp_id):
-        """Get a menu bitmap
+        """
+        Get a menu bitmap
         @param bmp_id: Id of bitmap to look for
-
         """
         if bmp_id in ART:
             path = self.__GetArtPath(wx.ART_MENU, mime=False)
@@ -363,10 +370,10 @@ class TangoTheme(plugin.Plugin):
         return wx.NullBitmap
 
     def GetFileBitmap(self, bmp_id):
-        """Get a mime type bitmap from the theme
+        """
+        Get a mime type bitmap from the theme
         @param bmp_id: Id of filetype bitmap to look up
         @see: L{syntax.synglob}
-
         """
         path = self.__GetArtPath(wx.ART_MENU, mime=True)
         if path is not None and bmp_id in SYNTAX_IDS:
@@ -383,9 +390,9 @@ class TangoTheme(plugin.Plugin):
         return wx.NullBitmap
 
     def GetOtherBitmap(self, bmp_id):
-        """Get a other catagory bitmap.
+        """
+        Get a other catagory bitmap.
         @param bmp_id: Id of art resource
-
         """
         if bmp_id in ART:
             path = self.__GetArtPath(wx.ART_OTHER, mime=False)
@@ -397,19 +404,19 @@ class TangoTheme(plugin.Plugin):
         return wx.NullBitmap
 
     def GetToolbarBitmap(self, bmp_id):
-        """Get a toolbar bitmap
+        """
+        Get a toolbar bitmap
         @param bmp_id: Id of bitmap to look for
         @return: wx.NullBitmap or a 32x32 bitmap
-
         """
         if bmp_id in ART:
-#            size = Profile_Get('ICON_SZ', default=(24, 24))
+            # size = Profile_Get('ICON_SZ', default=(24, 24))
             path = self.__GetArtPath(wx.ART_TOOLBAR, mime=False)
             if path is not None:
-#                tpath = os.path.join(path, '24', ART[bmp_id])
-#                if size[0] == 24 and os.path.exists(tpath):
-#                    path = tpath
-#                else:
+                # tpath = os.path.join(path, '24', ART[bmp_id])
+                # if size[0] == 24 and os.path.exists(tpath):
+                #     path = tpath
+                # else:
                 path = path + ART[bmp_id]
 
                 if os.path.exists(path):

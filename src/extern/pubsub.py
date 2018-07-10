@@ -1,5 +1,5 @@
 
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 """
 This module provides a publish-subscribe component that allows
 listeners to subcribe to messages of a given topic. Contrary to the
@@ -51,33 +51,37 @@ nodes, and Publisher would store listeners in each node and a topic
 tuple would be converted to a path in the tree.  This would lead to a
 much cleaner separation of concerns. But time is over, time to move on.
 """
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 
 # for function and method parameter counting:
-# from types   import InstanceType
-from inspect import getargspec, ismethod, isfunction
+# from types import InstanceType
+from inspect import getargspec, ismethod, isfunction, isclass
 # for weakly bound methods:
 # from new     import instancemethod as InstanceMethod
 from types import MethodType
 from weakref import ref as WeakRef
 
-# -----------------------------------------------------------------------------
 
+# -----------------------------------------------------------------------------
 def _isbound(method):
-    """Return true if method is a bound method, false otherwise"""
+    """
+    Return true if method is a bound method, false otherwise
+    """
     assert ismethod(method)
     return method.__self__ is not None
 
 
 def _paramMinCountFunc(function):
-    """Given a function, return pair (min,d) where min is minimum # of
-    args required, and d is number of default arguments."""
+    """
+    Given a function, return pair (min,d) where min is minimum # of
+    args required, and d is number of default arguments.
+    """
     assert isfunction(function)
     (args, va, kwa, dflt) = getargspec(function)
     lenDef = len(dflt or ())
     lenArgs = len(args or ())
     lenVA = int(va is not None)
-    return (lenArgs - lenDef + lenVA, lenDef)
+    return lenArgs - lenDef + lenVA, lenDef
 
 
 def _paramMinCount(callableObject):
@@ -87,21 +91,24 @@ def _paramMinCount(callableObject):
     is number of default arguments. The 'self' parameter, in the case
     of methods, is not counted.
     """
-    if type(callableObject) is InstanceType:
-        min, d = _paramMinCountFunc(callableObject.__call__.__func__)
-        return min-1, d
-    elif ismethod(callableObject):
+    if ismethod(callableObject):
         min, d = _paramMinCountFunc(callableObject.__func__)
         return min-1, d
     elif isfunction(callableObject):
         return _paramMinCountFunc(callableObject)
+    # if type(callableObject) is InstanceType:
+    elif type(callableObject) is not type:
+        min, d = _paramMinCountFunc(callableObject.__call__.__func__)
+        return min - 1, d
     else:
         raise 'Cannot determine type of callable: '+repr(callableObject)
 
 
 def _tupleize(items):
-    """Convert items to tuple if not already one, 
-    so items must be a list, tuple or non-sequence"""
+    """
+    Convert items to tuple if not already one,
+    so items must be a list, tuple or non-sequence
+    """
     if isinstance(items, list):
         raise TypeError('Not allowed to tuple-ize a list')
     elif isinstance(items, str) and items.find('.') != -1:
@@ -112,8 +119,10 @@ def _tupleize(items):
 
 
 def _getCallableName(callable):
-    """Get name for a callable, ie function, bound 
-    method or callable instance"""
+    """
+    Get name for a callable, ie function, bound
+    method or callable instance
+    """
     if ismethod(callable):
         return '%s.%s ' % (callable.__self__, callable.__func__.__name__)
     elif isfunction(callable):
@@ -123,8 +132,10 @@ def _getCallableName(callable):
     
     
 def _removeItem(item, fromList):
-    """Attempt to remove item from fromList, return true 
-    if successful, false otherwise."""
+    """
+    Attempt to remove item from fromList, return true
+    if successful, false otherwise.
+    """
     try: 
         fromList.remove(item)
         return True
@@ -135,18 +146,22 @@ def _removeItem(item, fromList):
 # -----------------------------------------------------------------------------
 
 class _WeakMethod:
-    """Represent a weak bound method, i.e. a method doesn't keep alive the 
+    """
+    Represent a weak bound method, i.e. a method doesn't keep alive the
     object that it is bound to. It uses WeakRef which, used on its own, 
     produces weak methods that are dead on creation, not very useful. 
     Typically, you will use the getRef() function instead of using
-    this class directly. """
+    this class directly.
+    """
     
     def __init__(self, method, notifyDead = None):
-        """The method must be bound. notifyDead will be called when 
-        object that method is bound to dies. """
+        """
+        The method must be bound. notifyDead will be called when
+        object that method is bound to dies.
+        """
         assert ismethod(method)
         if method.__self__ is None:
-            raise ValueError("We need a bound method!")
+            raise ValueError('We need a bound method!')
         if notifyDead is None:
             self.objRef = WeakRef(method.__self__)
         else:
@@ -155,33 +170,40 @@ class _WeakMethod:
         self.cls = method.__self__.__class__
         
     def __call__(self):
-        """Returns a new.instancemethod if object for method still alive. 
+        """
+        Returns a new.instancemethod if object for method still alive.
         Otherwise return None. Note that instancemethod causes a 
         strong reference to object to be created, so shouldn't save 
         the return value of this call. Note also that this __call__
         is required only for compatibility with WeakRef.ref(), otherwise
-        there would be more efficient ways of providing this functionality."""
+        there would be more efficient ways of providing this functionality.
+        """
         if self.objRef() is None:
             return None
         else:
-            return MethodType(self.fun, self.objRef(), self.cls)
-        
+            # return MethodType(self.fun, self.objRef(), self.cls)
+            return MethodType(self.fun, self.objRef())
+
     def __eq__(self, method2):
-        """Two WeakMethod objects compare equal if they refer to the same method
+        """
+        Two WeakMethod objects compare equal if they refer to the same method
         of the same instance. Thanks to Josiah Carlson for patch and clarifications
-        on how dict uses eq/cmp and hashing. """
+        on how dict uses eq/cmp and hashing.
+        """
         if not isinstance(method2, _WeakMethod):
             return False 
-        return      self.fun      is method2.fun \
-                and self.objRef() is method2.objRef() \
-                and self.objRef() is not None
+        return self.fun is method2.fun \
+            and self.objRef() is method2.objRef() \
+            and self.objRef() is not None
     
     def __hash__(self):
-        """Hash is an optimization for dict searches, it need not 
+        """
+        Hash is an optimization for dict searches, it need not
         return different numbers for every different object. Some objects
         are not hashable (eg objects of classes derived from dict) so no
         hash(objRef()) in there, and hash(self.cls) would only be useful
-        in the rare case where instance method was rebound. """
+        in the rare case where instance method was rebound.
+        """
         return hash(self.fun)
     
     def __repr__(self):
@@ -192,15 +214,19 @@ class _WeakMethod:
         return obj
         
     def refs(self, weakRef):
-        """Return true if we are storing same object referred to by weakRef."""
+        """
+        Return true if we are storing same object referred to by weakRef.
+        """
         return self.objRef == weakRef
 
 
 def _getWeakRef(obj, notifyDead=None):
-    """Get a weak reference to obj. If obj is a bound method, a _WeakMethod
+    """
+    Get a weak reference to obj. If obj is a bound method, a _WeakMethod
     object, that behaves like a WeakRef, is returned, if it is
     anything else a WeakRef is returned. If obj is an unbound method,
-    a ValueError will be raised."""
+    a ValueError will be raised.
+    """
     if ismethod(obj):
         createRef = _WeakMethod
     else:
@@ -213,21 +239,22 @@ def _getWeakRef(obj, notifyDead=None):
     
     
 # -----------------------------------------------------------------------------
-
 def getStrAllTopics():
-    """Function to call if, for whatever reason, you need to know 
-    explicitely what is the string to use to indicate 'all topics'."""
+    """
+    Function to call if, for whatever reason, you need to know
+    explicitely what is the string to use to indicate 'all topics'.
+    """
     return ''
 
 
 # alias, easier to see where used
 ALL_TOPICS = getStrAllTopics()
 
+
 # -----------------------------------------------------------------------------
-
-
 class _NodeCallback:
-    """Encapsulate a weak reference to a method of a TopicTreeNode
+    """
+    Encapsulate a weak reference to a method of a TopicTreeNode
     in such a way that the method can be called, if the node is 
     still alive, but the callback does not *keep* the node alive.
     Also, define two methods, preNotify() and noNotify(), which can 
@@ -246,16 +273,21 @@ class _NodeCallback:
             self.noNotify()
             
     def preNotify(self, dead):
-        """'Gets called just before our callback (self.objRef) is called"""
+        """
+        Gets called just before our callback (self.objRef) is called
+        """
         pass
         
     def noNotify(self):
-        """Gets called if the TopicTreeNode for this callback is dead"""
+        """
+        Gets called if the TopicTreeNode for this callback is dead
+        """
         pass
 
 
 class _TopicTreeNode:
-    """A node in the topic tree. This contains a list of callables
+    """
+    A node in the topic tree. This contains a list of callables
     that are interested in the topic that this node is associated
     with, and contains a dictionary of subtopics, whose associated
     values are other _TopicTreeNodes. The topic of a node is not stored
@@ -275,24 +307,34 @@ class _TopicTreeNode:
         self.__onDeadListenerWeakCB = onDeadListenerWeakCB
         
     def getPathname(self): 
-        """The complete node path to us, ie., the topic tuple that would lead to us"""
+        """
+        The complete node path to us, ie., the topic tuple that would lead to us
+        """
         return self.__topicPath
     
     def createSubtopic(self, subtopic, topicPath):
-        """Create a child node for subtopic"""
+        """
+        Create a child node for subtopic
+        """
         return self.__subtopics.setdefault(subtopic,
-                    _TopicTreeNode(topicPath, self.__onDeadListenerWeakCB))
+                                           _TopicTreeNode(topicPath, self.__onDeadListenerWeakCB))
     
     def hasSubtopic(self, subtopic):
-        """Return true only if topic string is one of subtopics of this node"""
+        """
+        Return true only if topic string is one of subtopics of this node
+        """
         return subtopic in self.__subtopics
     
     def getNode(self, subtopic):
-        """Return ref to node associated with subtopic"""
+        """
+        Return ref to node associated with subtopic
+        """
         return self.__subtopics[subtopic]
     
     def addCallable(self, callable):
-        """Add a callable to list of callables for this topic node"""
+        """
+        Add a callable to list of callables for this topic node
+        """
         try:
             id = self.__callables.index(_getWeakRef(callable))
             return self.__callables[id]
@@ -302,11 +344,15 @@ class _TopicTreeNode:
             return wrCall
             
     def getCallables(self):
-        """Get callables associated with this topic node"""
+        """
+        Get callables associated with this topic node
+        """
         return [cb() for cb in self.__callables if cb() is not None]
     
     def hasCallable(self, callable):
-        """Return true if callable in this node"""
+        """
+        Return true if callable in this node
+        """
         try: 
             self.__callables.index(_getWeakRef(callable))
             return True
@@ -314,7 +360,9 @@ class _TopicTreeNode:
             return False
     
     def sendMessage(self, message):
-        """Send a message to our callables"""
+        """
+        Send a message to our callables
+        """
         deliveryCount = 0
         for cb in self.__callables:
             listener = cb()
@@ -324,8 +372,10 @@ class _TopicTreeNode:
         return deliveryCount
     
     def removeCallable(self, callable):
-        """Remove weak callable from our node (and return True). 
-        Does nothing if not here (and returns False)."""
+        """
+        Remove weak callable from our node (and return True).
+        Does nothing if not here (and returns False).
+        """
         try: 
             self.__callables.remove(_getWeakRef(callable))
             return True
@@ -333,15 +383,19 @@ class _TopicTreeNode:
             return False
         
     def clearCallables(self):
-        """Abandon list of callables to caller. We no longer have 
-        any callables after this method is called."""
+        """
+        Abandon list of callables to caller. We no longer have
+        any callables after this method is called.
+        """
         tmpList = [cb for cb in self.__callables if cb() is not None]
         self.__callables = []
         return tmpList
         
     def __notifyDead(self, dead):
-        """Gets called when a listener dies, thanks to WeakRef"""
-        #print 'TreeNODE', `self`, 'received death certificate for ', dead
+        """
+        Gets called when a listener dies, thanks to WeakRef
+        """
+        # print 'TreeNODE', `self`, 'received death certificate for ', dead
         self.__cleanupDead()
         if self.__onDeadListenerWeakCB is not None:
             cb = self.__onDeadListenerWeakCB()
@@ -349,16 +403,20 @@ class _TopicTreeNode:
                 cb(dead)
         
     def __cleanupDead(self):
-        """Remove all dead objects from list of callables"""
+        """
+        Remove all dead objects from list of callables
+        """
         self.__callables = [cb for cb in self.__callables if cb() is not None]
         
     def __str__(self):
-        """Print us in a not-so-friendly, but readable way, good for debugging."""
+        """
+        Print us in a not-so-friendly, but readable way, good for debugging.
+        """
         strVal = []
         for callable in self.getCallables():
             strVal.append(_getCallableName(callable))
         for topic, node in self.__subtopics.items():
-            strVal.append(' (%s: %s)' %(topic, node))
+            strVal.append(' (%s: %s)' % (topic, node))
         return ''.join(strVal)
       
       
@@ -392,7 +450,9 @@ class _TopicTreeRoot(_TopicTreeNode):
                                 _getWeakRef(self.__rootNotifyDead))
         
     def addTopic(self, topic, listener):
-        """Add topic to tree if doesnt exist, and add listener to topic node"""
+        """
+        Add topic to tree if doesnt exist, and add listener to topic node
+        """
         assert isinstance(topic, tuple)
         topicNode = self.__getTreeNode(topic, make=True)
         weakCB = topicNode.addCallable(listener)
@@ -409,16 +469,20 @@ class _TopicTreeRoot(_TopicTreeNode):
         assert self.__callbackDict[weakCB].index(weakTopicNode) >= 0
         
     def getTopics(self, listener):
-        """Return the list of topics for given listener"""
+        """
+        Return the list of topics for given listener
+        """
         weakNodes = self.__callbackDict.get(_getWeakRef(listener), [])
         return [weakNode().getPathname() for weakNode in weakNodes 
                 if weakNode() is not None]
 
     def isSubscribed(self, listener, topic=None):
-        """Return true if listener is registered for topic specified. 
+        """
+        Return true if listener is registered for topic specified.
         If no topic specified, return true if subscribed to something.
         Use topic=getStrAllTopics() to determine if a listener will receive 
-        messages for all topics."""
+        messages for all topics.
+        """
         weakCB = _getWeakRef(listener)
         if topic is None: 
             return weakCB in self.__callbackDict
@@ -430,9 +494,11 @@ class _TopicTreeRoot(_TopicTreeNode):
             return False
             
     def unsubscribe(self, listener, topicList):
-        """Remove listener from given list of topics. If topicList
+        """
+        Remove listener from given list of topics. If topicList
         doesn't have any topics for which listener has subscribed,
-        nothing happens."""
+        nothing happens.
+        """
         weakCB = _getWeakRef(listener)
         if weakCB not in self.__callbackDict:
             return
@@ -453,10 +519,12 @@ class _TopicTreeRoot(_TopicTreeNode):
                 assert not self.isSubscribed(listener, node.getPathname())
 
     def unsubAll(self, topicList, onNoSuchTopic):
-        """Unsubscribe all listeners registered for any topic in 
+        """
+        Unsubscribe all listeners registered for any topic in
         topicList. If a topic in the list does not exist, and 
         onNoSuchTopic is not None, a call
-        to onNoSuchTopic(topic) is done for that topic."""
+        to onNoSuchTopic(topic) is done for that topic.
+        """
         for topic in topicList:
             node = self.__getTreeNode(topic)
             if node is not None:
@@ -464,15 +532,17 @@ class _TopicTreeRoot(_TopicTreeNode):
                 for callable in weakCallables:
                     weakNodes = self.__callbackDict[callable]
                     success = _removeItem(WeakRef(node), weakNodes)
-                    assert success == True
-                    if weakNodes == []:
+                    assert success is True
+                    if weakNodes is []:
                         del self.__callbackDict[callable]
             elif onNoSuchTopic is not None: 
                 onNoSuchTopic(topic)
             
     def sendMessage(self, topic, message, onTopicNeverCreated):
-        """Send a message for given topic to all registered listeners. If 
-        topic doesn't exist, call onTopicNeverCreated(topic)."""
+        """
+        Send a message for given topic to all registered listeners. If
+        topic doesn't exist, call onTopicNeverCreated(topic).
+        """
         # send to the all-toipcs listeners
         deliveryCount = _TopicTreeNode.sendMessage(self, message)
         # send to those who listen to given topic or any of its supertopics
@@ -482,14 +552,16 @@ class _TopicTreeRoot(_TopicTreeNode):
             if node.hasSubtopic(topicItem):
                 node = node.getNode(topicItem)
                 deliveryCount += node.sendMessage(message)
-            else: # topic never created, don't bother continuing
+            else:   # topic never created, don't bother continuing
                 if onTopicNeverCreated is not None:
                     onTopicNeverCreated(topic)
                 break
         return deliveryCount
 
     def numListeners(self):
-        """Return a pair (live, dead) with count of live and dead listeners in tree"""
+        """
+        Return a pair (live, dead) with count of live and dead listeners in tree
+        """
         dead, live = 0, 0
         for cb in self.__callbackDict:
             if cb() is None: 
@@ -502,7 +574,7 @@ class _TopicTreeRoot(_TopicTreeNode):
     callbackDeadLimit = 10
 
     def __rootNotifyDead(self, dead):
-        #print 'TreeROOT received death certificate for ', dead
+        # print 'TreeROOT received death certificate for ', dead
         self.__callbackDictCleanup += 1
         if self.__callbackDictCleanup > _TopicTreeRoot.callbackDeadLimit:
             self.__callbackDictCleanup = 0
@@ -513,8 +585,10 @@ class _TopicTreeRoot(_TopicTreeNode):
                     self.__callbackDict[weakCB] = weakNodes
         
     def __getTreeNode(self, topic, make=False):
-        """Return the tree node for 'topic' from the topic tree. If it 
-        doesnt exist and make=True, create it first."""
+        """
+        Return the tree node for 'topic' from the topic tree. If it
+        doesnt exist and make=True, create it first.
+        """
         # if the all-topics, give root; 
         if topic == (ALL_TOPICS,):
             return self
@@ -548,7 +622,9 @@ class _TopicTreeRoot(_TopicTreeNode):
     
 # -----------------------------------------------------------------------------
 
-class _SingletonKey: pass
+class _SingletonKey:
+    pass
+
 
 class PublisherClass:
     """
@@ -609,33 +685,38 @@ class PublisherClass:
            Singleton. I.e., every time you execute 'Publisher()', it's
            actually the same instance of PublisherClass that is
            returned. So to use, just do'Publisher().method()'.
-        
     """
     
     __ALL_TOPICS_TPL = (ALL_TOPICS, )
     
     def __init__(self, singletonKey):
-        """Construct a Publisher. This can only be done by the pubsub 
-        module. You just use pubsub.Publisher()."""
+        """
+        Construct a Publisher. This can only be done by the pubsub
+        module. You just use pubsub.Publisher().
+        """
         if not isinstance(singletonKey, _SingletonKey):
-            raise invalid_argument("Use Publisher() to get access to singleton")
-        self.__messageCount  = 0
+            raise invalid_argument('Use Publisher() to get access to singleton')
+        self.__messageCount = 0
         self.__deliveryCount = 0
-        self.__topicTree     = _TopicTreeRoot()
+        self.__topicTree = _TopicTreeRoot()
 
     #
     # Public API
     #
 
     def getDeliveryCount(self):
-        """How many listeners have received a message since beginning of run"""
+        """
+        How many listeners have received a message since beginning of run
+        """
         return self.__deliveryCount
     
     def getMessageCount(self):
-        """How many times sendMessage() was called since beginning of run"""
+        """
+        How many times sendMessage() was called since beginning of run
+        """
         return self.__messageCount
     
-    def subscribe(self, listener, topic = ALL_TOPICS):
+    def subscribe(self, listener, topic=ALL_TOPICS):
         """
         Subscribe listener for given topic. If topic is not specified,
         listener will be subscribed for all topics (that listener will 
@@ -673,47 +754,52 @@ class PublisherClass:
                ('t1','t2')) means that when calling sendMessage('t1'),
                listener gets one message, but when calling
                sendMessage(('t1','t2')), listener gets message twice.
-        
         """
         self.validate(listener)
 
         if topic is None: 
-            raise TypeError('Topic must be either a word, tuple of '\
-                             'words, or getStrAllTopics()')
+            raise TypeError('Topic must be either a word, tuple of ' 
+                            'words, or getStrAllTopics()')
             
         self.__topicTree.addTopic(_tupleize(topic), listener)
 
     def isSubscribed(self, listener, topic=None):
-        """Return true if listener has subscribed to topic specified. 
+        """
+        Return true if listener has subscribed to topic specified.
         If no topic specified, return true if subscribed to something.
         Use topic=getStrAllTopics() to determine if a listener will receive 
-        messages for all topics."""
+        messages for all topics.
+        """
         return self.__topicTree.isSubscribed(listener, topic)
             
     def validate(self, listener):
-        """Similar to isValid(), but raises a TypeError exception if not valid"""
+        """
+        Similar to isValid(), but raises a TypeError exception if not valid
+        """
         # check callable
         if not callable(listener):
-            raise TypeError('Listener '+repr(listener)+' must be a '\
-                             'function, bound method or instance.')
+            raise TypeError('Listener '+repr(listener)+' must be a '
+                            'function, bound method or instance.')
         # ok, callable, but if method, is it bound:
         elif ismethod(listener) and not _isbound(listener):
-            raise TypeError('Listener '+repr(listener)+\
-                             ' is a method but it is unbound!')
+            raise TypeError('Listener '+repr(listener) +
+                            ' is a method but it is unbound!')
                              
         # check that it takes the right number of parameters
         min, d = _paramMinCount(listener)
         if min > 1:
-            raise TypeError('Listener '+repr(listener)+" can't"\
-                             ' require more than one parameter!')
+            raise TypeError('Listener '+repr(listener)+' can\'t'
+                            ' require more than one parameter!')
         if min <= 0 and d == 0:
             raise TypeError('Listener '+repr(listener)+' lacking arguments!')
                              
-        assert (min == 0 and d>0) or (min == 1)
+        assert (min == 0 and d > 0) or (min == 1)
 
     def isValid(self, listener):
-        """Return true only if listener will be able to subscribe to 
-        Publisher."""
+        """
+        Return true only if listener will be able to subscribe to
+        Publisher.
+        """
         try: 
             self.validate(listener)
             return True
@@ -721,7 +807,8 @@ class PublisherClass:
             return False
 
     def unsubAll(self, topics=None, onNoSuchTopic=None):
-        """Unsubscribe all listeners subscribed for topics. Topics can 
+        """
+        Unsubscribe all listeners subscribed for topics. Topics can
         be a single topic (string or tuple) or a list of topics (ie 
         list containing strings and/or tuples). If topics is not 
         specified, all listeners for all topics will be unsubscribed, 
@@ -744,7 +831,8 @@ class PublisherClass:
         self.__topicTree.unsubAll(topicList, onNoSuchTopic)
             
     def unsubscribe(self, listener, topics=None):
-        """Unsubscribe listener. If topics not specified, listener is
+        """
+        Unsubscribe listener. If topics not specified, listener is
         completely unsubscribed. Otherwise, it is unsubscribed only 
         for the topic (the usual tuple) or list of topics (ie a list
         of tuples) specified. Nothing happens if listener is not actually
@@ -766,7 +854,8 @@ class PublisherClass:
         self.__topicTree.unsubscribe(listener, topicList)
         
     def getAssociatedTopics(self, listener):
-        """Return a list of topics the given listener is registered with. 
+        """
+        Return a list of topics the given listener is registered with.
         Returns [] if listener never subscribed.
         
         :attention: when using the return of this method to compare to
@@ -783,14 +872,16 @@ class PublisherClass:
     def sendMessage(self, topic=ALL_TOPICS,
                     data=None, onTopicNeverCreated=None,
                     context=None):
-        """Send a message for given topic, with optional data, to
+        """
+        Send a message for given topic, with optional data, to
         subscribed listeners. If topic is not specified, only the
         listeners that are interested in all topics will receive message. 
         The onTopicNeverCreated is an optional callback of your choice that 
         will be called if the topic given was never created (i.e. it, or 
         one of its subtopics, was never subscribed to by any listener). 
-        It will be called as onTopicNeverCreated(topic)."""
-        aTopic  = _tupleize(topic)
+        It will be called as onTopicNeverCreated(topic).
+        """
+        aTopic = _tupleize(topic)
         message = Message(aTopic, data, context=context)
         self.__messageCount += 1
         
@@ -803,7 +894,9 @@ class PublisherClass:
     #
 
     def __call__(self):
-        """Allows for singleton"""
+        """
+        Allows for singleton
+        """
         return self
     
     def __str__(self):
@@ -823,7 +916,7 @@ _key = _SingletonKey()
 Publisher = PublisherClass(_key)
 
 
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 
 class Message:
     """
@@ -834,7 +927,7 @@ class Message:
     """
     def __init__(self, topic, data, context=None):
         self.topic = topic
-        self.data  = data
+        self.data = data
         self.context = context
 
     Data = property(lambda self: self.data,
@@ -847,18 +940,24 @@ class Message:
         return '[Topic: '+repr(self.topic)+',  Data: '+repr(self.data)+']'
 
     def GetContext(self):
-        """Get the context that this message was sent in"""
+        """
+        Get the context that this message was sent in
+        """
         return self.context
 
     def GetData(self):
-        """Return the messages data/value"""
+        """
+        Return the messages data/value
+        """
         return self.data
 
     def GetType(self):
-        """Return the type of message"""
+        """
+        Return the type of message
+        """
         return self.topic
 
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 
 
 #
@@ -870,34 +969,35 @@ def test():
         
     def testParam():
         def testFunc00(): pass
-        def testFunc21(a,b,c=1): pass
+        def testFunc21(a, b, c=1): pass
         def testFuncA(*args): pass
-        def testFuncAK(*args,**kwds): pass
+        def testFuncAK(*args, **kwds): pass
         def testFuncK(**kwds): pass
         
         class Foo:
-            def testMeth(self,a,b): pass
+            def testMeth(self, a, b): pass
             def __call__(self, a): pass
         class Foo2:
             def __call__(self, *args): pass
             
-        assert _paramMinCount(testFunc00)==(0,0)
-        assert _paramMinCount(testFunc21)==(2,1)
-        assert _paramMinCount(testFuncA) ==(1,0)
-        assert _paramMinCount(testFuncAK)==(1,0)
-        assert _paramMinCount(testFuncK) ==(0,0)
+        assert _paramMinCount(testFunc00) == (0, 0)
+        assert _paramMinCount(testFunc21) == (2, 1)
+        assert _paramMinCount(testFuncA) == (1, 0)
+        assert _paramMinCount(testFuncAK) == (1, 0)
+        assert _paramMinCount(testFuncK) == (0, 0)
         foo = Foo()
-        assert _paramMinCount(Foo.testMeth)==(2,0)
-        assert _paramMinCount(foo.testMeth)==(2,0)
-        assert _paramMinCount(foo)==(1,0)
-        assert _paramMinCount(Foo2())==(1,0)
+        assert _paramMinCount(Foo.testMeth) == (2, 0)
+        assert _paramMinCount(foo.testMeth) == (2, 0)
+        assert _paramMinCount(foo) == (1, 0)
+        assert _paramMinCount(Foo2()) == (1, 0)
     
         done('testParam')
 
     testParam()
-    #------------------------
+    # ------------------------
 
     _NodeCallback.notified = 0
+
     def testPreNotifyNode(self, dead):
         _NodeCallback.notified += 1
         print('testPreNotifyNODE heard notification of', repr(dead))
@@ -908,8 +1008,10 @@ def test():
         class WS:
             def __init__(self, s):
                 self.s = s
+
             def __call__(self, msg):
                 print('WS#', self.s, ' received msg ', msg)
+
             def __str__(self):
                 return self.s
             
@@ -921,12 +1023,12 @@ def test():
         node.addCallable(boo)
         node.addCallable(baz)
         node.addCallable(boo)
-        assert node.getCallables() == [boo,baz]
+        assert node.getCallables() == [boo, baz]
         assert node.hasCallable(boo)
         
-        node.removeCallable(bid) # no-op
+        node.removeCallable(bid)    # no-op
         assert node.hasCallable(baz)
-        assert node.getCallables() == [boo,baz]
+        assert node.getCallables() == [boo, baz]
         
         node.removeCallable(boo)
         assert node.getCallables() == [baz]
@@ -943,8 +1045,8 @@ def test():
         node2.addCallable(cb1)
         node2.addCallable(cb2)
         node3.addCallable(cb)
-        node2.createSubtopic('st3', ('st1','st3'))
-        node2.createSubtopic('st4', ('st1','st4'))
+        node2.createSubtopic('st3', ('st1', 'st3'))
+        node2.createSubtopic('st4', ('st1', 'st4'))
        
         print(str(node))
         assert str(node) == ' (st1: st1_cb1 st1_cb2  (st4: ) (st3: )) (st2: st2_cb )'
@@ -960,16 +1062,23 @@ def test():
         done('testTreeNode')
         
     testTreeNode()
-    #------------------------
+    # ------------------------
     
     def testValidate():
         class Foo:
-            def __call__(self, a):   pass
-            def fun(self, b):        pass
-            def fun2(self, b=1):     pass
-            def fun3(self, a, b=2):  pass
-            def badFun(self):        pass
-            def badFun2():           pass
+
+            def __call__(self, a): pass
+
+            def fun(self, b): pass
+
+            def fun2(self, b=1): pass
+
+            def fun3(self, a, b=2): pass
+
+            def badFun(self): pass
+
+            def badFun2(): pass
+
             def badFun3(self, a, b): pass
             
         server = Publisher()
@@ -985,31 +1094,36 @@ def test():
         done('testValidate')
 
     testValidate()
-    #------------------------
+    # ------------------------
     
     class SimpleListener:
         def __init__(self, number):
             self.number = number
-        def __call__(self, message = ''): 
-            print('Callable #%s got the message "%s"' %(self.number, message))
+
+        def __call__(self, message=''):
+            print('Callable #%s got the message "%s"' % (self.number, message))
+
         def notify(self, message):
-            print('%s.notify() got the message "%s"' %(self.number, message))
+            print('%s.notify() got the message "%s"' % (self.number, message))
+
         def __str__(self):
-            return "SimpleListener_%s" % self.number
+            return 'SimpleListener_%s' % self.number
 
     def testSubscribe():
         publisher = Publisher()
         
         topic1 = 'politics'
-        topic2 = ('history','middle age')
-        topic3 = ('politics','UN')
-        topic4 = ('politics','NATO')
-        topic5 = ('politics','NATO','US')
+        topic2 = ('history', 'middle age')
+        topic3 = ('politics', 'UN')
+        topic4 = ('politics', 'NATO')
+        topic5 = ('politics', 'NATO', 'US')
         
         lisnr1 = SimpleListener(1)
         lisnr2 = SimpleListener(2)
+
         def func(message, a=1): 
             print('Func received message "%s"' % message)
+
         lisnr3 = func
         lisnr4 = lambda x: 'Lambda received message "%s"' % x
 
@@ -1021,18 +1135,18 @@ def test():
         publisher.subscribe(lisnr1, topic1)
         assert publisher.getAssociatedTopics(lisnr1) == [(topic1,)]
         publisher.subscribe(lisnr1, topic2)
-        publisher.subscribe(lisnr1, topic1) # do it again, should be no-op
-        assert publisher.getAssociatedTopics(lisnr1) == [(topic1,),topic2]
+        publisher.subscribe(lisnr1, topic1)     # do it again, should be no-op
+        assert publisher.getAssociatedTopics(lisnr1) == [(topic1,), topic2]
         publisher.subscribe(lisnr2.notify, topic3)
         assert publisher.getAssociatedTopics(lisnr2.notify) == [topic3]
-        assert publisher.getAssociatedTopics(lisnr1) == [(topic1,),topic2]
+        assert publisher.getAssociatedTopics(lisnr1) == [(topic1,), topic2]
         publisher.subscribe(lisnr3, topic5)
         assert publisher.getAssociatedTopics(lisnr3) == [topic5]
         assert publisher.getAssociatedTopics(lisnr2.notify) == [topic3]
-        assert publisher.getAssociatedTopics(lisnr1) == [(topic1,),topic2]
+        assert publisher.getAssociatedTopics(lisnr1) == [(topic1,), topic2]
         publisher.subscribe(lisnr4)
         
-        print("Publisher tree: ", publisher)
+        print('Publisher tree: ', publisher)
         assert publisher.isSubscribed(lisnr1)
         assert publisher.isSubscribed(lisnr1, topic1)
         assert publisher.isSubscribed(lisnr1, topic2)
@@ -1040,11 +1154,11 @@ def test():
         assert publisher.isSubscribed(lisnr3, topic5)
         assert publisher.isSubscribed(lisnr4, ALL_TOPICS)
         expectTopicTree = 'all: <lambda>  (politics: SimpleListener_1  (UN: SimpleListener_2.notify ) (NATO:  (US: func ))) (history:  (middle age: SimpleListener_1 ))'
-        print("Publisher tree: ", publisher)
+        print('Publisher tree: ', publisher)
         assert str(publisher) == expectTopicTree
         
-        publisher.unsubscribe(lisnr1, 'booboo') # should do nothing
-        assert publisher.getAssociatedTopics(lisnr1) == [(topic1,),topic2]
+        publisher.unsubscribe(lisnr1, 'booboo')     # should do nothing
+        assert publisher.getAssociatedTopics(lisnr1) == [(topic1,), topic2]
         assert publisher.getAssociatedTopics(lisnr2.notify) == [topic3]
         assert publisher.getAssociatedTopics(lisnr3) == [topic5]
         publisher.unsubscribe(lisnr1, topic1)
@@ -1061,7 +1175,7 @@ def test():
         publisher.unsubscribe(lisnr4)
         
         expectTopicTree = 'all:  (politics:  (UN: ) (NATO:  (US: ))) (history:  (middle age: ))'
-        print("Publisher tree: ", publisher)
+        print('Publisher tree: ', publisher)
         assert str(publisher) == expectTopicTree
         assert publisher.getDeliveryCount() == 0
         assert publisher.getMessageCount() == 0
@@ -1072,21 +1186,23 @@ def test():
         done('testSubscribe')
     
     testSubscribe()
-    #------------------------
+    # ------------------------
     
     def testUnsubAll():
         publisher = Publisher()
         
         topic1 = 'politics'
-        topic2 = ('history','middle age')
-        topic3 = ('politics','UN')
-        topic4 = ('politics','NATO')
-        topic5 = ('politics','NATO','US')
+        topic2 = ('history', 'middle age')
+        topic3 = ('politics', 'UN')
+        topic4 = ('politics', 'NATO')
+        topic5 = ('politics', 'NATO', 'US')
         
         lisnr1 = SimpleListener(1)
         lisnr2 = SimpleListener(2)
+
         def func(message, a=1): 
             print('Func received message "%s"' % message)
+
         lisnr3 = func
         lisnr4 = lambda x: 'Lambda received message "%s"' % x
 
@@ -1098,7 +1214,7 @@ def test():
         publisher.subscribe(lisnr4)
         
         expectTopicTree = 'all: <lambda>  (politics: SimpleListener_1  (UN: SimpleListener_2.notify ) (NATO:  (US: func ))) (history:  (middle age: SimpleListener_1 func ))'
-        print("Publisher tree: ", publisher)
+        print('Publisher tree: ', publisher)
         assert str(publisher) == expectTopicTree
     
         publisher.unsubAll(topic1)
@@ -1112,11 +1228,11 @@ def test():
         assert not publisher.isSubscribed(lisnr1)
         assert publisher.isSubscribed(lisnr3, topic5)
         
-        #print "Publisher tree: ", publisher
+        # print "Publisher tree: ", publisher
         expectTopicTree = 'all: <lambda>  (politics:  (UN: SimpleListener_2.notify ) (NATO:  (US: func ))) (history:  (middle age: ))'
         assert str(publisher) == expectTopicTree
         publisher.unsubAll(ALL_TOPICS)
-        #print "Publisher tree: ", publisher
+        # print "Publisher tree: ", publisher
         expectTopicTree = 'all:  (politics:  (UN: SimpleListener_2.notify ) (NATO:  (US: func ))) (history:  (middle age: ))'
         assert str(publisher) == expectTopicTree
         
@@ -1124,7 +1240,7 @@ def test():
         done('testUnsubAll')
     
     testUnsubAll()
-    #------------------------
+    # ------------------------
     
     def testSend():
         publisher = Publisher()
@@ -1133,10 +1249,13 @@ def test():
         class TestListener:
             def __init__(self, num):
                 self.number = num
+
             def __call__(self, b): 
-                called.append( 'TL%scb' % self.number )
+                called.append('TL%scb' % self.number )
+
             def notify(self, b):
-                called.append( 'TL%sm' % self.number )
+                called.append('TL%sm' % self.number )
+
         def funcListener(b):
             called.append('func')
             
@@ -1147,9 +1266,9 @@ def test():
 
         topic1 = 'politics'
         topic2 = 'history'
-        topic3 = ('politics','UN')
-        topic4 = ('politics','NATO','US')
-        topic5 = ('politics','NATO')
+        topic3 = ('politics', 'UN')
+        topic4 = ('politics', 'NATO', 'US')
+        topic5 = ('politics', 'NATO')
         
         publisher.subscribe(lisnr1, topic1)
         publisher.subscribe(lisnr2, topic2)
@@ -1161,19 +1280,19 @@ def test():
         
         # setup ok, now test send/receipt
         publisher.sendMessage(topic1)
-        assert called == ['lambda','TL1cb']
+        assert called == ['lambda', 'TL1cb']
         called = []
         publisher.sendMessage(topic2)
-        assert called == ['lambda','TL2cb','TL2m']
+        assert called == ['lambda', 'TL2cb', 'TL2m']
         called = []
         publisher.sendMessage(topic3)
-        assert called == ['lambda','TL1cb']
+        assert called == ['lambda', 'TL1cb']
         called = []
         publisher.sendMessage(topic4)
-        assert called == ['lambda','TL1cb','func']
+        assert called == ['lambda', 'TL1cb', 'func']
         called = []
         publisher.sendMessage(topic5)
-        assert called == ['lambda','TL1cb']
+        assert called == ['lambda', 'TL1cb']
         assert publisher.getDeliveryCount() == 12
         assert publisher.getMessageCount() == 5
     
@@ -1258,7 +1377,8 @@ def test():
     testDead()
     
     print('Exiting tests')
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+
 
 if __name__ == '__main__':
     test()

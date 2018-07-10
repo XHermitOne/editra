@@ -8,87 +8,99 @@
 
 """
 Bookmark manager
-
 """
 
-__author__ = "Cody Precord <cprecord@editra.org>"
-__svnid__ = "$Id: ed_bookmark.py 69115 2011-09-17 16:51:49Z CJP $"
-__revision__ = "$Revision: 69115 $"
+__author__ = 'Cody Precord <cprecord@editra.org>'
+__svnid__ = '$Id: ed_bookmark.py 69115 2011-09-17 16:51:49Z CJP $'
+__revision__ = '$Revision: 69115 $'
 
-#--------------------------------------------------------------------------#
+# --------------------------------------------------------------------------
 # Imports
 import os
 import re
 import wx
 
 # Editra Libraries
-from . import ed_msg
-from . import iface
-from . import plugin
-from .profiler import Profile_Get, Profile_Set
-from . import ed_glob
-from . import util
-from . import eclib
-from . import ebmlib
-from . import ed_basewin
-from .ed_marker import Bookmark
+from src import ed_msg
+from src import iface
+from src import plugin
+from src.profiler import Profile_Get, Profile_Set
+from src import ed_glob
+from src import util
+from src import eclib
+from src import ebmlib
+from src import ed_basewin
+from src.ed_marker import Bookmark
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------
 # Globals
 _ = wx.GetTranslation
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------
+
 
 # Interface Implementation
 class EdBookmarks(plugin.Plugin):
-    """Shelf interface implementation for the bookmark manager"""
+    """
+    Shelf interface implementation for the bookmark manager
+    """
     plugin.Implements(iface.ShelfI)
 
     __name__ = 'Bookmarks'
 
     @staticmethod
     def AllowMultiple():
-        """EdBookmark only allows one instance"""
+        """
+        EdBookmark only allows one instance
+        """
         return False
 
     @staticmethod
     def CreateItem(parent):
-        """Returns a bookmark panel"""
+        """
+        Returns a bookmark panel
+        """
         return BookmarkWindow(parent)
 
     def GetBitmap(self):
-        """Get the log viewers tab icon
+        """
+        Get the log viewers tab icon
         @return: wx.Bitmap
-
         """
         bmp = wx.ArtProvider.GetBitmap(str(ed_glob.ID_ADD_BM), wx.ART_MENU)
         return bmp
 
     @staticmethod
     def GetId():
-        """Plugin menu identifier ID"""
+        """
+        Plugin menu identifier ID
+        """
         return ed_glob.ID_BOOKMARK_MGR
 
     @staticmethod
     def GetMenuEntry(menu):
-        """Get the menu entry for the bookmark viewer
+        """
+        Get the menu entry for the bookmark viewer
         @param menu: the menu items parent menu
-
         """
         item = wx.MenuItem(menu, ed_glob.ID_BOOKMARK_MGR,
-                           _("Bookmarks"),
-                           _("View all bookmarks"))
+                           _('Bookmarks'),
+                           _('View all bookmarks'))
         bmp = wx.ArtProvider.GetBitmap(str(ed_glob.ID_ADD_BM), wx.ART_MENU)
         item.SetBitmap(bmp)
         return item
 
     def GetName(self):
-        """Return the name of this control"""
+        """
+        Return the name of this control
+        """
         return self.__name__
 
     @staticmethod
     def IsStockable():
-        """EdBookmark can be saved in the shelf preference stack"""
+        """
+        EdBookmark can be saved in the shelf preference stack
+        """
         return True
 
     # Bookmark storage
@@ -106,7 +118,7 @@ class EdBookmarks(plugin.Plugin):
                 # Store the stc bookmark handle
                 mark.Handle = data.get('handle', None)
                 # Store an alias for the bookmark
-                name = ""
+                name = ''
                 cline = buf.GetCurrentLine()
                 if line == cline:
                     name = buf.GetSelectedText()
@@ -123,29 +135,32 @@ class EdBookmarks(plugin.Plugin):
     def GetMarks(cls):
         return cls._marks
 
+
 ed_msg.Subscribe(EdBookmarks.OnStoreBM, ed_msg.EDMSG_UI_STC_BOOKMARK)
 
-#-----------------------------------------------------------------------------#
 
+# -----------------------------------------------------------------------------
 class BookmarkWindow(ed_basewin.EdBaseCtrlBox):
-    """Shelf window for managing bookmarks"""
+    """
+    Shelf window for managing bookmarks
+    """
     def __init__(self, parent):
         super(BookmarkWindow, self).__init__(parent)
 
         # Attributes
         self._list = BookmarkList(self)
 
-        #Setup
+        # Setup
         self.SetWindow(self._list)
         ctrlbar = self.CreateControlBar(wx.TOP)
         ctrlbar.AddStretchSpacer()
-        self._delbtn = self.AddPlateButton(_("Delete"), ed_glob.ID_DELETE,
+        self._delbtn = self.AddPlateButton(_('Delete'), ed_glob.ID_DELETE,
                                            wx.ALIGN_RIGHT)
-        self._delbtn.ToolTip = wx.ToolTip(_("Delete Bookmark"))
-        self._delallbtn = self.AddPlateButton(_("Delete All"),
+        self._delbtn.ToolTip = wx.ToolTip(_('Delete Bookmark'))
+        self._delallbtn = self.AddPlateButton(_('Delete All'),
                                               ed_glob.ID_DELETE_ALL,
                                               wx.ALIGN_RIGHT)
-        self._delallbtn.ToolTip = wx.ToolTip(_("Delete all bookmarks"))
+        self._delallbtn.ToolTip = wx.ToolTip(_('Delete all bookmarks'))
 
         # Message Handlers
         ed_msg.Subscribe(self.OnBookmark, ed_msg.EDMSG_UI_STC_BOOKMARK)
@@ -162,31 +177,39 @@ class BookmarkWindow(ed_basewin.EdBaseCtrlBox):
 #                  self._delbtn)
 
     def OnDestroy(self, evt):
-        """Unsubscribe message handlers on delete"""
+        """
+        Unsubscribe message handlers on delete
+        """
         if evt.GetId() == self.GetId():
             ed_msg.Unsubscribe(self.OnBookmark)
         evt.Skip()
 
     def OnBookmark(self, msg):
-        """Bookmark added or removed callback"""
+        """
+        Bookmark added or removed callback
+        """
         # Update on next iteration to ensure that handler
         # in the singleton data store have been updated.
         wx.CallAfter(self.DoUpdateListCtrl)
 
     def OnDelAllBm(self, evt):
-        """Delete all bookmarks"""
+        """
+        Delete all bookmarks
+        """
         items = list(range(self._list.ItemCount))
         self.DeleteBookmarks(items)
 
     def OnDelBm(self, evt):
-        """Remove the selected bookmark(s) from the list and the buffer"""
+        """
+        Remove the selected bookmark(s) from the list and the buffer
+        """
         items = self._list.GetSelections()
         self.DeleteBookmarks(items)
 
     def DeleteBookmarks(self, items):
-        """Delete the bookmarks from the passed in list
+        """
+        Delete the bookmarks from the passed in list
         @param items: list of indexes in BookmarkList
-
         """
         assert isinstance(items, list)
         if len(items):
@@ -205,7 +228,9 @@ class BookmarkWindow(ed_basewin.EdBaseCtrlBox):
             self.DoUpdateListCtrl()
 
     def DoUpdateListCtrl(self):
-        """Update the listctrl for changes in the cache"""
+        """
+        Update the listctrl for changes in the cache
+        """
         nMarks = len(EdBookmarks.GetMarks())
         self._list.SetItemCount(nMarks)
         # Refresh everything
@@ -214,9 +239,9 @@ class BookmarkWindow(ed_basewin.EdBaseCtrlBox):
         self._list.Refresh()
 
     def OnItemActivate(self, evt):
-        """Handle double clicks on items to navigate to the
+        """
+        Handle double clicks on items to navigate to the
         selected bookmark.
-
         """
         index = evt.m_itemIndex
         marks = EdBookmarks.GetMarks()
@@ -225,9 +250,9 @@ class BookmarkWindow(ed_basewin.EdBaseCtrlBox):
             self.GotoBookmark(mark)
 
     def GotoBookmark(self, mark):
-        """Goto the bookmark in the editor
+        """
+        Goto the bookmark in the editor
         @param mark: BookMark
-
         """
         app = wx.GetApp()
         mw = app.GetActiveWindow()
@@ -251,44 +276,47 @@ class BookmarkWindow(ed_basewin.EdBaseCtrlBox):
                     lnum = mark.Line
                 buf.GotoLine(lnum)
         else:
-            util.Log("[ed_bookmark][err] Failed to locate mainwindow")
+            util.Log('[ed_bookmark][err] Failed to locate mainwindow')
 
-#-----------------------------------------------------------------------------#
 
+# -----------------------------------------------------------------------------
 class BookmarkList(eclib.EBaseListCtrl):
-    """ListCtrl for displaying the bookmarks in"""
+    """
+    ListCtrl for displaying the bookmarks in
+    """
     BOOKMARK = 0
     FILE_NAME = 1
     LINE_NUM = 2
+
     def __init__(self, parent):
         super(BookmarkList, self).__init__(parent,
-                                           style=wx.LC_REPORT|\
-                                                 wx.LC_EDIT_LABELS|\
-                                                 wx.LC_VIRTUAL)
+                                           style=wx.LC_REPORT | wx.LC_EDIT_LABELS | wx.LC_VIRTUAL)
 
         # Setup
-        self._il = wx.ImageList(16,16)
+        self._il = wx.ImageList(16, 16)
         self._idx = self._il.Add(Bookmark().Bitmap)
         self.SetImageList(self._il, wx.IMAGE_LIST_SMALL)
-        self.InsertColumn(BookmarkList.BOOKMARK, _("Bookmark"))
-        self.InsertColumn(BookmarkList.FILE_NAME, _("File Location"))
-        self.InsertColumn(BookmarkList.LINE_NUM, _("Line Number"))
-        self.setResizeColumn(BookmarkList.FILE_NAME+1) #NOTE: +1 bug in mixin
+        self.InsertColumn(BookmarkList.BOOKMARK, _('Bookmark'))
+        self.InsertColumn(BookmarkList.FILE_NAME, _('File Location'))
+        self.InsertColumn(BookmarkList.LINE_NUM, _('Line Number'))
+        self.setResizeColumn(BookmarkList.FILE_NAME+1)  # NOTE: +1 bug in mixin
         self.SetItemCount(len(EdBookmarks.GetMarks()))
 
     def OnGetItemImage(self, item):
         return 0
 
     def OnGetItemText(self, item, column):
-        """Override for virtual control"""
+        """
+        Override for virtual control
+        """
         marks = EdBookmarks.GetMarks()
-        val = ""
+        val = ''
         if item < len(marks):
             mark = marks[item]
             if column == BookmarkList.BOOKMARK:
                 val = mark.Name
                 if not val:
-                    val = _("Bookmark%d") % item
+                    val = _('Bookmark%d') % item
             elif column == BookmarkList.FILE_NAME:
                 val = mark.Filename
             elif column == BookmarkList.LINE_NUM:

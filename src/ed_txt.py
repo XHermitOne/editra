@@ -718,14 +718,15 @@ def DecodeString(string, encoding=None):
         # The string is already unicode so just return it
         return string
 
+
 def EncodeString(string, encoding=None):
-    """Try and encode a given unicode object to a string
+    """
+    Try and encode a given unicode object to a string
     with the provided encoding returning that string. The
     default encoding will be used if None is given for the
     encoding.
     @param string: unicode object to encode into a string
     @keyword encoding: encoding to use for conversion
-
     """
     if not encoding:
         encoding = DEFAULT_ENCODING
@@ -738,6 +739,7 @@ def EncodeString(string, encoding=None):
         return rtxt
     else:
         return string
+
 
 def FallbackReader(fname):
     """Guess the encoding of a file by brute force by trying one

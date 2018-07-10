@@ -12,14 +12,13 @@ This module defines the Editra Application object and the Main method for
 running Editra.
 
 @summary: Editra's main application object and MainLoop
-
 """
 
-__author__ = "Cody Precord <cprecord@editra.org>"
-__svnid__ = "$Id: Editra.py 71718 2012-06-12 13:25:48Z CJP $"
-__revision__ = "$Revision: 71718 $"
+__author__ = 'Cody Precord <cprecord@editra.org>'
+__svnid__ = '$Id: Editra.py 71718 2012-06-12 13:25:48Z CJP $'
+__revision__ = '$Revision: 71718 $'
 
-#--------------------------------------------------------------------------#
+# --------------------------------------------------------------------------
 # Dependencies
 import os
 import sys
@@ -74,22 +73,23 @@ from . import ed_session
 from . import ebmlib
 from .syntax import synglob
 
-#--------------------------------------------------------------------------#
+# --------------------------------------------------------------------------
 # Global Variables
 ID_UPDATE_CHECK = wx.NewId()
 
 _ = wx.GetTranslation
-#--------------------------------------------------------------------------#
+# --------------------------------------------------------------------------
+
 
 class Editra(wx.App, events.AppEventHandlerMixin):
-    """The Editra Application Object
+    """
+    The Editra Application Object
     @deprecated: L{GetMainWindow}
-
     """
     def __init__(self, *args, **kargs):
-        """Initialize that main app and its attributes
+        """
+        Initialize that main app and its attributes
         @postcondition: application is created and ready to be run in mainloop
-
         """
         wx.App.__init__(self, *args, **kargs)
         events.AppEventHandlerMixin.__init__(self)
@@ -113,14 +113,14 @@ class Editra(wx.App, events.AppEventHandlerMixin):
 
         if ed_glob.SINGLE:
             # Setup the instance checker
-            instance_name = "%s-%s" % (self.GetAppName(), wx.GetUserId())
+            instance_name = '%s-%s' % (self.GetAppName(), wx.GetUserId())
             lockpath = wx.StandardPaths.Get().GetTempDir()
             self._instance = wx.SingleInstanceChecker(instance_name, path=lockpath)
             if self._instance.IsAnotherRunning():
                 try:
                     opts, args = ProcessCommandLine()
                 except getopt.GetoptError as msg:
-                    self._log("[app][err] %s" % str(msg))
+                    self._log('[app][err] %s' % str(msg))
                     args = list()
                     opts = dict()
 
@@ -145,7 +145,7 @@ class Editra(wx.App, events.AppEventHandlerMixin):
                 exml.arglist = arglist
 
                 # TODO: need to process other command line options as well i.e) -g
-                self._log("[app][info] Sending: %s" % exml.Xml)
+                self._log('[app][info] Sending: %s' % exml.Xml)
                 key = profiler.Profile_Get('SESSION_KEY')
                 if ebmlib.IsUnicode(key):
                     key = key.encode(sys.getfilesystemencoding(), 'replace')
@@ -155,7 +155,7 @@ class Editra(wx.App, events.AppEventHandlerMixin):
                 if not rval:
                     self._isfirst = True
             else:
-                self._log("[app][info] Starting Ipc server...")
+                self._log('[app][info] Starting Ipc server...')
                 # Set the session key and save it to the users profile so
                 # that other instances can access the server
                 key = base64.b64encode(os.urandom(8), b'zZ')
@@ -171,8 +171,8 @@ class Editra(wx.App, events.AppEventHandlerMixin):
                     self._server = ed_ipc.EdIpcServer(self, key)
                     self._server.start()
                 except Exception as msg:
-                    self._log("[app][err] Failed to start ipc server")
-                    self._log("[app][err] %s" % str(msg))
+                    self._log('[app][err] Failed to start ipc server')
+                    self._log('[app][err] %s' % str(msg))
                     self._server = None
                 self._isfirst = True
         else:
@@ -183,8 +183,8 @@ class Editra(wx.App, events.AppEventHandlerMixin):
         if self._isfirst:
             self._pluginmgr = plugin.PluginManager()
 
-            self._log("[app][info] Registering Editra's ArtProvider")
-            wx.ArtProvider.PushProvider(ed_art.EditraArt())
+            self._log('[app][info] Registering Editra\'s ArtProvider')
+            wx.ArtProvider.Push(ed_art.EditraArt())
 
         # Check if libenchant has been loaded or need to be
         from .extern import stcspellcheck
@@ -196,10 +196,10 @@ class Editra(wx.App, events.AppEventHandlerMixin):
             # TODO: log if load fails here
 
     def AddMessageCatalog(self, name, path):
-        """Add a catalog lookup path to the app
+        """
+        Add a catalog lookup path to the app
         @param name: name of catalog (i.e 'projects')
         @param path: catalog lookup path
-
         """
         if self.locale is not None:
             path = resource_filename(path, 'locale')
@@ -207,19 +207,19 @@ class Editra(wx.App, events.AppEventHandlerMixin):
             self.locale.AddCatalog(name)
 
     def OnInit(self):
-        """Initialize the Editor
+        """
+        Initialize the Editor
         @note: this gets called before __init__
         @postcondition: custom artprovider and plugins are loaded
-
         """
         self.SetAppName(ed_glob.PROG_NAME)
 
         self._log = dev_tool.DEBUGP
-        self._log("[app][info] Editra is Initializing")
+        self._log('[app][info] Editra is Initializing')
 
         # Load user preferences
         self.profile_updated = InitConfig()
-        self._isfirst = False # Is the first instance
+        self._isfirst = False   # Is the first instance
         self._instance = None
 
         # Setup Locale
@@ -228,15 +228,15 @@ class Editra(wx.App, events.AppEventHandlerMixin):
         if wx.Locale.IsAvailable(langId):
             self.locale = wx.Locale(langId)
             if self.locale.GetCanonicalName() in ed_i18n.GetAvailLocales():
-                self._log("[app][info] Loaded Locale '%s'" % self.locale.CanonicalName)
+                self._log('[app][info] Loaded Locale \'%s\'' % self.locale.CanonicalName)
                 self.locale.AddCatalogLookupPathPrefix(ed_glob.CONFIG['LANG_DIR'])
                 self.locale.AddCatalog(ed_glob.PROG_NAME)
             else:
-                self._log("[app][err] Unknown Locale '%s'" % self.locale.CanonicalName)
+                self._log('[app][err] Unknown Locale \'%s\'' % self.locale.CanonicalName)
                 del self.locale
                 self.locale = None
         else:
-            self._log("[app][err] The locale %s is not available!" %  profiler.Profile_Get('LANG'))
+            self._log('[app][err] The locale %s is not available!' %  profiler.Profile_Get('LANG'))
             self.locale = None
 
         # Check and set encoding if necessary
@@ -250,14 +250,14 @@ class Editra(wx.App, events.AppEventHandlerMixin):
             try:
                 codecs.lookup(d_enc)
             except (LookupError, TypeError):
-                self._log("[app][err] Resetting bad encoding: %s" % d_enc)
+                self._log('[app][err] Resetting bad encoding: %s' % d_enc)
                 profiler.Profile_Set('ENCODING', ed_txt.DEFAULT_ENCODING)
 
         # Setup the Error Reporter
         if profiler.Profile_Get('REPORTER', 'bool', True):
             sys.excepthook = dev_tool.ExceptionHook
 
-        #---- Bind Events ----#
+        # ---- Bind Events ----
         self.Bind(wx.EVT_ACTIVATE_APP, self.OnActivate)
         self.Bind(wx.EVT_MENU, self.OnNewWindow, id=ed_glob.ID_NEW_WINDOW)
         self.Bind(wx.EVT_MENU, self.OnCloseWindow)
@@ -268,14 +268,16 @@ class Editra(wx.App, events.AppEventHandlerMixin):
         if profiler.Profile_Get('APPSPLASH'):
             from . import edimage
             splash_img = edimage.splashwarn.GetBitmap()
-            self.splash = wx.adv.SplashScreen(splash_img, wx.adv.SPLASH_CENTRE_ON_PARENT | \
-                                          wx.adv.SPLASH_NO_TIMEOUT, 0, None, wx.ID_ANY)
+            self.splash = wx.adv.SplashScreen(splash_img, wx.adv.SPLASH_CENTRE_ON_PARENT | wx.adv.SPLASH_NO_TIMEOUT,
+                                              0, None, wx.ID_ANY)
             self.splash.Show()
 
         return True
 
     def Destroy(self):
-        """Destroy the application"""
+        """
+        Destroy the application
+        """
         try:
             # Cleanup the instance checker
             del self._instance
@@ -284,18 +286,20 @@ class Editra(wx.App, events.AppEventHandlerMixin):
         wx.App.Destroy(self)
 
     def DestroySplash(self):
-        """Destroy the splash screen"""
+        """
+        Destroy the splash screen
+        """
         # If is created and not dead already
         if getattr(self, 'splash', None) is not None and \
-           isinstance(self.splash, wx.SplashScreen):
+           isinstance(self.splash, wx.adv.SplashScreen):
             self.splash.Destroy()
             self.splash = None
 
     def Exit(self, force=False):
-        """Exit the program
+        """
+        Exit the program
         @postcondition: If no toplevel windows are present program will exit.
         @postcondition: Program may remain open if an open window is locking.
-
         """
         self._isexiting = True
         self._pluginmgr.WritePluginConfig()
@@ -314,37 +318,37 @@ class Editra(wx.App, events.AppEventHandlerMixin):
             wx.App.ExitMainLoop(self)
 
     def GetLocaleObject(self):
-        """Get the locale object owned by this app. Use this method to add
+        """
+        Get the locale object owned by this app. Use this method to add
         extra catalogs for lookup.
         @return: wx.Locale or None
-
         """
         return self.locale
 
     def GetLog(self):
-        """Returns the logging function used by the app
+        """
+        Returns the logging function used by the app
         @return: the logging function of this program instance
-
         """
         return self._log
 
     def GetMainWindow(self):
-        """Returns reference to the instance of the MainWindow
+        """
+        Returns reference to the instance of the MainWindow
         that is running if available, and None if not.
         @return: the L{MainWindow} of this app if it is open
-
         """
-        self._log("[app][warn] Editra::GetMainWindow is deprecated")
+        self._log('[app][warn] Editra::GetMainWindow is deprecated')
         for window in self._windows:
             if isinstance(self._windows[window][0], ed_main.MainWindow):
                 return self._windows[window][0]
         return None
 
     def GetActiveWindow(self):
-        """Returns the active main window if there is one else it will
+        """
+        Returns the active main window if there is one else it will
         just return some main window or none if there are no main windows
         @return: frame instance or None
-
         """
         awin = None
         for win in self.GetMainWindows():
@@ -361,15 +365,15 @@ class Editra(wx.App, events.AppEventHandlerMixin):
         return awin
 
     def GetCurrentBuffer(self):
-        """Get the current buffer from the active window or None
+        """
+        Get the current buffer from the active window or None
         @return: EditraStc
-
         """
         win = self.GetTopWindow()
         if not isinstance(win, ed_main.MainWindow):
             win = self.GetActiveWindow()
             if win is None:
-                return None # UI dead?
+                return None     # UI dead?
 
         if isinstance(win, ed_main.MainWindow):
             nbook = win.GetNotebook()
@@ -378,9 +382,9 @@ class Editra(wx.App, events.AppEventHandlerMixin):
         return None
 
     def GetMainWindows(self):
-        """Returns a list of all open main windows
+        """
+        Returns a list of all open main windows
         @return: list of L{MainWindow} instances of this app (list may be empty)
-
         """
         mainw = list()
         for window in self._windows:
@@ -392,33 +396,33 @@ class Editra(wx.App, events.AppEventHandlerMixin):
         return mainw
 
     def GetOpenWindows(self):
-        """Returns a list of open windows
+        """
+        Returns a list of open windows
         @return: list of all open windows owned by app
-
         """
         return self._windows
 
     def GetPluginManager(self):
-        """Returns the plugin manager used by this application
+        """
+        Returns the plugin manager used by this application
         @return: Apps plugin manager
         @see: L{plugin}
-
         """
         return self._pluginmgr
 
     def GetProfileUpdated(self):
-        """Was the profile updated 
+        """
+        Was the profile updated
         @return: bool
-
         """
         return self.profile_updated
 
     def GetWindowInstance(self, wintype):
-        """Get an instance of an open window if one exists
+        """
+        Get an instance of an open window if one exists
         @param wintype: Class type of window to look for
         @precondition: Window must have called L{RegisterWindow}
         @return: Instance of window or None
-
         """
         for win in self._windows:
             if isinstance(self._windows[win][0], wintype):
@@ -426,31 +430,31 @@ class Editra(wx.App, events.AppEventHandlerMixin):
         return None
 
     def IsLocked(self):
-        """Returns whether the application is locked or not
+        """
+        Returns whether the application is locked or not
         @return: whether a window has locked the app from closing or not
-
         """
         return self._lock
 
     def IsOnlyInstance(self):
-        """Check if this app is the the first instance that is running
+        """
+        Check if this app is the the first instance that is running
         @return: bool
-
         """
         return self._isfirst
 
     def Lock(self):
-        """Locks the app from exiting
+        """
+        Locks the app from exiting
         @postcondition: program is locked from exiting
-
         """
         self._lock = True
 
     def OpenFile(self, filename, line=-1):
-        """Open a file in the currently active window
+        """
+        Open a file in the currently active window
         @param filename: file path
         @keyword line: int
-
         """
         window = self.GetTopWindow()
         if not isinstance(window, ed_main.MainWindow):
@@ -471,35 +475,39 @@ class Editra(wx.App, events.AppEventHandlerMixin):
                 window.Raise()
             else:
                 # Some unlikely error condition
-                self._log("[app][err] OpenFile unknown error: %s" % filename)
+                self._log('[app][err] OpenFile unknown error: %s' % filename)
                 
         except Exception as msg:
-            self._log("[app][err] Failed to open file: %s" % str(msg))
+            self._log('[app][err] Failed to open file: %s' % str(msg))
 
     def MacNewFile(self):
-        """Stub for future use"""
+        """
+        Stub for future use
+        """
         pass
 
     def MacOpenFile(self, filename):
-        """Macintosh Specific code for opening files that are associated
+        """
+        Macintosh Specific code for opening files that are associated
         with the editor and double clicked on after the editor is already
         running.
         @param filename: file path string
         @postcondition: if L{MainWindow} is open file will be opened in notebook
-
         """
-        self._log("[app][info] MacOpenFile Fired")
+        self._log('[app][info] MacOpenFile Fired')
         self.OpenFile(filename, line=-1)
 
     def MacPrintFile(self, filename):
-        """Stub for future use
+        """
+        Stub for future use
         @param filename: file to print
-
         """
         pass
 
     def MacReopenApp(self):
-        """Handle kAEReopenApplication when dock icons is clicked on"""
+        """
+        Handle kAEReopenApplication when dock icons is clicked on
+        """
         frame = self.GetTopWindow()
         if frame is not None:
             if frame.IsIconized():
@@ -507,12 +515,12 @@ class Editra(wx.App, events.AppEventHandlerMixin):
             frame.Raise()
 
     def OnActivate(self, evt):
-        """Activation Event Handler
+        """
+        Activation Event Handler
         @param evt: wx.ActivateEvent
-
         """
         if evt.GetActive():
-            self._log("[app][info] I'm Awake!!")
+            self._log('[app][info] I\'m Awake!!')
             # Refresh Clipboard Ring
             ed_main.MainWindow.UpdateClipboardRing()
 
@@ -522,14 +530,14 @@ class Editra(wx.App, events.AppEventHandlerMixin):
 #                    frame.Iconize(False)
 #                frame.Raise()
         else:
-            self._log("[app][info] Going to sleep")
+            self._log('[app][info] Going to sleep')
         evt.Skip()
 
     def OnExit(self, evt=None, force=False):
-        """Handle application exit request
+        """
+        Handle application exit request
         @keyword evt: event that called this handler
         @keyword force: Force an exit
-
         """
         e_id = -1
         if evt:
@@ -558,9 +566,9 @@ class Editra(wx.App, events.AppEventHandlerMixin):
                 evt.Skip()
 
     def OnNewWindow(self, evt):
-        """Create a new editing window
+        """
+        Create a new editing window
         @param evt: wx.EVT_MENU
-
         """
         if evt.GetId() == ed_glob.ID_NEW_WINDOW:
             frame = evt.GetEventObject().GetMenuBar().GetFrame()
@@ -569,19 +577,19 @@ class Editra(wx.App, events.AppEventHandlerMixin):
             evt.Skip()
 
     def OnCommandReceived(self, evt):
-        """Receive commands from the IPC server
+        """
+        Receive commands from the IPC server
         @todo: move command processing into own module
-
         """
         # Guard against events that come in after shutdown
         # from server thread.
         if not self or self._isexiting or not self.IsMainLoopRunning():
             return
 
-        self._log("[app][info] IN OnCommandReceived")
+        self._log('[app][info] IN OnCommandReceived')
         cmds = evt.GetCommands()
         if isinstance(cmds, ed_ipc.IPCCommand):
-            self._log("[app][info] OnCommandReceived %s" % cmds.Xml)
+            self._log('[app][info] OnCommandReceived %s' % cmds.Xml)
             if not len(cmds.filelist):
                 self.OpenNewWindow()
             else:
@@ -601,9 +609,9 @@ class Editra(wx.App, events.AppEventHandlerMixin):
                     self.OpenFile(fname.value, line)
 
     def OnCloseWindow(self, evt):
-        """Close the currently active window
+        """
+        Close the currently active window
         @param evt: wx.MenuEvent
-
         """
         if evt.GetId() in [ed_glob.ID_CLOSE, ed_glob.ID_CLOSE_WINDOW]:
             for window in wx.GetTopLevelWindows():
@@ -615,11 +623,11 @@ class Editra(wx.App, events.AppEventHandlerMixin):
             evt.Skip()
 
     def OpenNewWindow(self, fname='', caller=None):
-        """Open a new window
+        """
+        Open a new window
         @keyword fname: Open a file in the new window
         @keyword caller: MainWindow that called to open this one
         @return: the new window
-
         """
         frame = ed_main.MainWindow(None, wx.ID_ANY,
                                    profiler.Profile_Get('WSIZE'),
@@ -641,22 +649,22 @@ class Editra(wx.App, events.AppEventHandlerMixin):
         return frame
 
     def OnNotify(self, evt):
-        """Handle notification events
+        """
+        Handle notification events
         @param evt: L{ed_event.NotificationEvent}
-
         """
         e_val = evt.GetValue()
         if evt.GetId() == ID_UPDATE_CHECK and \
            isinstance(e_val, tuple) and e_val[0]:
             self.DestroySplash()
             mdlg = wx.MessageDialog(self.GetActiveWindow(),
-                                    _("An updated version of Editra is available\n"
-                                      "Would you like to download Editra %s now?") %\
-                                      e_val[1], _("Update Available"),
-                                    wx.YES_NO|wx.YES_DEFAULT|wx.CENTER|wx.ICON_INFORMATION)
+                                    _('An updated version of Editra is available\n'
+                                      'Would you like to download Editra %s now?') %\
+                                    e_val[1], _('Update Available'),
+                                    wx.YES_NO | wx.YES_DEFAULT | wx.CENTER | wx.ICON_INFORMATION)
             if mdlg.ShowModal() == wx.ID_YES:
                 dl_dlg = updater.DownloadDialog(None, wx.ID_ANY,
-                                                _("Downloading Update"))
+                                                _('Downloading Update'))
                 dp_sz = wx.GetDisplaySize()
                 dl_dlg.SetPosition(((dp_sz[0] - (dl_dlg.GetSize()[0] + 5)), 25))
                 dl_dlg.Show()
@@ -665,48 +673,48 @@ class Editra(wx.App, events.AppEventHandlerMixin):
             evt.Skip()
 
     def RegisterWindow(self, name, window, can_lock=False):
-        """Registers winows with the app. The name should be the
+        """
+        Registers winows with the app. The name should be the
         repr of window. The can_lock parameter is a boolean stating
         whether the window can keep the main app running after the
         main frame has exited.
         @param name: name of window
         @param window: reference to window object
         @keyword can_lock: whether window can lock exit or not
-
         """
         self._windows[name] = (window, can_lock)
 
     def ReloadArtProvider(self):
-        """Reloads the custom art provider onto the artprovider stack
+        """
+        Reloads the custom art provider onto the artprovider stack
         @postcondition: artprovider is removed and reloaded
-
         """
         try:
-            wx.ArtProvider.PopProvider()
+            wx.ArtProvider.Pop()
         finally:
-            wx.ArtProvider.PushProvider(ed_art.EditraArt())
+            wx.ArtProvider.Push(ed_art.EditraArt())
 
     def UnLock(self):
-        """Unlocks the application
+        """
+        Unlocks the application
         @postcondition: application is unlocked so it can exit
-
         """
         self._lock = False
 
     def UnRegisterWindow(self, name):
-        """Unregisters a named window with the app if the window
+        """
+        Unregisters a named window with the app if the window
         was the top window and if other windows that can lock are
         registered in the window stack it will promote the next one
         it finds to be the top window. If no windows that fit this
         criteria are found it will close the application.
         @param name: name of window to unregister
-
         """
         if name in self._windows:
             self._windows.pop(name)
             
             if not len(self._windows):
-                self._log("[app][info] No more open windows shutting down")
+                self._log('[app][info] No more open windows shutting down')
                 self.Exit()
                 return
 
@@ -718,7 +726,7 @@ class Editra(wx.App, events.AppEventHandlerMixin):
                 found = False
                 for key in self._windows:
                     if self._windows[key][1]:
-                        self._log("[app][info] Promoting %s to top" % key)
+                        self._log('[app][info] Promoting %s to top' % key)
                         try:
                             self.SetTopWindow(self._windows[key][0])
                         except Exception:
@@ -727,35 +735,35 @@ class Editra(wx.App, events.AppEventHandlerMixin):
                         break
 
                 if not found:
-                    self._log("[app][info] No more top windows exiting app")
+                    self._log('[app][info] No more top windows exiting app')
                     self.UnLock()
                     self.Exit()
             else:
-                self._log("[app][info] UnRegistered %s" % name)
+                self._log('[app][info] UnRegistered %s' % name)
         else:
-            self._log("[app][warn] The window %s is not registered" % name)
+            self._log('[app][warn] The window %s is not registered' % name)
 
     def WindowCanLock(self, winname):
-        """Checks if a named window can lock the application or
+        """
+        Checks if a named window can lock the application or
         not. The window must have been previously registered with
         a call to RegisterWindow for this function to have any
         real usefullness.
         @param winname: name of window to query
-
         """
         if winname in self._windows:
             return self._windows[winname][1]
         else:
-            self._log("[app][warn] the window %s has "
-                      "not been registered" % winname)
+            self._log('[app][warn] the window %s has '
+                      'not been registered' % winname)
             return False
 
-#--------------------------------------------------------------------------#
 
+# --------------------------------------------------------------------------
 def InitConfig():
-    """Initializes the configuration data
+    """
+    Initializes the configuration data
     @postcondition: all configuration data is set
-
     """
     # Check if a custom config directory was specified on the commandline
     if ed_glob.CONFIG['CONFIG_BASE'] is not None:
@@ -771,12 +779,12 @@ def InitConfig():
 
     if os.path.exists(config_base):
         ed_glob.CONFIG['CONFIG_BASE'] = config_base
-        ed_glob.CONFIG['PROFILE_DIR'] = os.path.join(config_base, "profiles")
+        ed_glob.CONFIG['PROFILE_DIR'] = os.path.join(config_base, 'profiles')
         ed_glob.CONFIG['PROFILE_DIR'] += os.sep
         ed_glob.CONFIG['ISLOCAL'] = True
     else:
         config_base = wx.StandardPaths.Get().GetUserDataDir()
-        ed_glob.CONFIG['PROFILE_DIR'] = util.ResolvConfigDir("profiles")
+        ed_glob.CONFIG['PROFILE_DIR'] = util.ResolvConfigDir('profiles')
 
     # Check for if config directory exists and if profile is from the current
     # running version of Editra.
@@ -789,14 +797,14 @@ def InitConfig():
             if ed_glob.CONFIG['ISLOCAL']:
                 pstr = os.path.join(ed_glob.CONFIG['PROFILE_DIR'], pstr)
             pstr = util.RepairConfigState(pstr)
-            dev_tool.DEBUGP("[InitConfig][info] Loading profile: %s" % repr(pstr))
+            dev_tool.DEBUGP('[InitConfig][info] Loading profile: %s' % repr(pstr))
             profiler.TheProfile.Load(pstr)
         else:
-            dev_tool.DEBUGP("[InitConfig][info] Updating Profile to current version")
+            dev_tool.DEBUGP('[InitConfig][info] Updating Profile to current version')
 
             # When upgrading from an older version make sure all
             # config directories are available.
-            for cfg in ("cache", "styles", "plugins", "profiles", "sessions"):
+            for cfg in ('cache', 'styles', 'plugins', 'profiles', 'sessions'):
                 if not util.HasConfigDir(cfg):
                     util.MakeConfigDir(cfg)
 
@@ -806,7 +814,7 @@ def InitConfig():
             profiler.TheProfile.Load(pstr)
             profiler.TheProfile.Update()
 
-            #---- Temporary Profile Adaption ----#
+            # ---- Temporary Profile Adaption ----
 
             # Added after 0.5.32
             mconfig = profiler.Profile_Get('LEXERMENU', default=None)
@@ -835,11 +843,11 @@ def InitConfig():
 
             # Simplifications to eol mode persistence (0.4.28)
             # Keep for now till plugins are updated
-            #profiler.Profile_Del('EOL') # changed to EOL_MODE
+            # profiler.Profile_Del('EOL') # changed to EOL_MODE
 
             # After 0.4.65 LAST_SESSION now points a session file and not
             # to a list of files to open.
-            ed_glob.CONFIG['SESSION_DIR'] = util.ResolvConfigDir("sessions")
+            ed_glob.CONFIG['SESSION_DIR'] = util.ResolvConfigDir('sessions')
             smgr = ed_session.EdSessionMgr()
             sess = profiler.Profile_Get('LAST_SESSION')
             if isinstance(sess, list) or not sess:
@@ -850,7 +858,7 @@ def InitConfig():
                     name = smgr.SessionNameFromPath(sess)
                     profiler.Profile_Set('LAST_SESSION', name)
 
-            #---- End Temporary Profile Adaption ----#
+            # ---- End Temporary Profile Adaption ----
 
             # Write out updated profile
             profiler.TheProfile.Write(pstr)
@@ -865,16 +873,16 @@ def InitConfig():
         try:
             success = UpgradeOldInstall()
         except Exception as msg:
-            dev_tool.DEBUGP("[InitConfig][err] %s" % msg)
+            dev_tool.DEBUGP('[InitConfig][err] %s' % msg)
             success = False
 
         if not success:
-            old_cdir = "%s%s.%s%s" % (wx.GetHomeDir(), os.sep,
-                                       ed_glob.PROG_NAME, os.sep)
-            msg = ("Failed to upgrade your old installation\n"
-                   "To retain your old settings you may need to copy some files:\n"
-                   "\nFrom: %s\n\nTo: %s") % (old_cdir, config_base)
-            wx.MessageBox(msg, "Upgrade Failed", style=wx.ICON_WARNING|wx.OK)
+            old_cdir = '%s%s.%s%s' % (wx.GetHomeDir(), os.sep,
+                                      ed_glob.PROG_NAME, os.sep)
+            msg = ('Failed to upgrade your old installation\n'
+                   'To retain your old settings you may need to copy some files:\n'
+                   '\nFrom: %s\n\nTo: %s') % (old_cdir, config_base)
+            wx.MessageBox(msg, 'Upgrade Failed', style=wx.ICON_WARNING | wx.OK)
 
         # Set default eol for windows
         if wx.Platform == '__WXMSW__':
@@ -884,7 +892,7 @@ def InitConfig():
             # Default to 32x32 toolbar icons on OSX
             profiler.Profile_Set('ICONSZ', (32, 32))
 
-    #---- Profile Loaded / Installed ----#
+    # ---- Profile Loaded / Installed ----
 
     # Set debug mode
     emode = profiler.Profile_Get('MODE')
@@ -894,37 +902,37 @@ def InitConfig():
             ed_glob.VDEBUG = True
 
     # Resolve resource locations
-    ed_glob.CONFIG['CONFIG_DIR'] = util.ResolvConfigDir("")
-    ed_glob.CONFIG['INSTALL_DIR'] = util.ResolvConfigDir("", True)
-    ed_glob.CONFIG['KEYPROF_DIR'] = util.ResolvConfigDir("ekeys", True)
-    ed_glob.CONFIG['SYSPIX_DIR'] = util.ResolvConfigDir("pixmaps", True)
-    ed_glob.CONFIG['PLUGIN_DIR'] = util.ResolvConfigDir("plugins")
-    ed_glob.CONFIG['THEME_DIR'] = util.ResolvConfigDir(os.path.join("pixmaps", "theme"))
-    ed_glob.CONFIG['LANG_DIR'] = util.ResolvConfigDir("locale", True)
-    ed_glob.CONFIG['STYLES_DIR'] = util.ResolvConfigDir("styles")
-    ed_glob.CONFIG['SYS_PLUGIN_DIR'] = util.ResolvConfigDir("plugins", True)
-    ed_glob.CONFIG['SYS_STYLES_DIR'] = util.ResolvConfigDir("styles", True)
-    ed_glob.CONFIG['TEST_DIR'] = util.ResolvConfigDir(os.path.join("tests", "syntax"), True)
+    ed_glob.CONFIG['CONFIG_DIR'] = util.ResolvConfigDir('')
+    ed_glob.CONFIG['INSTALL_DIR'] = util.ResolvConfigDir('', True)
+    ed_glob.CONFIG['KEYPROF_DIR'] = util.ResolvConfigDir('ekeys', True)
+    ed_glob.CONFIG['SYSPIX_DIR'] = util.ResolvConfigDir('pixmaps', True)
+    ed_glob.CONFIG['PLUGIN_DIR'] = util.ResolvConfigDir('plugins')
+    ed_glob.CONFIG['THEME_DIR'] = util.ResolvConfigDir(os.path.join('pixmaps', 'theme'))
+    ed_glob.CONFIG['LANG_DIR'] = util.ResolvConfigDir('locale', True)
+    ed_glob.CONFIG['STYLES_DIR'] = util.ResolvConfigDir('styles')
+    ed_glob.CONFIG['SYS_PLUGIN_DIR'] = util.ResolvConfigDir('plugins', True)
+    ed_glob.CONFIG['SYS_STYLES_DIR'] = util.ResolvConfigDir('styles', True)
+    ed_glob.CONFIG['TEST_DIR'] = util.ResolvConfigDir(os.path.join('tests', 'syntax'), True)
 
     # Make sure all standard config directories are there
-    for cfg in ("cache", "styles", "plugins", "profiles", "sessions"):
+    for cfg in ('cache', 'styles', 'plugins', 'profiles', 'sessions'):
         if not util.HasConfigDir(cfg):
             util.MakeConfigDir(cfg)
-    ed_glob.CONFIG['CACHE_DIR'] = util.ResolvConfigDir("cache")
-    ed_glob.CONFIG['SESSION_DIR'] = util.ResolvConfigDir("sessions")
+    ed_glob.CONFIG['CACHE_DIR'] = util.ResolvConfigDir('cache')
+    ed_glob.CONFIG['SESSION_DIR'] = util.ResolvConfigDir('sessions')
 
     return profile_updated
 
-#--------------------------------------------------------------------------#
 
+# --------------------------------------------------------------------------
 def UpgradeOldInstall():
-    """Upgrade an old installation and transfer all files if they exist
+    """
+    Upgrade an old installation and transfer all files if they exist
     @note: FOR INTERNAL USE ONLY
     @return: bool (True if success, False if failure)
-
     """
-    old_cdir = "%s%s.%s%s" % (wx.GetHomeDir(), os.sep,
-                               ed_glob.PROG_NAME, os.sep)
+    old_cdir = '%s%s.%s%s' % (wx.GetHomeDir(), os.sep,
+                              ed_glob.PROG_NAME, os.sep)
     base = ed_glob.CONFIG['CONFIG_BASE']
     if base is None:
         base = wx.StandardPaths.Get().GetUserDataDir() + os.sep
@@ -944,7 +952,7 @@ def UpgradeOldInstall():
 
                 shutil.move(item, dest)
             except Exception as msg:
-                util.Log("[Upgrade][err] %s" % msg)
+                util.Log('[Upgrade][err] %s' % msg)
                 err += 1
                 continue
 
@@ -953,68 +961,68 @@ def UpgradeOldInstall():
         # Load the copied over profile
         pstr = profiler.GetProfileStr()
         prof = os.path.basename(pstr)
-        pstr = os.path.join(base, "profiles", prof)
+        pstr = os.path.join(base, 'profiles', prof)
         if os.path.exists(pstr):
             profiler.TheProfile.Load(pstr)
             profiler.TheProfile.Update()
             profiler.UpdateProfileLoader()
 
         if not err:
-            wx.MessageBox(_("Your profile has been updated to the latest "
-                "version") + "\n" + \
-              _("Please check the preferences dialog to check "
-                "your preferences"),
-              _("Profile Updated"))
+            wx.MessageBox(_('Your profile has been updated to the latest '
+                          'version') + '\n' + \
+                          _('Please check the preferences dialog to check '
+                            'your preferences'),
+                          _('Profile Updated'))
 
     return not err
 
-#--------------------------------------------------------------------------#
 
+# --------------------------------------------------------------------------
 def PrintHelp(err=None):
-    """Print command line help
+    """
+    Print command line help
     @postcondition: Help is printed and program exits
-
     """
     if err is not None:
         sys.stderr.write(err + os.linesep)
 
-    print((("Editra - %s - Developers Text Editor\n"
-       "Cody Precord (2005-2012)\n\n"
-       "usage: Editra [arguments] [files... ]\n\n"
-       "Short Arguments:\n"
-       "  -c    Set custom configuration directory at runtime\n"
-       "  -d    Turn on console debugging (-dd for verbose debug)\n"
-       "  -D    Turn off console debugging (overrides preferences)\n"
-       "  -g    Open file to line (i.e Editra -g 10 file.txt)\n"
-       "  -h    Show this help message\n"
-       "  -p    Run Editra in the profiler (outputs to editra.prof).\n"
-       "  -v    Print version number and exit\n"
-       "  -S    Disable single instance checker\n"
-       "\nLong Arguments:\n"
-       "  --confdir arg     Set custom configuration directory at runtime\n"
-       "  --debug           Turn on console debugging\n"
-       "  --help            Show this help message\n"
-       "  --auth            Print the ipc server info\n"
-       "  --version         Print version number and exit\n"
-       "  --profileOut arg  Run Editra in the profiler (arg is output file)\n"
-      ) % ed_glob.VERSION))
+    print((('Editra - %s - Developers Text Editor\n'
+            'Cody Precord (2005-2012)\n\n'
+            'usage: Editra [arguments] [files... ]\n\n'
+            'Short Arguments:\n'
+            '  -c    Set custom configuration directory at runtime\n'
+            '  -d    Turn on console debugging (-dd for verbose debug)\n'
+            '  -D    Turn off console debugging (overrides preferences)\n'
+            '  -g    Open file to line (i.e Editra -g 10 file.txt)\n'
+            '  -h    Show this help message\n'
+            '  -p    Run Editra in the profiler (outputs to editra.prof).\n'
+            '  -v    Print version number and exit\n'
+            '  -S    Disable single instance checker\n'
+            '\nLong Arguments:\n'
+            '  --confdir arg     Set custom configuration directory at runtime\n'
+            '  --debug           Turn on console debugging\n'
+            '  --help            Show this help message\n'
+            '  --auth            Print the ipc server info\n'
+            '  --version         Print version number and exit\n'
+            '  --profileOut arg  Run Editra in the profiler (arg is output file)\n'
+            ) % ed_glob.VERSION))
 
     if err is None:
         os._exit(0)
     else:
         os._exit(1)
 
-#--------------------------------------------------------------------------#
 
+# --------------------------------------------------------------------------
 def ProcessCommandLine():
-    """Process the command line switches
+    """
+    Process the command line switches
     @return: tuple ({switches,}, [args,])
-
     """
     try:
-        items, args = getopt.getopt(sys.argv[1:], "dg:hp:vDSc:",
-                                   ['debug', 'help', 'version', 'auth',
-                                    'confdir=', 'profileOut='])
+        items, args = getopt.getopt(sys.argv[1:], 'dg:hp:vDSc:',
+                                    ['debug', 'help', 'version', 'auth',
+                                     'confdir=', 'profileOut='])
     except getopt.GetoptError as msg:
         # Raise error to console and exit
         PrintHelp(str(msg))
@@ -1025,7 +1033,7 @@ def ProcessCommandLine():
         if opt in ['-h', '--help']:
             PrintHelp()
         elif opt in ['-v', '--version']:
-            print((ed_glob.VERSION))
+            print(ed_glob.VERSION)
             os._exit(0)
         elif opt in ['-d', '--debug'] and '-D' not in list(opts.keys()):
             # If the debug flag is set more than once go into verbose mode
@@ -1050,20 +1058,20 @@ def ProcessCommandLine():
         elif opt == '-g':
             # Validate argument passed to -g
             if not value.isdigit():
-                PrintHelp("error: -g requires a number as an argument!")
+                PrintHelp('error: -g requires a number as an argument!')
         else:
             pass
 
     # Return any unprocessed arguments
     return opts, args
 
-#--------------------------------------------------------------------------#
 
+# --------------------------------------------------------------------------
 def Main():
-    """Configures and Runs an instance of Editra
+    """
+    Configures and Runs an instance of Editra
     @summary: Parses command line options, loads the user profile, creates
               an instance of Editra and starts the main loop.
-
     """
     opts, args = ProcessCommandLine()
 
@@ -1073,7 +1081,7 @@ def Main():
 
         if not len(p_file):
             # Fall back to default output file
-            p_file = "editra.prof"
+            p_file = 'editra.prof'
             
         import hotshot
         prof = hotshot.Profile(p_file)
@@ -1082,11 +1090,12 @@ def Main():
     else:
         _Main(opts, args)
 
+
 def _Main(opts, args):
-    """Main method
+    """
+    Main method
     @param opts: Commandline options
     @param args: Commandline arguments
-
     """
     # Put extern subpackage on path so that bundled external dependencies
     # can be found if needed.
@@ -1096,20 +1105,20 @@ def _Main(opts, args):
             sys.path.append(epath)
 
     # Create Application
-    dev_tool.DEBUGP("[main][app] Initializing application...")
+    dev_tool.DEBUGP('[main][app] Initializing application...')
     editra_app = Editra(False)
 
     # Print ipc server authentication info
     if '--auth' in opts:
         opts.pop('--auth')
-        print("port=%d,key=%s" % (ed_ipc.EDPORT,
+        print('port=%d,key=%s' % (ed_ipc.EDPORT,
                                   profiler.Profile_Get('SESSION_KEY')))
 
     # Check if this is the only instance, if its not exit since
     # any of the opening commands have already been passed to the
     # master instance
     if not editra_app.IsOnlyInstance():
-        dev_tool.DEBUGP("[main][info] Second instance exiting...")
+        dev_tool.DEBUGP('[main][info] Second instance exiting...')
         editra_app.Destroy()
         os._exit(0)
 
@@ -1163,30 +1172,31 @@ def _Main(opts, args):
                 fname = ebmlib.GetAbsPath(fname)
                 frame.DoOpen(ed_glob.ID_COMMAND_LINE_OPEN, fname, line)
             except IndexError:
-                dev_tool.DEBUGP("[main][err] IndexError on commandline args")
+                dev_tool.DEBUGP('[main][err] IndexError on commandline args')
 
     # Notify that profile was updated
     if editra_app.GetProfileUpdated():
         editra_app.DestroySplash()
         # Make sure window iniliazes to default position
         profiler.Profile_Del('WPOS')
-        wx.MessageBox(_("Your profile has been updated to the latest "
-                        "version") + "\n" + \
-                      _("Please check the preferences dialog to verify "
-                        "your preferences"),
-                      _("Profile Updated"))
+        wx.MessageBox(_('Your profile has been updated to the latest '
+                        'version') + "\n" + \
+                      _('Please check the preferences dialog to verify '
+                        'your preferences'),
+                      _('Profile Updated'))
 
     # 3. Start Applications Main Loop
-    dev_tool.DEBUGP("[main][info] Starting MainLoop...")
+    dev_tool.DEBUGP('[main][info] Starting MainLoop...')
     wx.CallAfter(frame.Raise)
 
     # Install handlers to exit app if os is shutting down/restarting
     ebmlib.InstallTermHandler(editra_app.Exit, force=True)
 
     editra_app.MainLoop()
-    dev_tool.DEBUGP("[main][info] MainLoop finished exiting application")
+    dev_tool.DEBUGP('[main][info] MainLoop finished exiting application')
     os._exit(0)
 
-#-----------------------------------------------------------------------------#
+
+# -----------------------------------------------------------------------------
 if __name__ == '__main__':
     Main()
