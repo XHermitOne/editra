@@ -14,6 +14,7 @@ __date__ = '31 March 2009'
 
 
 import wx
+import wx.lib.agw.aui.aui_utilities
 import types
 
 from .aui_utilities import BitmapFromBits, StepColour, ChopText, GetBaseColour
@@ -152,7 +153,7 @@ class AuiDefaultDockArt(object):
 
         self.SetDefaultPaneBitmaps(isMac)
         # self._restore_bitmap = wx.BitmapFromXPMData(restore_xpm)
-        self._restore_bitmap = wx.Bitmap(). FromXPMData(restore_xpm)
+        self._restore_bitmap = wx.lib.agw.aui.aui_utilities.BitmapFromBits(str.encode(restore_bits), 16, 16, colour=wx.WHITE)
 
         # default metric values
         self._sash_size = 4

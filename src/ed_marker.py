@@ -8,14 +8,13 @@
 
 """
 Classes to represent Markers and associated data in a StyledTextCtrl
-
 """
 
-__author__ = "Cody Precord <cprecord@editra.org>"
-__svnid__ = "$Id: ed_marker.py 67626 2011-04-27 02:51:39Z CJP $"
-__revision__ = "$Revision: 67626 $"
+__author__ = 'Cody Precord <cprecord@editra.org>'
+__svnid__ = '$Id: ed_marker.py 67626 2011-04-27 02:51:39Z CJP $'
+__revision__ = '$Revision: 67626 $'
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------
 import wx
 import wx.stc
 from .extern.embeddedimage import PyEmbeddedImage
@@ -116,26 +115,32 @@ _LintBmpYellow = PyEmbeddedImage(
     "Xi/sCzVdYGllk0BjDa/efCSTNVlcOxAAQ/0R10JVfUaA4YGoLEtJNmcRavK5yLtMeJQrz/Pe"
     "kLz0/r//xt8H26DcJVZnmgAAAABJRU5ErkJggg==")
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------
 
 __markerId = -1
+
+
 def NewMarkerId():
-    """Get a new marker id
+    """
+    Get a new marker id
     @note: limited by stc to 16 possible ids. will assert when this threshold
            is passed.
-
     """
     global __markerId
     __markerId += 1
     assert __markerId < 24, "No more marker Ids available!"
     return __markerId
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------
+
 
 class Marker(object):
-    """Marker Base class"""
+    """
+    Marker Base class
+    """
     _ids = list()
     _symbols = list()
+
     def __init__(self):
         super(Marker, self).__init__()
 
@@ -159,7 +164,9 @@ class Marker(object):
 
     @classmethod
     def AnySet(cls, stc, line):
-        """Is any breakpoint set on the line"""
+        """
+        Is any breakpoint set on the line
+        """
         if not cls.IsSet(stc, line):
             # Check subclasses
             for bpoint in cls.__subclasses__():
@@ -171,26 +178,34 @@ class Marker(object):
 
     @classmethod
     def GetIds(cls):
-        """Get the list of marker IDs."""
+        """
+        Get the list of marker IDs.
+        """
         return cls._ids
 
     @classmethod
     def GetSymbols(cls):
-        """Get the list of symbols"""
+        """
+        Get the list of symbols
+        """
         return cls._symbols
 
     @classmethod
     def IsSet(cls, stc, line):
-        """Is the marker set on the given line"""
+        """
+        Is the marker set on the given line
+        """
         mask = stc.MarkerGet(line)
-        return True in [ bool(1<<marker & mask) for marker in cls.GetIds() ]
+        return True in [bool(1 << marker & mask) for marker in cls.GetIds()]
 
     def Set(self, stc, line, delete=False):
-        """Add/Delete the marker to the stc at the given line"""
+        """
+        Add/Delete the marker to the stc at the given line
+        """
         for marker in self.GetIds():
             if delete:
                 mask = stc.MarkerGet(line)
-                if (1<<marker & mask):
+                if 1 << marker & mask:
                     stc.MarkerDelete(line, marker)
             else:
                 handle = stc.MarkerAdd(line, marker)
@@ -199,86 +214,112 @@ class Marker(object):
                     self.Handle = handle
 
     def DeleteAll(self, stc):
-        """Remove all instances of this bookmark from the stc"""
+        """
+        Remove all instances of this bookmark from the stc
+        """
         for marker in self.GetIds():
             stc.MarkerDeleteAll(marker)
 
     def RegisterWithStc(self, stc):
-        """Setup the STC to use this marker"""
+        """
+        Setup the STC to use this marker
+        """
         ids = self.GetIds()
-        if self.Bitmap.IsNull():
+        # if self.Bitmap.IsNull():
+        if not self.Bitmap.IsOk():
             symbols = self.GetSymbols()
             if len(ids) == len(symbols):
                 markers = list(zip(ids, symbols))
                 for marker, symbol in markers:
                     stc.MarkerDefine(marker, symbol,
                                      self.Foreground, self.Background)
-        elif len(ids) == 1 and not self.Bitmap.IsNull():
+        # elif len(ids) == 1 and not self.Bitmap.IsNull():
+        elif len(ids) == 1 and self.Bitmap.IsOk():
             stc.MarkerDefineBitmap(ids[0], self.Bitmap)
         else:
             assert False, "Invalid Marker!"
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------
+
 
 class Bookmark(Marker):
-    """Class to store bookmark data"""
-    _ids = [NewMarkerId(),]
+    """
+    Class to store bookmark data
+    """
+    _ids = [NewMarkerId(), ]
+
     def __init__(self):
         super(Bookmark, self).__init__()
 
         # Attributes
-        self._name = ""        # Bookmark alias name
-        self._fname = ""       # Filename
+        self._name = ''        # Bookmark alias name
+        self._fname = ''       # Filename
         self.Bitmap = _BookmarkBmp.Bitmap
 
     def __eq__(self, other):
         return (self.Filename, self.Line) == (other.Filename, other.Line)
 
-    #---- Properties ----#
+    # ---- Properties ----
     Name = property(lambda self: self._name,
                     lambda self, name: setattr(self, '_name', name))
     Filename = property(lambda self: self._fname,
                         lambda self, name: setattr(self, '_fname', name))
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------
+
 
 class Breakpoint(Marker):
-    """Marker object to represent a breakpoint in the EditraBaseStc"""
-    _ids = [NewMarkerId(),]
+    """
+    Marker object to represent a breakpoint in the EditraBaseStc
+    """
+    _ids = [NewMarkerId(), ]
+
     def __init__(self):
         super(Breakpoint, self).__init__()
         self.Bitmap = _BreakpointBmp.Bitmap
 
+
 class BreakpointDisabled(Breakpoint):
-    """Marker object to represent a disabled breakpoint in the EditraBaseStc"""
-    _ids = [NewMarkerId(),]
+    """
+    Marker object to represent a disabled breakpoint in the EditraBaseStc
+    """
+    _ids = [NewMarkerId(), ]
+
     def __init__(self):
         super(BreakpointDisabled, self).__init__()
         self.Bitmap = _BreakpointDisabledBmp.Bitmap
 
+
 class BreakpointStep(Breakpoint):
-    """Marker object to represent debugger step breakpoint in the EditraBaseStc"""
+    """
+    Marker object to represent debugger step breakpoint in the EditraBaseStc
+    """
     _ids = [NewMarkerId(), NewMarkerId()]
+
     def __init__(self):
         super(BreakpointStep, self).__init__()
         self.Bitmap = _ArrowBmp.Bitmap
 
     def DeleteAll(self, stc):
-        """Overrode to handle refresh issue"""
+        """
+        Overrode to handle refresh issue
+        """
         super(BreakpointStep, self).DeleteAll(stc)
         stc.Colourise(0, stc.GetLength())
 
     def RegisterWithStc(self, stc):
-        """Register this compound marker with the given StyledTextCtrl"""
+        """
+        Register this compound marker with the given StyledTextCtrl
+        """
         ids = self.GetIds()
         stc.MarkerDefineBitmap(ids[0], self.Bitmap)
         stc.MarkerDefine(ids[1], wx.stc.STC_MARK_BACKGROUND, 
                          background=self.Background)
 
     def Set(self, stc, line, delete=False):
-        """Add/Delete the marker to the stc at the given line
+        """
+        Add/Delete the marker to the stc at the given line
         @note: overrode to ensure only one is set in a buffer at a time
-
         """
         self.DeleteAll(stc)
         super(BreakpointStep, self).Set(stc, line, delete)
@@ -286,19 +327,26 @@ class BreakpointStep(Breakpoint):
         end = stc.GetLineEndPosition(line)
         if start == end:
             start = 0
-        stc.Colourise(start, end) # Refresh for background marker
+        stc.Colourise(start, end)   # Refresh for background marker
+
 
 class StackMarker(Marker):
-    """Marker object to mark a line in a callstack in the EditraBaseStc"""
-    _ids = [NewMarkerId(),]
+    """
+    Marker object to mark a line in a callstack in the EditraBaseStc
+    """
+    _ids = [NewMarkerId(), ]
+
     def __init__(self):
         super(StackMarker, self).__init__()
         self.Bitmap = _StackMarker.Bitmap
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------
+
 
 class FoldMarker(Marker):
-    """Marker object class for managing the code folding markers"""
+    """
+    Marker object class for managing the code folding markers
+    """
     _ids = [wx.stc.STC_MARKNUM_FOLDEROPEN, wx.stc.STC_MARKNUM_FOLDER,
             wx.stc.STC_MARKNUM_FOLDERSUB, wx.stc.STC_MARKNUM_FOLDERTAIL,
             wx.stc.STC_MARKNUM_FOLDEREND, wx.stc.STC_MARKNUM_FOLDEROPENMID,
@@ -313,22 +361,30 @@ class FoldMarker(Marker):
         stc.SetFoldMarginHiColour(True, self.Foreground)
         stc.SetFoldMarginColour(True, self.Foreground)
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------
+
 
 class ErrorMarker(Marker):
-    """Marker object to indicate an error line in the EditraBaseStc"""
+    """
+    Marker object to indicate an error line in the EditraBaseStc
+    """
     _ids = [NewMarkerId(), NewMarkerId()]
+
     def __init__(self):
         super(ErrorMarker, self).__init__()
         self.Bitmap = _ErrorBmp.Bitmap
 
     def DeleteAll(self, stc):
-        """Overrode to handle refresh issue"""
+        """
+        Overrode to handle refresh issue
+        """
         super(ErrorMarker, self).DeleteAll(stc)
         stc.Colourise(0, stc.GetLength())
 
     def RegisterWithStc(self, stc):
-        """Register this compound marker with the given StyledTextCtrl"""
+        """
+        Register this compound marker with the given StyledTextCtrl
+        """
         ids = self.GetIds()
         stc.MarkerDefineBitmap(ids[0], self.Bitmap)
         stc.MarkerDefine(ids[1], wx.stc.STC_MARK_BACKGROUND, 
@@ -336,42 +392,50 @@ class ErrorMarker(Marker):
                          background=self.Foreground)
 
     def Set(self, stc, line, delete=False):
-        """Add/Delete the marker to the stc at the given line
+        """
+        Add/Delete the marker to the stc at the given line
         @note: overrode to ensure only one is set in a buffer at a time
-
         """
         super(ErrorMarker, self).Set(stc, line, delete)
         start = stc.GetLineEndPosition(max(line-1, 0))
         end = stc.GetLineEndPosition(line)
         if start == end:
             start = 0
-        stc.Colourise(start, end) # Refresh for background marker
+        stc.Colourise(start, end)   # Refresh for background marker
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------
+
 
 class LintMarker(Marker):
-    """Marker object to represent a marker for coding issue in the EditraBaseStc"""
-    _ids = [NewMarkerId(),]
+    """
+    Marker object to represent a marker for coding issue in the EditraBaseStc
+    """
+    _ids = [NewMarkerId(), ]
+
     def __init__(self):
         super(LintMarker, self).__init__()
         self.Bitmap = _LintBmpGreen.Bitmap
 
-class LintMarkerWarning(Marker):
-    """Marker object to represent a marker for moderate severity 
-    coding issue in the EditraBaseStc
 
+class LintMarkerWarning(Marker):
     """
-    _ids = [NewMarkerId(),]
+    Marker object to represent a marker for moderate severity
+    coding issue in the EditraBaseStc
+    """
+    _ids = [NewMarkerId(), ]
+
     def __init__(self):
         super(LintMarkerWarning, self).__init__()
         self.Bitmap = _LintBmpYellow.Bitmap
 
-class LintMarkerError(Marker):
-    """Marker object to represent a marker for a high severity
-    coding issue in the EditraBaseStc
 
+class LintMarkerError(Marker):
     """
-    _ids = [NewMarkerId(),]
+    Marker object to represent a marker for a high severity
+    coding issue in the EditraBaseStc
+    """
+    _ids = [NewMarkerId(), ]
+
     def __init__(self):
         super(LintMarkerError, self).__init__()
         self.Bitmap = _LintBmpRed.Bitmap

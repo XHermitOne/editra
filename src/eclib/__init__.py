@@ -11,9 +11,9 @@ Editra Control Library
 
 """
 
-__author__ = "Cody Precord <cprecord@editra.org>"
-__cvsid__ = "$Id: __init__.py 70469 2012-01-27 19:27:02Z CJP $"
-__revision__ = "$Revision: 70469 $"
+__author__ = 'Cody Precord <cprecord@editra.org>'
+__cvsid__ = '$Id: __init__.py 70469 2012-01-27 19:27:02Z CJP $'
+__revision__ = '$Revision: 70469 $'
 
 
 __all__ = ['auinavi', 'choicedlg', 'colorsetter', 'ctrlbox', 'eclutil',

@@ -71,7 +71,7 @@ class EdMenu(wx.Menu):
         based on item id.
         """
         binding = EdMenuBar.keybinder.GetBinding(id_)
-        item = self.Append(id_, text+binding, helpstr, kind, use_bmp)
+        item = self.AppendEd(id_, text+binding, helpstr, kind, use_bmp)
         return item
 
     def AppendItem(self, item, use_bmp=True):
@@ -128,7 +128,7 @@ class EdMenu(wx.Menu):
         if pos:
             mitem = self.Insert(pos + 1, id_, label, helpstr, kind, use_bmp)
         else:
-            mitem = self.Append(id_, label, helpstr, kind, use_bmp)
+            mitem = self.AppendEd(id_, label, helpstr, kind, use_bmp)
         return mitem
 
     def InsertBefore(self, item_id, id_, label='', helpstr='',
@@ -155,7 +155,7 @@ class EdMenu(wx.Menu):
         if pos:
             mitem = self.Insert(pos, id_, label, helpstr, kind, use_bmp)
         else:
-            mitem = self.Append(id_, label, helpstr, kind, use_bmp)
+            mitem = self.AppendEd(id_, label, helpstr, kind, use_bmp)
         return mitem
 
     def InsertAlpha(self, id_, label='', helpstr='',
@@ -197,7 +197,7 @@ class EdMenu(wx.Menu):
 
         l_item = self.FindItemByPosition(last_ind)
         if pos == last_ind and (l_item.IsSeparator() or label > mlabel):
-            mitem = self.Append(id_, label, helpstr, kind, use_bmp)
+            mitem = self.AppendEd(id_, label, helpstr, kind, use_bmp)
         else:
             mitem = self.Insert(pos, id_, label, helpstr, kind, use_bmp)
         return mitem

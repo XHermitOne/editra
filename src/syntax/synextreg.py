@@ -20,41 +20,43 @@ LANGUAGE: Python
 
 """
 
-__author__ = "Cody Precord <cprecord@editra.org>"
-__svnid__ = "$Id: synextreg.py 70228 2011-12-31 20:39:16Z CJP $"
-__revision__ = "$Revision: 70228 $"
+__author__ = 'Cody Precord <cprecord@editra.org>'
+__svnid__ = '$Id: synextreg.py 70228 2011-12-31 20:39:16Z CJP $'
+__revision__ = '$Revision: 70228 $'
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------
 import os
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------
+
 
 def _NewId():
     global _idCounter
     _idCounter += 1
     return _idCounter
 
+
 _idCounter = 32100
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------
 
-#---- Language Identifiers Keys ----#
+# ---- Language Identifiers Keys ----
 # Used for specifying what dialect/keyword set to load for a specific lexer
 
-#---- Use LEX_NULL ----#
-ID_LANG_TXT  = _NewId()
+# ---- Use LEX_NULL ----
+ID_LANG_TXT = _NewId()
 LANG_TXT = 'Plain Text'
 
-#---- Use LEX_ADA ----#
+# ---- Use LEX_ADA ----
 ID_LANG_ADA = _NewId()
 LANG_ADA = 'Ada'
 
-#---- Use LEX_ASM ----#
-ID_LANG_ASM  = _NewId()
+# ---- Use LEX_ASM ----
+ID_LANG_ASM = _NewId()
 LANG_ASM = 'GNU Assembly'
 ID_LANG_DSP56K = _NewId()
 LANG_DSP56K = 'DSP56K Assembly'
-ID_LANG_68K  = _NewId()
+ID_LANG_68K = _NewId()
 LANG_68K = '68k Assembly'
 ID_LANG_MASM = _NewId()
 LANG_MASM = 'MASM'
@@ -64,11 +66,11 @@ LANG_NASM = 'Netwide Assembler'
 # Use LEX_BASH
 ID_LANG_BOURNE = _NewId()
 LANG_BOURNE = 'Bourne Shell Script'
-ID_LANG_BASH   = _NewId()
+ID_LANG_BASH = _NewId()
 LANG_BASH = 'Bash Shell Script'
-ID_LANG_CSH    = _NewId()
+ID_LANG_CSH = _NewId()
 LANG_CSH = 'C-Shell Script'
-ID_LANG_KSH    = _NewId()
+ID_LANG_KSH = _NewId()
 LANG_KSH = 'Korn Shell Script'
 
 # Use LEX_CAML
@@ -160,11 +162,11 @@ ID_LANG_COLDFUSION = _NewId()
 LANG_COLDFUSION = 'ColdFusion'
 ID_LANG_HTML = _NewId()
 LANG_HTML = 'HTML'
-ID_LANG_JS   = _NewId()
+ID_LANG_JS = _NewId()
 LANG_JS = 'JavaScript'
-ID_LANG_PHP  = _NewId()
+ID_LANG_PHP = _NewId()
 LANG_PHP = 'PHP'
-ID_LANG_XML  = _NewId()
+ID_LANG_XML = _NewId()
 LANG_XML = 'XML'
 ID_LANG_SGML = _NewId()
 
@@ -245,7 +247,7 @@ ID_LANG_4GL = _NewId()
 LANG_4GL = "Progress 4GL"
 
 # Use LEX_TCL
-ID_LANG_TCL  = _NewId()
+ID_LANG_TCL = _NewId()
 LANG_TCL = 'Tcl/Tk'
 
 # Use LEX_TEX
@@ -281,7 +283,7 @@ ID_LANG_BATCH = _NewId()
 LANG_BATCH = 'DOS Batch Script'
 ID_LANG_DIFF = _NewId()
 LANG_DIFF = 'Diff File'
-ID_LANG_MAKE  = _NewId()
+ID_LANG_MAKE = _NewId()
 LANG_MAKE = 'Makefile'
 ID_LANG_PROPS = _NewId()
 LANG_PROPS = 'Properties'
@@ -306,141 +308,144 @@ LANG_GROOVY = 'Groovy'
 ID_LANG_XTEXT = _NewId()
 LANG_XTEXT = 'Xtext'
 
-#---- End Language Identifier Keys ----#
+# ---- End Language Identifier Keys ----
 
 # Default extensions to file type mapping
 EXT_MAP = {
-           '4gl'                : LANG_4GL,
-           '56k'                : LANG_DSP56K,
-           '68k'                : LANG_68K,
-           'ada adb ads a'      : LANG_ADA,
-           'conf htaccess'      : LANG_APACHE,
-           'as asc mx'          : LANG_AS,
-           'gasm'               : LANG_ASM,
-           'bsh sh configure'   : LANG_BASH,
-           'bat cmd'            : LANG_BATCH,
-           'boo'                : LANG_BOO,
-           'c h'                : LANG_C,
-           'ml mli'             : LANG_CAML,
-           'cilk cilkh'         : LANG_CILK,
-           'cobra'              : LANG_COBRA,
-           'cfm cfc cfml dbm'   : LANG_COLDFUSION,
-           'cc c++ cpp cxx hh h++ hpp hxx' : LANG_CPP,
-           'csh'                : LANG_CSH,
-           'cs'                 : LANG_CSHARP,
-           'css'                : LANG_CSS,
-           'd'                  : LANG_D,
-           'patch diff'         : LANG_DIFF,
-           'django'             : LANG_DJANGO,
-           'dot'                : LANG_DOT,
-           'edc'                : LANG_EDJE,
-           'e'                  : LANG_EIFFEL,
-           'erl'                : LANG_ERLANG,
-           'ess'                : LANG_ESS,
-           'f for'              : LANG_F77,
-           'f90 f95 f2k fpp'    : LANG_F95,
-           'fe'                 : LANG_FERITE,
-           'fth 4th fs seq'     : LANG_FORTH,
-           'prg'                : LANG_FLAGSHIP,
-           'frag vert glsl'     : LANG_GLSL,
-           'gc gui'             : LANG_GUI4CLI,
-           'hs'                 : LANG_HASKELL,
-           'hx hxml'            : LANG_HAXE,
-           'htm html shtm shtml xhtml' : LANG_HTML,
-           'isl'                : LANG_ISSL,
-           'iss'                : LANG_INNO,
-           'java'               : LANG_JAVA,
-           'js'                 : LANG_JS,
-           'kix'                : LANG_KIX,
-           'ksh'                : LANG_KSH,
-           'aux tex sty'        : LANG_LATEX,
-           'cl lisp'            : LANG_LISP,
-           'lsp'                : LANG_NEWLISP,
-           'lt'                 : LANG_LOUT,
-           'lua'                : LANG_LUA,
-           'mak makefile mk'    : LANG_MAKE,
-           'mao mako'           : LANG_MAKO,
-           'asm masm'           : LANG_MASM,
-           'matlab'             : LANG_MATLAB,
-           'mssql'              : LANG_MSSQL,
-           'nasm'               : LANG_NASM,
-           'ctl nonmem'         : LANG_NONMEM,
-           'nsi nsh'            : LANG_NSIS,
-           'mm m'               : LANG_OBJC,
-           'oct octave'         : LANG_OCTAVE,
-           'ooc'                : LANG_OOC,
-           'dfm dpk dpr inc p pas pp' : LANG_PASCAL,
-           'cgi pl pm pod'      : LANG_PERL,
-           'php php3 phtml phtm' : LANG_PHP,
-           'pike'                : LANG_PIKE,
-           'plsql'              : LANG_PLSQL,
-           'ini inf reg url cfg cnf' : LANG_PROPS,
-           'ai ps'              : LANG_PS,
-           'py pyw python'      : LANG_PYTHON,
-           'r'                  : LANG_R,
-           'do ado'             : LANG_STATA,
-           'rake rb rbw rbx gemspec' : LANG_RUBY,
-           's'                  : LANG_S,
-           'scm smd ss'         : LANG_SCHEME,
-           'sql'                : LANG_SQL,
-           'nut'                : LANG_SQUIRREL,
-           'st'                 : LANG_ST,
-           'sv svh'             : LANG_SYSVERILOG,
-           'itcl tcl tk'        : LANG_TCL,
-           'txt'                : LANG_TXT,
-           'vala'               : LANG_VALA,
-           'bas cls frm vb'     : LANG_VB,
-           'vbs dsm'            : LANG_VBSCRIPT,
-           'v'                  : LANG_VERILOG,
-           'vh vhdl vhd'        : LANG_VHDL,
-           'axl dtd plist rdf svg xml xrc xsd xsl xslt xul' : LANG_XML,
-           'yaml yml'           : LANG_YAML,
-           'groovy'             : LANG_GROOVY,
-           'xtext'               : LANG_XTEXT,
+           '4gl': LANG_4GL,
+           '56k': LANG_DSP56K,
+           '68k': LANG_68K,
+           'ada adb ads a': LANG_ADA,
+           'conf htaccess': LANG_APACHE,
+           'as asc mx': LANG_AS,
+           'gasm': LANG_ASM,
+           'bsh sh configure': LANG_BASH,
+           'bat cmd': LANG_BATCH,
+           'boo': LANG_BOO,
+           'c h': LANG_C,
+           'ml mli': LANG_CAML,
+           'cilk cilkh': LANG_CILK,
+           'cobra': LANG_COBRA,
+           'cfm cfc cfml dbm': LANG_COLDFUSION,
+           'cc c++ cpp cxx hh h++ hpp hxx': LANG_CPP,
+           'csh': LANG_CSH,
+           'cs': LANG_CSHARP,
+           'css': LANG_CSS,
+           'd': LANG_D,
+           'patch diff': LANG_DIFF,
+           'django': LANG_DJANGO,
+           'dot': LANG_DOT,
+           'edc': LANG_EDJE,
+           'e': LANG_EIFFEL,
+           'erl': LANG_ERLANG,
+           'ess': LANG_ESS,
+           'f for': LANG_F77,
+           'f90 f95 f2k fpp': LANG_F95,
+           'fe': LANG_FERITE,
+           'fth 4th fs seq': LANG_FORTH,
+           'prg': LANG_FLAGSHIP,
+           'frag vert glsl': LANG_GLSL,
+           'gc gui': LANG_GUI4CLI,
+           'hs': LANG_HASKELL,
+           'hx hxml': LANG_HAXE,
+           'htm html shtm shtml xhtml': LANG_HTML,
+           'isl': LANG_ISSL,
+           'iss': LANG_INNO,
+           'java': LANG_JAVA,
+           'js': LANG_JS,
+           'kix': LANG_KIX,
+           'ksh': LANG_KSH,
+           'aux tex sty': LANG_LATEX,
+           'cl lisp': LANG_LISP,
+           'lsp': LANG_NEWLISP,
+           'lt': LANG_LOUT,
+           'lua': LANG_LUA,
+           'mak makefile mk': LANG_MAKE,
+           'mao mako': LANG_MAKO,
+           'asm masm': LANG_MASM,
+           'matlab': LANG_MATLAB,
+           'mssql': LANG_MSSQL,
+           'nasm': LANG_NASM,
+           'ctl nonmem': LANG_NONMEM,
+           'nsi nsh': LANG_NSIS,
+           'mm m': LANG_OBJC,
+           'oct octave': LANG_OCTAVE,
+           'ooc': LANG_OOC,
+           'dfm dpk dpr inc p pas pp': LANG_PASCAL,
+           'cgi pl pm pod': LANG_PERL,
+           'php php3 phtml phtm': LANG_PHP,
+           'pike': LANG_PIKE,
+           'plsql': LANG_PLSQL,
+           'ini inf reg url cfg cnf': LANG_PROPS,
+           'ai ps': LANG_PS,
+           'py pyw python': LANG_PYTHON,
+           'r': LANG_R,
+           'do ado': LANG_STATA,
+           'rake rb rbw rbx gemspec': LANG_RUBY,
+           's': LANG_S,
+           'scm smd ss': LANG_SCHEME,
+           'sql': LANG_SQL,
+           'nut': LANG_SQUIRREL,
+           'st': LANG_ST,
+           'sv svh': LANG_SYSVERILOG,
+           'itcl tcl tk': LANG_TCL,
+           'txt': LANG_TXT,
+           'vala': LANG_VALA,
+           'bas cls frm vb': LANG_VB,
+           'vbs dsm': LANG_VBSCRIPT,
+           'v': LANG_VERILOG,
+           'vh vhdl vhd': LANG_VHDL,
+           'axl dtd plist rdf svg xml xrc xsd xsl xslt xul': LANG_XML,
+           'yaml yml': LANG_YAML,
+           'groovy': LANG_GROOVY,
+           'xtext': LANG_XTEXT,
           }
 
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------
 
 class ExtensionRegister(dict):
-    """A data storage class for managing mappings of
+    """
+    A data storage class for managing mappings of
     file types to file extensions. The register is created as a singleton.
-
     """
     instance = None
     config = 'synmap'
+
     def __init__(self):
-        """Initializes the register"""
+        """
+        Initializes the register
+        """
         if not ExtensionRegister.instance:
             self.LoadDefault()
 
     def __new__(cls, *args, **kargs):
-        """Maintain only a single instance of this object
+        """
+        Maintain only a single instance of this object
         @return: instance of this class
-
         """
         if not cls.instance:
             cls.instance = dict.__new__(cls, *args, **kargs)
         return cls.instance
 
     def __missing__(self, key):
-        """Return the default value if an item is not found
+        """
+        Return the default value if an item is not found
         @return: txt extension for plain text
-
         """
         return 'txt'
 
     def __setitem__(self, i, y):
-        """Ensures that only one filetype is associated with an extension
+        """
+        Ensures that only one filetype is associated with an extension
         at one time. The behavior is that more recent settings override
         and remove associations from older settings.
         @param i: key to set
         @param y: value to set
         @throws: TypeError Only accepts list() objects
-
         """
         if not isinstance(y, list):
-            raise TypeError("Extension Register Expects a List")
+            raise TypeError('Extension Register Expects a List')
         for key, val in self.items():
             for item in y:
                 if item in val:
@@ -449,25 +454,25 @@ class ExtensionRegister(dict):
         dict.__setitem__(self, i, [x.strip() for x in y])
 
     def __str__(self):
-        """Converts the Register to a string that is formatted
+        """
+        Converts the Register to a string that is formatted
         for output to a config file.
         @return: the register as a string
-
         """
         keys = list(self.keys())
         keys.sort()
         tmp = list()
         for key in keys:
-            tmp.append("%s=%s" % (key, ':'.join(self.__getitem__(key))))
+            tmp.append('%s=%s' % (key, ':'.join(self.__getitem__(key))))
         return os.linesep.join(tmp)
 
     def Associate(self, ftype, ext):
-        """Associate a given file type with the given file extension(s).
+        """
+        Associate a given file type with the given file extension(s).
         The ext parameter can be a string of space separated extensions
         to allow for multiple associations at once.
         @param ftype: file type description string
         @param ext: file extension to associate
-        
         """
         assoc = self.get(ftype, None)
         exts = ext.strip().split()
@@ -481,11 +486,11 @@ class ExtensionRegister(dict):
         super(ExtensionRegister, self).__setitem__(ftype, assoc)
 
     def Disassociate(self, ftype, ext):
-        """Disassociate a file type with a given extension or space
+        """
+        Disassociate a file type with a given extension or space
         separated list of extensions.
         @param ftype: filetype description string
         @param ext: extension to disassociate
-
         """
         to_drop = ext.strip().split()
         assoc = self.get(ftype, None)
@@ -498,12 +503,12 @@ class ExtensionRegister(dict):
             pass
 
     def FileTypeFromExt(self, ext):
-        """Returns the file type that is associated with
+        """
+        Returns the file type that is associated with
         the extension. Matching is done with a case insensitive search.
         If no association is found Plain Text
         will be returned by default.
         @param ext: extension to lookup
-
         """
         ext = ext.lower()
         for key, val in self.items():
@@ -512,9 +517,9 @@ class ExtensionRegister(dict):
         return LANG_TXT
 
     def GetAllExtensions(self):
-        """Returns a sorted list of all extensions registered
+        """
+        Returns a sorted list of all extensions registered
         @return: list of all registered extensions
-
         """
         ext = list()
         for extension in list(self.values()):
@@ -523,24 +528,24 @@ class ExtensionRegister(dict):
         return ext
 
     def LoadDefault(self):
-        """Loads the default settings
+        """
+        Loads the default settings
         @postcondition: sets dictionary back to default installation state
-
         """
         self.clear()
         for key in EXT_MAP:
             self.__setitem__(EXT_MAP[key], key.split())
 
     def LoadFromConfig(self, config):
-        """Load the extension register with values from a config file
+        """
+        Load the extension register with values from a config file
         @param config: path to config file to load settings from
-
         """
         path = os.path.join(config, self.config)
         if not os.path.exists(path):
             self.LoadDefault()
         else:
-            file_h = file(path, "rb")
+            file_h = open(path, 'rt')
             lines = file_h.readlines()
             file_h.close()
             for line in lines:
@@ -552,10 +557,10 @@ class ExtensionRegister(dict):
                 self.__setitem__(ftype, exts)
 
     def Remove(self, ftype):
-        """Remove a filetype from the register
+        """
+        Remove a filetype from the register
         @param ftype: File type description string
         @return: bool removed or not
-
         """
         if ftype in self:
             del self[ftype]
@@ -563,31 +568,32 @@ class ExtensionRegister(dict):
         return False
 
     def SetAssociation(self, ftype, ext):
-        """Like Associate but overrides any current settings instead of
+        """
+        Like Associate but overrides any current settings instead of
         just adding to them.
         @param ftype: File type description string
         @param ext: space separated list of file extensions to set
-
         """
         self.__setitem__(ftype, list(set(ext.split())))
 
-#-----------------------------------------------------------------------------#
 
+# -----------------------------------------------------------------------------
 def GetFileExtensions():
-    """Gets a sorted list of all file extensions the editor is configured
+    """
+    Gets a sorted list of all file extensions the editor is configured
     to handle.
     @return: all registered file extensions
-
     """
     extreg = ExtensionRegister()
     return extreg.GetAllExtensions()
 
+
 def RegisterNewLangId(langId, langName):
-    """Register a new language identifier
+    """
+    Register a new language identifier
     @param langId: "ID_LANG_FOO"
     @param langName: "Foo"
     @return: int
-
     """
     gdict = globals()
     if langId not in gdict:
@@ -595,4 +601,4 @@ def RegisterNewLangId(langId, langName):
         gdict[langId[3:]] = langName
     return gdict[langId]
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------

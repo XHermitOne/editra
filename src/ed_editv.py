@@ -10,14 +10,13 @@
 Text editor buffer view control for the main notebook
 
 @summary: Editor view
-
 """
 
-__author__ = "Cody Precord <cprecord@editra.org>"
-__svnid__ = "$Id: ed_editv.py 72901 2012-11-05 15:19:28Z CJP $"
-__revision__ = "$Revision: 72901 $"
+__author__ = 'Cody Precord <cprecord@editra.org>'
+__svnid__ = '$Id: ed_editv.py 72901 2012-11-05 15:19:28Z CJP $'
+__revision__ = '$Revision: 72901 $'
 
-#--------------------------------------------------------------------------#
+# --------------------------------------------------------------------------
 # Imports
 import wx
 import os
@@ -37,7 +36,7 @@ from .ebmlib import GetFileModTime, ContextMenuManager, GetFileName
 # External libs
 from .extern.stcspellcheck import STCSpellCheck
 
-#--------------------------------------------------------------------------#
+# --------------------------------------------------------------------------
 
 ID_SPELL_1 = wx.NewId()
 ID_SPELL_2 = wx.NewId()
@@ -45,13 +44,16 @@ ID_SPELL_3 = wx.NewId()
 
 _ = wx.GetTranslation
 
-def modalcheck(func):
-    """Decorator method to add extra modality guards to functions that
-    show modal dialogs. Arg 0 must be a Window instance.
 
+def modalcheck(func):
+    """
+    Decorator method to add extra modality guards to functions that
+    show modal dialogs. Arg 0 must be a Window instance.
     """
     def WrapModal(*args, **kwargs):
-        """Wrapper method to guard against multiple dialogs being shown"""
+        """
+        Wrapper method to guard against multiple dialogs being shown
+        """
         self = args[0]
         self._has_dlg = True
         func(*args, **kwargs)
@@ -61,10 +63,13 @@ def modalcheck(func):
     WrapModal.__doc__ = func.__doc__
     return WrapModal
 
-#--------------------------------------------------------------------------#
+# --------------------------------------------------------------------------
+
 
 class EdEditorView(ed_stc.EditraStc, ed_tab.EdTabBase):
-    """Tab editor view for main notebook control."""
+    """
+    Tab editor view for main notebook control.
+    """
     ID_NO_SUGGEST = wx.NewId()
     ID_ADD_TO_DICT = wx.NewId()
     ID_IGNORE = wx.NewId()
@@ -75,7 +80,9 @@ class EdEditorView(ed_stc.EditraStc, ed_tab.EdTabBase):
 
     def __init__(self, parent, id_=wx.ID_ANY, pos=wx.DefaultPosition,
                  size=wx.DefaultSize, style=0, use_dt=True):
-        """Initialize the editor view"""
+        """
+        Initialize the editor view
+        """
         ed_stc.EditraStc.__init__(self, parent, id_, pos, size, style, use_dt)
         ed_tab.EdTabBase.__init__(self)
 
@@ -127,23 +134,27 @@ class EdEditorView(ed_stc.EditraStc, ed_tab.EdTabBase):
                              ed_msg.EDMSG_PROFILE_CHANGE + (opt,))
 
     def OnDestroy(self, evt):
-        """Cleanup message handlers on destroy"""
+        """
+        Cleanup message handlers on destroy
+        """
         if evt.Id == self.Id:
             ed_msg.Unsubscribe(self.OnConfigMsg)
         evt.Skip()
 
-    #---- EdTab Methods ----#
+    # ---- EdTab Methods ----
 
     def DoDeactivateTab(self):
-        """Deactivate any active popups when the tab is no longer
+        """
+        Deactivate any active popups when the tab is no longer
         the active tab.
-
         """
         self._menu.Clear()
         self.HidePopups()
 
     def DoOnIdle(self):
-        """Check if the file has been modified and prompt a warning"""
+        """
+        Check if the file has been modified and prompt a warning
+        """
         # Don't check while the file is loading
         if self.IsLoading():
             return
@@ -198,16 +209,18 @@ class EdEditorView(ed_stc.EditraStc, ed_tab.EdTabBase):
 
     @modalcheck
     def DoReloadFile(self):
-        """Reload the current file"""
+        """
+        Reload the current file
+        """
         cfile = self.GetFileName()
         ret = True
-        rmsg = ""
+        rmsg = ''
         try:
             ret, rmsg = self.ReloadFile()
         except Exception as msg:
             # Unexpected error
-            wx.MessageBox(_("Failed to reload file\n\nError:\n%s") % msg,
-                          _("File read error"), wx.ICON_ERROR|wx.OK|wx.CENTER)
+            wx.MessageBox(_('Failed to reload file\n\nError:\n%s') % msg,
+                          _('File read error'), wx.ICON_ERROR | wx.OK | wx.CENTER)
             # Set modtime to prevent re-prompting of dialog regardless of error cases
             self.SetModTime(GetFileModTime(cfile))
             return
@@ -216,9 +229,9 @@ class EdEditorView(ed_stc.EditraStc, ed_tab.EdTabBase):
         if not ret:
             errmap = dict(filename=cfile, errmsg=rmsg)
             mdlg = wx.MessageDialog(self,
-                                    _("Failed to reload %(filename)s:\n"
-                                      "Error: %(errmsg)s") % errmap,
-                                    _("Error"),
+                                    _('Failed to reload %(filename)s:\n'
+                                      'Error: %(errmsg)s') % errmap,
+                                    _('Error'),
                                     wx.OK | wx.ICON_ERROR)
             mdlg.ShowModal()
             mdlg.Destroy()
@@ -227,31 +240,37 @@ class EdEditorView(ed_stc.EditraStc, ed_tab.EdTabBase):
         self.SetModTime(GetFileModTime(cfile))
 
     def DoTabClosing(self):
-        """Save the current position in the buffer to reset on next load"""
+        """
+        Save the current position in the buffer to reset on next load
+        """
         if len(self.GetFileName()) > 1:
             EdEditorView.DOCMGR.AddRecord([self.GetFileName(),
                                            self.GetCurrentPos()])
 
     def DoTabOpen(self, ):
-        """Called to open a new tab"""
+        """
+        Called to open a new tab
+        """
         pass
 
     def DoTabSelected(self):
-        """Performs updates that need to happen when this tab is selected"""
-        Log("[ed_editv][info] Tab has file: %s" % self.GetFileName())
+        """
+        Performs updates that need to happen when this tab is selected
+        """
+        Log('[ed_editv][info] Tab has file: %s' % self.GetFileName())
         self.PostPositionEvent()
 
     def GetName(self):
-        """Gets the unique name for this tab control.
-        @return: (unicode) string
-
         """
-        return "EditraTextCtrl"
+        Gets the unique name for this tab control.
+        @return: (unicode) string
+        """
+        return 'EditraTextCtrl'
 
     def GetTabImage(self):
-        """Get the Bitmap to use for the tab
+        """
+        Get the Bitmap to use for the tab
         @return: wx.Bitmap (16x16)
-
         """
         if self.GetDocument().ReadOnly:
             self._ro_img = True
@@ -260,36 +279,37 @@ class EdEditorView(ed_stc.EditraStc, ed_tab.EdTabBase):
             self._ro_img = False
             lang_id = str(self.GetLangId())
             bmp = wx.ArtProvider.GetBitmap(lang_id, wx.ART_MENU)
-            if bmp.IsNull():
+            # if bmp.IsNull():
+            if not bmp.IsOk():
                 bmp = wx.ArtProvider.GetBitmap(str(synglob.ID_LANG_TXT), wx.ART_MENU)
         return bmp
 
     def GetTabMenu(self):
-        """Get the tab menu
+        """
+        Get the tab menu
         @return: wx.Menu
         @todo: move logic from notebook to here
         @todo: generalize generic actions to base class (close, new, etc..)
-
         """
         ptxt = self.GetTabLabel()
 
         menu = ed_menu.EdMenu()
-        menu.Append(ed_glob.ID_NEW, _("New Tab"))
-        menu.Append(ed_glob.ID_MOVE_TAB, _("Move Tab to New Window"))
+        menu.Append(ed_glob.ID_NEW, _('New Tab'))
+        menu.Append(ed_glob.ID_MOVE_TAB, _('Move Tab to New Window'))
         menu.AppendSeparator()
-        menu.Append(ed_glob.ID_SAVE, _("Save \"%s\"") % ptxt)
-        menu.Append(EdEditorView.ID_CLOSE_TAB, _("Close \"%s\"") % ptxt)
-        menu.Append(ed_glob.ID_CLOSE_OTHERS, _("Close Other Tabs"))
-        menu.Append(EdEditorView.ID_CLOSE_ALL_TABS, _("Close All"))
+        menu.Append(ed_glob.ID_SAVE, _('Save \"%s\"') % ptxt)
+        menu.Append(EdEditorView.ID_CLOSE_TAB, _('Close \"%s\"') % ptxt)
+        menu.Append(ed_glob.ID_CLOSE_OTHERS, _('Close Other Tabs'))
+        menu.Append(EdEditorView.ID_CLOSE_ALL_TABS, _('Close All'))
         menu.AppendSeparator()
-        menu.Append(ed_glob.ID_COPY_FILE, _("Copy Filename"))
-        menu.Append(ed_glob.ID_COPY_PATH, _("Copy Full Path"))
+        menu.Append(ed_glob.ID_COPY_FILE, _('Copy Filename'))
+        menu.Append(ed_glob.ID_COPY_PATH, _('Copy Full Path'))
         return menu
 
     def GetTitleString(self):
-        """Get the title string to display in the MainWindows title bar
+        """
+        Get the title string to display in the MainWindows title bar
         @return: (unicode) string
-
         """
         fname = self.GetFileName()
         title = os.path.split(fname)[-1]
@@ -299,13 +319,13 @@ class EdEditorView(ed_stc.EditraStc, ed_tab.EdTabBase):
             title = fname = self.GetTabLabel()
 
         if self.GetModify() and not title.startswith('*'):
-            title = "*" + title
-        return "%s - file://%s" % (title, fname)
+            title = '*' + title
+        return '%s - file://%s' % (title, fname)
 
     def CanCloseTab(self):
-        """Called when checking if tab can be closed or not
+        """
+        Called when checking if tab can be closed or not
         @return: bool
-
         """
         if self._ignore_del:
             self._ignore_del = False
@@ -321,7 +341,9 @@ class EdEditorView(ed_stc.EditraStc, ed_tab.EdTabBase):
         return result
 
     def OnSetFocus(self, evt):
-        """Make sure that the currently selected tab is this one"""
+        """
+        Make sure that the currently selected tab is this one
+        """
         evt.Skip()
         parent = self.GetParent()
         csel = parent.GetSelection()
@@ -330,10 +352,10 @@ class EdEditorView(ed_stc.EditraStc, ed_tab.EdTabBase):
             parent.SetSelection(idx)
 
     def OnSpelling(self, buff, evt):
-        """Context menu subscriber callback
+        """
+        Context menu subscriber callback
         @param buff: buffer menu event happened in
         @param evt: MenuEvent
-
         """
         e_id = evt.Id
         spelld = self._spell.getSpellingDictionary()
@@ -360,7 +382,9 @@ class EdEditorView(ed_stc.EditraStc, ed_tab.EdTabBase):
                 buff.ReplaceTarget(replace)
 
     def RefreshSpellcheck(self):
-        """Refresh the visible text area for spellchecking"""
+        """
+        Refresh the visible text area for spellchecking
+        """
         fline = self.GetFirstVisibleLine()
         first = self.GetLineStartPosition(fline)
         lline = self.GetLastVisibleLine()
@@ -368,7 +392,9 @@ class EdEditorView(ed_stc.EditraStc, ed_tab.EdTabBase):
         self._spell.addDirtyRange(first, last, 0, False)
 
     def OnTabMenu(self, evt):
-        """Tab menu event handler"""
+        """
+        Tab menu event handler
+        """
         e_id = evt.GetId()
         if e_id in (ed_glob.ID_COPY_PATH, ed_glob.ID_COPY_FILE):
             path = self.GetFileName()
@@ -398,18 +424,20 @@ class EdEditorView(ed_stc.EditraStc, ed_tab.EdTabBase):
         else:
             evt.Skip()
 
-    #---- End EdTab Methods ----#
+    # ---- End EdTab Methods ----
 
     def OnKillFocus(self, evt):
-        """Hide popups when focus is lost
+        """
+        Hide popups when focus is lost
         @note: call to skip is necessary
-
         """
         self.HidePopups()
         evt.Skip()
 
     def OnConfigMsg(self, msg):
-        """Update config based on profile changes"""
+        """
+        Update config based on profile changes
+        """
         mtype = msg.GetType()[-1]
         mdata = msg.GetData()
         if mtype == 'SPELLCHECK':
@@ -433,51 +461,53 @@ class EdEditorView(ed_stc.EditraStc, ed_tab.EdTabBase):
             self.SetEndAtLastLine(not Profile_Get('VIEWVERTSPACE'))
 
         # Update other settings
-        cfgmap = { 'AUTOBACKUP' : self.EnableAutoBackup,
-                   'SYNTHEME'   : self.UpdateAllStyles,
-                   'SYNTAX'     : self.SyntaxOnOff,
-                   'BRACKETHL'  : self.ToggleBracketHL,
-                   'GUIDES'     : self.SetIndentationGuides,
-                   'SHOW_EDGE'  : self.SetViewEdgeGuide,
-                   'EDGE'       : self.SetViewEdgeGuide,
-                   'CODE_FOLD'  : self.FoldingOnOff,
-                   'AUTO_COMP'  : self.SetAutoComplete,
+        cfgmap = { 'AUTOBACKUP': self.EnableAutoBackup,
+                   'SYNTHEME': self.UpdateAllStyles,
+                   'SYNTAX': self.SyntaxOnOff,
+                   'BRACKETHL': self.ToggleBracketHL,
+                   'GUIDES': self.SetIndentationGuides,
+                   'SHOW_EDGE': self.SetViewEdgeGuide,
+                   'EDGE': self.SetViewEdgeGuide,
+                   'CODE_FOLD': self.FoldingOnOff,
+                   'AUTO_COMP': self.SetAutoComplete,
                    'AUTO_INDENT': self.ToggleAutoIndent,
                    'HLCARETLINE': self.SetCaretLineVisible,
-                   'USETABS'    : self.SetUseTabs,
-                   'BSUNINDENT' : self.SetBackSpaceUnIndents,
-                   'EOL_MODE'   : self.SetEOLMode,
-                   'AALIASING'  : self.SetUseAntiAliasing,
-                   'SHOW_EOL'   : self.SetViewEOL,
-                   'SHOW_LN'    : self.ToggleLineNumbers,
-                   'SHOW_WS'    : self.SetViewWhiteSpace,
-                   'WRAP'       : self.SetWrapMode }
+                   'USETABS': self.SetUseTabs,
+                   'BSUNINDENT': self.SetBackSpaceUnIndents,
+                   'EOL_MODE': self.SetEOLMode,
+                   'AALIASING': self.SetUseAntiAliasing,
+                   'SHOW_EOL': self.SetViewEOL,
+                   'SHOW_LN': self.ToggleLineNumbers,
+                   'SHOW_WS': self.SetViewWhiteSpace,
+                   'WRAP': self.SetWrapMode }
 
         if mtype in cfgmap:
             cfgmap[mtype](Profile_Get(mtype))
             return
 
-        cfgmap2 = { 'TABWIDTH'   : self.SetTabWidth,
-                    'INDENTWIDTH': self.SetIndent }
+        cfgmap2 = {'TABWIDTH': self.SetTabWidth,
+                   'INDENTWIDTH': self.SetIndent}
         if mtype in cfgmap2:
             cfgmap2[mtype](Profile_Get(mtype, 'int'))
 
     def OnContextMenu(self, evt):
-        """Handle right click menu events in the buffer"""
+        """
+        Handle right click menu events in the buffer
+        """
         self._menu.Clear()
 
         menu = ed_menu.EdMenu()
-        menu.Append(ed_glob.ID_UNDO, _("Undo"))
-        menu.Append(ed_glob.ID_REDO, _("Redo"))
+        menu.Append(ed_glob.ID_UNDO, _('Undo'))
+        menu.Append(ed_glob.ID_REDO, _('Redo'))
         menu.AppendSeparator()
-        menu.Append(ed_glob.ID_CUT, _("Cut"))
-        menu.Append(ed_glob.ID_COPY, _("Copy"))
-        menu.Append(ed_glob.ID_PASTE, _("Paste"))
+        menu.Append(ed_glob.ID_CUT, _('Cut'))
+        menu.Append(ed_glob.ID_COPY, _('Copy'))
+        menu.Append(ed_glob.ID_PASTE, _('Paste'))
         menu.AppendSeparator()
-        menu.Append(ed_glob.ID_TO_UPPER, _("To Uppercase"))
-        menu.Append(ed_glob.ID_TO_LOWER, _("To Lowercase"))
+        menu.Append(ed_glob.ID_TO_UPPER, _('To Uppercase'))
+        menu.Append(ed_glob.ID_TO_LOWER, _('To Lowercase'))
         menu.AppendSeparator()
-        menu.Append(ed_glob.ID_SELECTALL, _("Select All"))
+        menu.Append(ed_glob.ID_SELECTALL, _('Select All'))
 
         # Allow clients to customize the context menu
         self._menu.SetMenu(menu)
@@ -500,7 +530,7 @@ class EdEditorView(ed_stc.EditraStc, ed_tab.EdTabBase):
             sugg = list()
 
         if not len(sugg):
-            item = menu.Insert(0, EdEditorView.ID_NO_SUGGEST, _("No Suggestions"))
+            item = menu.Insert(0, EdEditorView.ID_NO_SUGGEST, _('No Suggestions'))
             item.Enable(False)
         else:
             sugg = reversed(sugg[:min(len(sugg), 3)])
@@ -516,21 +546,23 @@ class EdEditorView(ed_stc.EditraStc, ed_tab.EdTabBase):
                 pos += 1
             # Add spelling settings menu
             smenu = wx.Menu()
-            smenu.Append(EdEditorView.ID_IGNORE, _("Ignore"))
+            smenu.Append(EdEditorView.ID_IGNORE, _('Ignore'))
             self._menu.AddHandler(EdEditorView.ID_IGNORE, self.OnSpelling)
             smenu.Append(EdEditorView.ID_ADD_TO_DICT,
-                         _("Add '%s' to dictionary") % self._spell_data['word'][0])
+                         _('Add \'%s\' to dictionary') % self._spell_data['word'][0])
             self._menu.AddHandler(EdEditorView.ID_ADD_TO_DICT, self.OnSpelling)
             menu.InsertSeparator(pos)
             menu.InsertMenu(pos+1, EdEditorView.ID_SPELLING_MENU,
-                            _("Spelling"), smenu)
+                            _('Spelling'), smenu)
         #### End Spell Checking ####
 
         self.PopupMenu(self._menu.Menu)
         evt.Skip()
 
     def OnMenuEvent(self, evt):
-        """Handle context menu events"""
+        """
+        Handle context menu events
+        """
         e_id = evt.GetId()
         handler = self._menu.GetHandler(e_id)
 
@@ -543,7 +575,9 @@ class EdEditorView(ed_stc.EditraStc, ed_tab.EdTabBase):
                 evt.Skip()
 
     def OnModified(self, evt):
-        """Overrides EditraBaseStc.OnModified"""
+        """
+        Overrides EditraBaseStc.OnModified
+        """
         super(EdEditorView, self).OnModified(evt)
 
         # Handle word changes to update spell checking
@@ -558,15 +592,15 @@ class EdEditorView(ed_stc.EditraStc, ed_tab.EdTabBase):
 
     @modalcheck
     def PromptToReSave(self, cfile):
-        """Show a dialog prompting to resave the current file
+        """
+        Show a dialog prompting to resave the current file
         @param cfile: the file in question
-
         """
         mdlg = wx.MessageDialog(self,
-                                _("%s has been deleted since its "
-                                  "last save point.\n\nWould you "
-                                  "like to save it again?") % cfile,
-                                _("Resave File?"),
+                                _('%s has been deleted since its '
+                                  'last save point.\n\nWould you '
+                                  'like to save it again?') % cfile,
+                                _('Resave File?'),
                                 wx.YES_NO | wx.ICON_INFORMATION)
         mdlg.CenterOnParent()
         result = mdlg.ShowModal()
@@ -578,17 +612,17 @@ class EdEditorView(ed_stc.EditraStc, ed_tab.EdTabBase):
 
     @modalcheck
     def AskToReload(self, cfile):
-        """Show a dialog asking if the file should be reloaded
+        """
+        Show a dialog asking if the file should be reloaded
         @param cfile: the file to prompt for a reload of
-
         """
         if not self:
             return
         mdlg = wx.MessageDialog(self,
-                                _("%s has been modified by another "
-                                  "application.\n\nWould you like "
-                                  "to reload it?") % cfile,
-                                  _("Reload File?"),
+                                _('%s has been modified by another '
+                                  'application.\n\nWould you like '
+                                  'to reload it?') % cfile,
+                                  _('Reload File?'),
                                   wx.YES_NO | wx.ICON_INFORMATION)
         mdlg.CenterOnParent()
         result = mdlg.ShowModal()
@@ -600,7 +634,9 @@ class EdEditorView(ed_stc.EditraStc, ed_tab.EdTabBase):
             self.SetModTime(GetFileModTime(cfile))
 
     def SetLexer(self, lexer):
-        """Override to toggle spell check context"""
+        """
+        Override to toggle spell check context
+        """
         super(EdEditorView, self).SetLexer(lexer)
 
         if lexer == wx.stc.STC_LEX_NULL:
@@ -608,24 +644,24 @@ class EdEditorView(ed_stc.EditraStc, ed_tab.EdTabBase):
         else:
             self._spell.setCheckRegion(self.IsNonCode)
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------
 
     def ModifySave(self):
-        """Called when document has been modified prompting
+        """
+        Called when document has been modified prompting
         a message dialog asking if the user would like to save
         the document before closing.
         @return: Result value of whether the file was saved or not
-
         """
         name = self.GetFileName()
-        if name == "":
+        if name == '':
             name = self.GetTabLabel()
 
         dlg = wx.MessageDialog(self,
-                                _("The file: \"%s\" has been modified since "
-                                  "the last save point.\n\nWould you like to "
-                                  "save the changes?") % name,
-                               _("Save Changes?"),
+                                _('The file: \"%s\" has been modified since '
+                                  'the last save point.\n\nWould you like to '
+                                  'save the changes?') % name,
+                               _('Save Changes?'),
                                wx.YES_NO | wx.YES_DEFAULT | wx.CANCEL | \
                                wx.ICON_INFORMATION)
         result = dlg.ShowModal()

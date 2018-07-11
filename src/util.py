@@ -8,14 +8,13 @@
 
 """
 This file contains various helper functions and utilities that the program uses.
-
 """
 
-__author__ = "Cody Precord <cprecord@editra.org>"
-__svnid__ = "$Id: util.py 72623 2012-10-06 19:33:06Z CJP $"
-__revision__ = "$Revision: 72623 $"
+__author__ = 'Cody Precord <cprecord@editra.org>'
+__svnid__ = '$Id: util.py 72623 2012-10-06 19:33:06Z CJP $'
+__revision__ = '$Revision: 72623 $'
 
-#--------------------------------------------------------------------------#
+# --------------------------------------------------------------------------
 # Imports
 import os
 import sys
@@ -37,20 +36,22 @@ from .syntax import synglob
 from . import ebmlib
 
 _ = wx.GetTranslation
-#--------------------------------------------------------------------------#
+# --------------------------------------------------------------------------
+
 
 class DropTargetFT(wx.PyDropTarget):
-    """Drop target capable of accepting dropped files and text
+    """
+    Drop target capable of accepting dropped files and text
     @todo: has some issues with the clipboard on windows under certain
            conditions. They are not fatal but need fixing.
-
     """
+
     def __init__(self, window, textcallback=None, filecallback=None):
-        """Initializes the Drop target
+        """
+        Initializes the Drop target
         @param window: window to receive drop objects
         @keyword textcallback: Callback for when text is dropped
         @keyword filecallback: Callback for when file(s) are dropped
-
         """
         super(DropTargetFT, self).__init__()
 
@@ -65,10 +66,10 @@ class DropTargetFT(wx.PyDropTarget):
         self.InitObjects()
 
     def CreateDragString(self, txt):
-        """Creates a bitmap of the text that is being dragged
+        """
+        Creates a bitmap of the text that is being dragged
         @todo: possibly set colors to match highlighting of text
         @todo: generalize this to be usable by other widgets besides stc
-
         """
         if not isinstance(self.window, wx.stc.StyledTextCtrl):
             return
@@ -81,7 +82,7 @@ class DropTargetFT(wx.PyDropTarget):
             if ext[0] > longest[0]:
                 longest = ext
 
-        cords = [ (0, x * longest[1]) for x in range(len(txt)) ]
+        cords = [(0, x * longest[1]) for x in range(len(txt))]
         try:
             mdc = wx.MemoryDC(wx.EmptyBitmap(longest[0] + 5,
                                              longest[1] * len(txt), 32))
@@ -91,12 +92,12 @@ class DropTargetFT(wx.PyDropTarget):
             mdc.DrawTextList(txt, cords)
             self._tmp = wx.DragImage(mdc.GetAsBitmap())
         except wx.PyAssertionError as msg:
-            Log("[droptargetft][err] %s" % str(msg))
+            Log('[droptargetft][err] %s' % str(msg))
 
     def InitObjects(self):
-        """Initializes the text and file data objects
+        """
+        Initializes the text and file data objects
         @postcondition: all data objects are initialized
-
         """
         self._data['data'] = wx.DataObjectComposite()
         self._data['tdata'] = wx.TextDataObject()
@@ -106,12 +107,12 @@ class DropTargetFT(wx.PyDropTarget):
         self.SetDataObject(self._data['data'])
 
     def OnEnter(self, x_cord, y_cord, drag_result):
-        """Called when a drag starts
+        """
+        Called when a drag starts
         @param x_cord: x cord of enter point
         @param y_cord: y cord of enter point
         @param drag_result: wxDrag value
         @return: result of drop object entering window
-
         """
         # GetData seems to happen automatically on msw, calling it again
         # causes this to fail the first time.
@@ -134,18 +135,19 @@ class DropTargetFT(wx.PyDropTarget):
         return drag_result
 
     def OnDrop(self, x_cord=0, y_cord=0):
-        """Gets the drop cords
+        """
+        Gets the drop cords
         @keyword x_cord: x cord of drop object
         @keyword y_cord: y cord of drop object
         @todo: implement snapback when drop is out of range
-
         """
         self._tmp = None
         self._lastp = None
         return True
 
     def OnDragOver(self, x_cord, y_cord, drag_result):
-        """Called when the cursor is moved during a drag action
+        """
+        Called when the cursor is moved during a drag action
         @param x_cord: x cord of mouse
         @param y_cord: y cord of mouse
         @param drag_result: Drag result value
@@ -153,7 +155,6 @@ class DropTargetFT(wx.PyDropTarget):
         @todo: For some reason the caret position changes which can be seen
                by the brackets getting highlighted. However the actual caret
                is not moved.
-
         """
         stc = self.window
         if self._tmp is None:
@@ -178,12 +179,12 @@ class DropTargetFT(wx.PyDropTarget):
         return drag_result
 
     def OnData(self, x_cord, y_cord, drag_result):
-        """Gets and processes the dropped data
+        """
+        Gets and processes the dropped data
         @param x_cord: x coordinate 
         @param y_cord: y coordinate
         @param drag_result: wx Drag result value
         @postcondition: dropped data is processed
-
         """
         self.window.SetCursor(wx.StockCursor(wx.CURSOR_ARROW))
         if self.window.HasCapture():
@@ -194,8 +195,8 @@ class DropTargetFT(wx.PyDropTarget):
         except wx.PyAssertionError:
             wx.PostEvent(self.window.GetTopLevelParent(), \
                         ed_event.StatusEvent(ed_event.edEVT_STATUS, -1,
-                                             _("Unable to accept dropped file "
-                                               "or text")))
+                                             _('Unable to accept dropped file '
+                                               'or text')))
             data = False
             drag_result = wx.DragCancel
 
@@ -213,9 +214,9 @@ class DropTargetFT(wx.PyDropTarget):
         return drag_result
 
     def OnLeave(self):
-        """Handles the event of when the drag object leaves the window
+        """
+        Handles the event of when the drag object leaves the window
         @postcondition: Cursor is set back to normal state
-
         """
         self.window.SetCursor(wx.StockCursor(wx.CURSOR_ARROW))
         if self.window.HasCapture():
@@ -225,17 +226,17 @@ class DropTargetFT(wx.PyDropTarget):
             try:
                 self._tmp.EndDrag()
             except wx.PyAssertionError as msg:
-                Log("[droptargetft][err] %s" % str(msg))
+                Log('[droptargetft][err] %s' % str(msg))
 
     @staticmethod
     def ScrollBuffer(stc, x_cord, y_cord):
-        """Scroll the buffer as the dragged text is moved towards the
+        """
+        Scroll the buffer as the dragged text is moved towards the
         ends.
         @param stc: StyledTextCtrl
         @param x_cord: int (x position)
         @param y_cord: int (y position)
         @note: currently does not work on wxMac
-
         """
         try:
             cline = stc.PositionFromPoint(wx.Point(x_cord, y_cord))
@@ -250,17 +251,20 @@ class DropTargetFT(wx.PyDropTarget):
                 else:
                     pass
         except wx.PyAssertionError as msg:
-            Log("[droptargetft][err] ScrollBuffer: %s" % msg)
+            Log('[droptargetft][err] ScrollBuffer: %s' % msg)
 
-#---- End FileDropTarget ----#
+# ---- End FileDropTarget ----
+
 
 class EdClipboard(ebmlib.CycleCache):
-    """Local clipboard object
+    """
+    Local clipboard object
     @todo: make into a singleton
-
     """
     def GetNext(self):
-        """Get the next item in the cache"""
+        """
+        Get the next item in the cache
+        """
         # Initialize the clipboard if it hasn't been loaded yet and
         # there is something in the system clipboard
         if self.GetCurrentSize() == 0:
@@ -271,11 +275,11 @@ class EdClipboard(ebmlib.CycleCache):
         return super(EdClipboard, self).GetNext()
 
     def IsAtIndex(self, txt):
-        """Is the passed in phrase at the current cycle index in the
+        """
+        Is the passed in phrase at the current cycle index in the
         cache. Used to check if index should be reset or to continue in
         the cycle.
         @param txt: selected text
-
         """
         pre = self.PeekPrev()
         next = self.PeekNext()
@@ -285,23 +289,24 @@ class EdClipboard(ebmlib.CycleCache):
             return False
 
     def Put(self, txt):
-        """Put some text in the clipboard
+        """
+        Put some text in the clipboard
         @param txt: Text to put in the system clipboard
-
         """
         pre = self.PeekPrev()
         next = self.PeekNext()
         if len(txt) and txt not in (pre, next):
             self.PutItem(txt)
 
-#---- Misc Common Function Library ----#
+# ---- Misc Common Function Library ----
 # Used for holding the primary selection on mac/msw
 FAKE_CLIPBOARD = None
 
-def GetClipboardText(primary=False):
-    """Get the primary selection from the clipboard if there is one
-    @return: str or None
 
+def GetClipboardText(primary=False):
+    """
+    Get the primary selection from the clipboard if there is one
+    @return: str or None
     """
     if primary and wx.Platform == '__WXGTK__':
         wx.TheClipboard.UsePrimarySelection(True)
@@ -324,11 +329,12 @@ def GetClipboardText(primary=False):
         wx.TheClipboard.UsePrimarySelection(False)
     return rtxt
 
+
 def SetClipboardText(txt, primary=False):
-    """Copies text to the clipboard
+    """
+    Copies text to the clipboard
     @param txt: text to put in clipboard
     @keyword primary: Set txt as primary selection (x11)
-
     """
     # Check if using primary selection
     if primary and wx.Platform == '__WXGTK__':
@@ -352,11 +358,12 @@ def SetClipboardText(txt, primary=False):
     else:
         return False
 
+
 def FilterFiles(file_list):
-    """Filters a list of paths and returns a list of paths
+    """
+    Filters a list of paths and returns a list of paths
     that can probably be opened in the editor.
     @param file_list: list of files/folders to filter for good files in
-
     """
     good = list()
     checker = ebmlib.FileTypeChecker()
@@ -365,30 +372,33 @@ def FilterFiles(file_list):
             good.append(path)
     return good
 
+
 def GetFileType(fname):
-    """Get what the type of the file is as Editra sees it
+    """
+    Get what the type of the file is as Editra sees it
     in a formatted string.
     @param fname: file path
     @return: string (formatted/translated filetype)
-
     """
     if os.path.isdir(fname):
-        return _("Folder")
+        return _('Folder')
 
     eguess = syntax.GetTypeFromExt(fname.split('.')[-1])
     if eguess == synglob.LANG_TXT and fname.split('.')[-1] == 'txt':
-        return _("Text Document")
+        return _('Text Document')
     elif eguess == synglob.LANG_TXT:
         mtype = mimetypes.guess_type(fname)[0]
         if mtype is not None:
             return mtype
         else:
-            return _("Unknown")
+            return _('Unknown')
     else:
-        return _("%s Source File") % eguess
+        return _('%s Source File') % eguess
+
 
 def GetFileReader(file_name, enc='utf-8'):
-    """Returns a file stream reader object for reading the
+    """
+    Returns a file stream reader object for reading the
     supplied file name. It returns a file reader using the encoding
     (enc) which defaults to utf-8. If lookup of the reader fails on
     the host system it will return an ascii reader.
@@ -397,12 +407,11 @@ def GetFileReader(file_name, enc='utf-8'):
     @param file_name: name of file to get a reader for
     @keyword enc: encoding to use for reading the file
     @return file reader, or int if error.
-
     """
     try:
-        file_h = open(file_name, "rb")
+        file_h = open(file_name, 'rb')
     except (IOError, OSError):
-        dev_tool.DEBUGP("[file_reader] Failed to open file %s" % file_name)
+        dev_tool.DEBUGP('[file_reader] Failed to open file %s' % file_name)
         return -1
 
     try:
@@ -412,8 +421,10 @@ def GetFileReader(file_name, enc='utf-8'):
         reader = file_h
     return reader
 
+
 def GetFileWriter(file_name, enc='utf-8'):
-    """Returns a file stream writer object for reading the
+    """
+    Returns a file stream writer object for reading the
     supplied file name. It returns a file writer in the supplied
     encoding if the host system supports it other wise it will return
     an ascii reader. The default will try and return a utf-8 reader.
@@ -421,12 +432,11 @@ def GetFileWriter(file_name, enc='utf-8'):
     will return a negative number.
     @param file_name: path of file to get writer for
     @keyword enc: encoding to write text to file with
-
     """
     try:
-        file_h = open(file_name, "wb")
+        file_h = open(file_name, 'wb')
     except IOError:
-        dev_tool.DEBUGP("[file_writer][err] Failed to open file %s" % file_name)
+        dev_tool.DEBUGP('[file_writer][err] Failed to open file %s' % file_name)
         return -1
     try:
         writer = codecs.getwriter(enc)(file_h)
@@ -435,11 +445,15 @@ def GetFileWriter(file_name, enc='utf-8'):
         writer = file_h
     return writer
 
+
 # TODO: DEPRECATED - remove once callers migrate to ebmlib
 GetFileManagerCmd = ebmlib.GetFileManagerCmd
 
+
 def GetUserConfigBase():
-    """Get the base user configuration directory path"""
+    """
+    Get the base user configuration directory path
+    """
     cbase = ed_glob.CONFIG['CONFIG_BASE']
     if cbase is None:
         cbase = wx.StandardPaths.Get().GetUserDataDir()
@@ -452,20 +466,22 @@ def GetUserConfigBase():
                     cbase = os.path.join(tmp_path, cfgdir.lstrip('.'))
     return cbase + os.sep
 
+
 def HasConfigDir(loc=""):
-    """ Checks if the user has a config directory and returns True
+    """
+    Checks if the user has a config directory and returns True
     if the config directory exists or False if it does not.
     @return: whether config dir in question exists on an expected path
-
     """
     cbase = GetUserConfigBase()
     to_check = os.path.join(cbase, loc)
     return os.path.exists(to_check)
 
-def MakeConfigDir(name):
-    """Makes a user config directory
-    @param name: name of config directory to make in user config dir
 
+def MakeConfigDir(name):
+    """
+    Makes a user config directory
+    @param name: name of config directory to make in user config dir
     """
     cbase = GetUserConfigBase()
     try:
@@ -473,11 +489,12 @@ def MakeConfigDir(name):
     except (OSError, IOError):
         pass
 
+
 def RepairConfigState(path):
-    """Repair the state of profile path, updating and creating it
+    """
+    Repair the state of profile path, updating and creating it
     it does not exist.
     @param path: path of profile
-
     """
     if os.path.isabs(path) and os.path.exists(path):
         return path
@@ -485,21 +502,22 @@ def RepairConfigState(path):
         # Need to fix some stuff up
         CreateConfigDir()
         from . import profiler
-        return profiler.Profile_Get("MYPROFILE")
+        return profiler.Profile_Get('MYPROFILE')
+
 
 def CreateConfigDir():
-    """ Creates the user config directory its default sub
+    """
+    Creates the user config directory its default sub
     directories and any of the default config files.
     @postcondition: all default configuration files/folders are created
-
     """
-    #---- Resolve Paths ----#
+    # ---- Resolve Paths ----
     config_dir = GetUserConfigBase()
-    profile_dir = os.path.join(config_dir, "profiles")
-    dest_file = os.path.join(profile_dir, "default.ppb")
-    ext_cfg = ["cache", "styles", "plugins"]
+    profile_dir = os.path.join(config_dir, 'profiles')
+    dest_file = os.path.join(profile_dir, 'default.ppb')
+    ext_cfg = ['cache', 'styles', 'plugins']
 
-    #---- Create Directories ----#
+    # ---- Create Directories ----
     if not os.path.exists(config_dir):
         os.mkdir(config_dir)
 
@@ -512,7 +530,7 @@ def CreateConfigDir():
 
     from . import profiler
     profiler.TheProfile.LoadDefaults()
-    profiler.Profile_Set("MYPROFILE", dest_file)
+    profiler.Profile_Set('MYPROFILE', dest_file)
     profiler.TheProfile.Write(dest_file)
     profiler.UpdateProfileLoader()
 
@@ -616,10 +634,10 @@ def ResolvConfigDir(config_dir, sys_only=False):
 
 
 def GetResources(resource):
-    """Returns a list of resource directories from a given toplevel config dir
+    """
+    Returns a list of resource directories from a given toplevel config dir
     @param resource: config directory name
     @return: list of resource directory that exist under the given resource path
-
     """
     rec_dir = ResolvConfigDir(resource)
     if os.path.exists(rec_dir):
@@ -629,9 +647,11 @@ def GetResources(resource):
     else:
         return -1
 
+
 def GetResourceFiles(resource, trim=True, get_all=False,
                      suffix=None, title=True):
-    """Gets a list of resource files from a directory and trims the
+    """
+    Gets a list of resource files from a directory and trims the
     file extentions from the names if trim is set to True (default).
     If the get_all parameter is set to True the function will return
     a set of unique items by looking up both the user and system level
@@ -643,7 +663,6 @@ def GetResourceFiles(resource, trim=True, get_all=False,
     @keyword get_all: get a set of both system/user files or just user level
     @keyword suffix: Get files that have the specified suffix or all (default)
     @keyword title: Titlize the results
-
     """
     rec_dir = ResolvConfigDir(resource)
     if get_all:
@@ -667,7 +686,7 @@ def GetResourceFiles(resource, trim=True, get_all=False,
 
                 # Trim the last part of an extension if one exists
                 if trim:
-                    rec = ".".join(rec.split(".")[:-1]).strip()
+                    rec = '.'.join(rec.split('.')[:-1]).strip()
 
                 # Make the resource name a title if requested
                 if title and len(rec):
@@ -679,82 +698,89 @@ def GetResourceFiles(resource, trim=True, get_all=False,
         
         return list(set(rec_list))
 
-def GetAllEncodings():
-    """Get all encodings found on the system
-    @return: list of strings
 
+def GetAllEncodings():
+    """
+    Get all encodings found on the system
+    @return: list of strings
     """
     elist = list(encodings.aliases.aliases.values())
     elist = list(set(elist))
     elist.sort()
-    elist = [ enc for enc in elist if not enc.endswith('codec') ]
+    elist = [enc for enc in elist if not enc.endswith('codec')]
     return elist
 
+
 def Log(msg, *args):
-    """Push the message to the apps log
+    """
+    Push the message to the apps log
     @param msg: message string to log
     @param args: optional positional arguments to use as a printf formatting
                  to the message.
-
     """
     try:
         wx.GetApp().GetLog()(msg, args)
     except:
         pass
 
-def GetProxyOpener(proxy_set):
-    """Get a urlopener for use with a proxy
-    @param proxy_set: proxy settings to use
 
+def GetProxyOpener(proxy_set):
     """
-    Log("[util][info] Making proxy opener with %s" % str(proxy_set))
+    Get a urlopener for use with a proxy
+    @param proxy_set: proxy settings to use
+    """
+    Log('[util][info] Making proxy opener with %s' % str(proxy_set))
     proxy_info = dict(proxy_set)
-    auth_str = "%(uname)s:%(passwd)s@%(url)s"
+    auth_str = '%(uname)s:%(passwd)s@%(url)s'
     url = proxy_info['url']
     if url.startswith('http://'):
-        auth_str = "http://" + auth_str
+        auth_str = 'http://' + auth_str
         proxy_info['url'] = url.replace('http://', '')
     else:
         pass
 
     if len(proxy_info.get('port', '')):
-        auth_str = auth_str + ":%(port)s"
+        auth_str = auth_str + ':%(port)s'
 
     proxy_info['passwd'] = ed_crypt.Decrypt(proxy_info['passwd'],
                                             proxy_info['pid'])
-    Log("[util][info] Formatted proxy request: %s" % \
+    Log('[util][info] Formatted proxy request: %s' % \
         (auth_str.replace('%(passwd)s', '****') % proxy_info))
-    proxy = urllib.request.ProxyHandler({"http" : auth_str % proxy_info})
+    proxy = urllib.request.ProxyHandler({'http': auth_str % proxy_info})
     opener = urllib.request.build_opener(proxy, urllib.request.HTTPHandler)
     return opener
 
-#---- GUI helper functions ----#
 
+# ---- GUI helper functions ----
 def SetWindowIcon(window):
-    """Sets the given windows icon to be the programs
+    """
+    Sets the given windows icon to be the programs
     application icon.
     @param window: window to set app icon for
-
     """
     try:
-        if wx.Platform == "__WXMSW__":
-            ed_icon = ed_glob.CONFIG['SYSPIX_DIR'] + "editra.ico"
+        if wx.Platform == '__WXMSW__':
+            ed_icon = ed_glob.CONFIG['SYSPIX_DIR'] + 'editra.ico'
             window.SetIcon(wx.Icon(ed_icon, wx.BITMAP_TYPE_ICO))
         else:
-            ed_icon = ed_glob.CONFIG['SYSPIX_DIR'] + "editra.png"
+            ed_icon = ed_glob.CONFIG['SYSPIX_DIR'] + 'editra.png'
             window.SetIcon(wx.Icon(ed_icon, wx.BITMAP_TYPE_PNG))
     finally:
         pass
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------
+
 
 class IntValidator(wx.PyValidator):
-    """A Generic integer validator"""
+    """
+    A Generic integer validator
+    """
+
     def __init__(self, min_=0, max_=0):
-        """Initialize the validator
+        """
+        Initialize the validator
         @keyword min_: min value to accept
         @keyword max_: max value to accept
-
         """
         wx.PyValidator.__init__(self)
         self._min = min_
@@ -764,24 +790,24 @@ class IntValidator(wx.PyValidator):
         self.Bind(wx.EVT_CHAR, self.OnChar)
 
     def Clone(self):
-        """Clones the current validator
+        """
+        Clones the current validator
         @return: clone of this object
-
         """
         return IntValidator(self._min, self._max)
 
     def Validate(self, win):
-        """Validate an window value
+        """
+        Validate an window value
         @param win: window to validate
-
         """
         val = win.GetValue()
         return val.isdigit()
 
     def OnChar(self, event):
-        """Process values as they are entered into the control
+        """
+        Process values as they are entered into the control
         @param event: event that called this handler
-
         """
         key = event.GetKeyCode()
         if key < wx.WXK_SPACE or key == wx.WXK_DELETE or \

@@ -14,13 +14,13 @@ be purged after a given period of time.
 
 """
 
-__author__ = "Cody Precord <cprecord@editra.org>"
-__svnid__ = "$Id: logfile.py 66868 2011-02-09 16:01:49Z CJP $"
-__revision__ = "$Revision: 66868 $"
+__author__ = 'Cody Precord <cprecord@editra.org>'
+__svnid__ = '$Id: logfile.py 66868 2011-02-09 16:01:49Z CJP $'
+__revision__ = '$Revision: 66868 $'
 
-__all__ = ['LogFile',]
+__all__ = ['LogFile', ]
 
-#--------------------------------------------------------------------------#
+# --------------------------------------------------------------------------
 # Imports
 import os
 import time
@@ -28,16 +28,19 @@ import datetime
 import re
 import tempfile
 
-#--------------------------------------------------------------------------#
+# --------------------------------------------------------------------------
+
 
 class LogFile(object):
-    """Log file class"""
+    """
+    Log file class
+    """
     def __init__(self, prefix, logdir=None):
-        """Create a log file
+        """
+        Create a log file
         @param prefix: filename prefix
         @keyword logdir: abs path to log output dir
         @note: if logdir is None then the system temp directory will be used
-
         """
         super(LogFile, self).__init__()
 
@@ -49,26 +52,26 @@ class LogFile(object):
         if self.logdir is None:
             self.logdir = tempfile.gettempdir()
 
-    #---- Properties ----#
+    # ---- Properties ----
     LogDirectory = property(lambda self: self.logdir,
                             lambda self, dname: setattr(self, 'logdir', dname))
     Prefix = property(lambda self: self.prefix,
                       lambda self, prefix: setattr(self, 'prefix', prefix))
 
-    #---- Public Interface ----#
+    # ---- Public Interface ----
     def WriteMessage(self, msg):
-        """Append the message to the current log file
+        """
+        Append the message to the current log file
         @param msg: string object
-
         """
         # Files are named as prefix_YYYY_MM_DD.log
-        logstamp = "%d_%d_%d" % time.localtime()[:3]
-        logname = "%s_%s.log" % (self.prefix, logstamp)
+        logstamp = '%d_%d_%d' % time.localtime()[:3]
+        logname = '%s_%s.log' % (self.prefix, logstamp)
         logpath = os.path.join(self.logdir, logname)
         if os.path.exists(logpath):
-            opencmd = "ab"
+            opencmd = 'at'
         else:
-            opencmd = "wb"
+            opencmd = 'wt'
 
 #        with open(logpath, opencmd) as handle:
 #            handle.write(msg.rstrip() + os.linesep)
@@ -80,11 +83,11 @@ class LogFile(object):
             pass
 
     def PurgeOldLogs(self, days):
-        """Purge all log files older than n days
-        @param days: number of days
-
         """
-        logpattern = re.compile("%s_[0-9]{4}_[0-9]{1,2}_[0-9]{1,2}.log" % self.prefix)
+        Purge all log files older than n days
+        @param days: number of days
+        """
+        logpattern = re.compile('%s_[0-9]{4}_[0-9]{1,2}_[0-9]{1,2}.log' % self.prefix)
         paths = list()
         cdate = datetime.date(*time.localtime()[:3])
         for path in os.listdir(self.logdir):

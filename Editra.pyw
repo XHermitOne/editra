@@ -14,14 +14,13 @@ local path and if it is not there it tries to import the Main method
 from where Editra would be installed if it was installed using distutils
 
 @summary: Editra's main launch script for Windows
-
 """
 
-__author__ = "Cody Precord <cprecord@editra.org>"
-__svnid__ = "$Id: Editra.pyw 63538 2010-02-23 03:39:03Z CJP $"
-__revision__ = "$Revision: 63538 $"
+__author__ = 'Cody Precord <cprecord@editra.org>'
+__svnid__ = '$Id: Editra.pyw 63538 2010-02-23 03:39:03Z CJP $'
+__revision__ = '$Revision: 63538 $'
 
-#--------------------------------------------------------------------------#
+# --------------------------------------------------------------------------
 # Dependencies
 import sys
 import os
@@ -33,15 +32,16 @@ except ImportError:
     try:
         import Editra as esrc
         IS_LOCAL = False
-    except ImportError, msg:
-        print "There was an error while tring to import Editra"
-        print ("Make sure that Editra is on your PYTHONPATH and that "
-               "you have wxPython installed.")
-        print "ERROR MSG: "
-        print str(msg)
+    except ImportError as msg:
+        print('There was an error while tring to import Editra')
+        print('Make sure that Editra is on your PYTHONPATH and that '
+              'you have wxPython installed.')
+        print('ERROR MSG: ')
+        print(str(msg))
         os._exit(1)
 
-#--------------------------------------------------------------------------#
+
+# --------------------------------------------------------------------------#
 # There are currently some necessary hacks for launching editra from this
 # script that will hopefully be removed in the not so distance future once
 # the plugin managers meta registry is redesigned.
@@ -62,8 +62,8 @@ def main():
     # manager currently registers the class objects metadata by using
     # the classes module signature for identification.
     if not IS_LOCAL:
-        torem = [ key for key in sys.modules.keys()
-                  if key.startswith('Editra') ]
+        torem = [key for key in sys.modules.keys()
+                 if key.startswith('Editra')]
         for key in torem:
             del sys.modules[key]
     else:

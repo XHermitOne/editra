@@ -195,7 +195,8 @@ def MakeDisabledBitmap(bitmap):
     else:
         maskColour = None
         
-    data = list(map(ord, list(anImage.GetData())))
+    # data = list(map(ord, list(anImage.GetData())))
+    data = list(anImage.GetData())
 
     for i in range(0, len(data), 3):
         pixel = (data[i], data[i+1], data[i+2])
@@ -204,8 +205,9 @@ def MakeDisabledBitmap(bitmap):
         for x in range(3):
             data[i+x] = pixel[x]
 
-    anImage.SetData(''.join(map(chr, data)))
-    
+    # anImage.SetData(''.join(map(chr, data)))
+    anImage.SetData((''.join([chr(byte) for byte in data]).encode()))
+
     return anImage.ConvertToBitmap()
 
 

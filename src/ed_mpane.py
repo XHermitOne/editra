@@ -11,14 +11,13 @@ This module provides the L{MainPanel} component. That contains the editors main
 notebook and command bar. 
 
 @summary: Main Panel
-
 """
 
-__author__ = "Cody Precord <cprecord@editra.org>"
-__svnid__ = "$Id: ed_mpane.py 72278 2012-08-02 14:24:23Z CJP $"
-__revision__ = "$Revision: 72278 $"
+__author__ = 'Cody Precord <cprecord@editra.org>'
+__svnid__ = '$Id: ed_mpane.py 72278 2012-08-02 14:24:23Z CJP $'
+__revision__ = '$Revision: 72278 $'
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------
 # Imports
 import wx
 
@@ -27,16 +26,18 @@ from . import ed_glob
 from . import ed_pages
 from . import ed_cmdbar
 from . import eclib
+# -----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------#
 
 class MainPanel(eclib.ControlBox):
-    """Main panel view
+    """
+    Main panel view
     @todo: Add interface for registering additional commandbars.
-
     """
     def __init__(self, parent):
-        """Initialize the panel"""
+        """
+        Initialize the panel
+        """
         super(MainPanel, self).__init__(parent)
 
         # Attributes
@@ -49,29 +50,33 @@ class MainPanel(eclib.ControlBox):
         self.Bind(wx.EVT_ERASE_BACKGROUND, self.OnEB)
 
     def OnEB(self, evt):
-        """Empty method to fix notebook flashing issue on MSW"""
+        """
+        Empty method to fix notebook flashing issue on MSW
+        """
         pass
 
     Book = property(lambda self: self.nb)
 
     def GetNotebook(self):
-        """Get the main notebook control
+        """
+        Get the main notebook control
         @return: EdPages instance
-
         """
         return self.nb
 
     def HideCommandBar(self):
-        """Hide the command bar"""
+        """
+        Hide the command bar
+        """
         bar = self.GetControlBar(wx.BOTTOM)
         if bar:
             bar.Hide()
         self.Layout()
 
     def ShowCommandControl(self, ctrlid):
-        """Change the mode of the commandbar
+        """
+        Change the mode of the commandbar
         @param ctrlid: CommandBar control id
-
         """
         cur_bar = self.GetControlBar(wx.BOTTOM)
         if ctrlid in self._bars:

@@ -6,16 +6,17 @@
 # License: wxWindows License                                                  #
 ###############################################################################
 
-""" Editra Development Tools
+""" 
+Editra Development Tools
 Tools and Utilities for debugging and helping with development of Editra.
 @summary: Utility function for debugging the editor
-
 """
-__author__ = "Cody Precord <cprecord@editra.org>"
-__svnid__ = "$Id: dev_tool.py 72623 2012-10-06 19:33:06Z CJP $"
-__revision__ = "$Revision: 72623 $"
 
-#-----------------------------------------------------------------------------#
+__author__ = 'Cody Precord <cprecord@editra.org>'
+__svnid__ = '$Id: dev_tool.py 72623 2012-10-06 19:33:06Z CJP $'
+__revision__ = '$Revision: 72623 $'
+
+# -----------------------------------------------------------------------------
 # Imports
 import os
 import sys
@@ -34,10 +35,10 @@ from . import ed_msg
 from . import eclib
 from .ebmlib import IsUnicode, LogFile
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------
 # Globals
 _ = wx.GetTranslation
-RE_LOG_LBL = re.compile(r"\[(.+?)\]")
+RE_LOG_LBL = re.compile(r'\[(.+?)\]')
 
 # The default fallback encoding
 DEFAULT_ENCODING = locale.getpreferredencoding()
@@ -48,10 +49,12 @@ except (LookupError, TypeError):
 
 PYTHONW = 'pythonw' in sys.executable.lower()
 
-#-----------------------------------------------------------------------------#
+
+# -----------------------------------------------------------------------------
 # General Debugging Helper Functions
 def DEBUGP(statement, *args):
-    """Prints debug messages and broadcasts them on the log message channel.
+    """
+    Prints debug messages and broadcasts them on the log message channel.
     Subscribing a listener with any of the EDMSG_LOG_* types will recieve its
     messages from this method.
 
@@ -65,7 +68,7 @@ def DEBUGP(statement, *args):
         - [evt]  : Event related message (normal priority)
 
     Example:
-      >>> DEBUGP("[ed_main][err] File failed to open")
+      >>> DEBUGP('[ed_main][err] File failed to open')
 
     @param statement: Should be a formatted string that starts with two
                       identifier blocks. The first is used to indicate the
@@ -73,7 +76,6 @@ def DEBUGP(statement, *args):
                       of filtering. The second block is the type of message,
                       this is used to indicate the priority of the message and
                       is used as the secondary means of filtering.
-
     """
     # Check if formatting should be done here
     if len(args):
@@ -97,7 +99,7 @@ def DEBUGP(statement, *args):
     msg_type = msg.Type
     if ed_glob.DEBUG:
         mstr = str(msg)
-        mstr = mstr.encode('utf-8', 'replace')
+        # mstr = mstr.encode('utf-8', 'replace')
         if not PYTHONW:
             print(mstr)
 
@@ -127,21 +129,22 @@ def DEBUGP(statement, *args):
 
     ed_msg.PostMessage(mtype, msg)
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------
+
 
 class LogMsg(object):
-    """LogMsg is a container class for representing log messages. Converting
+    """
+    LogMsg is a container class for representing log messages. Converting
     it to a string will yield a formatted log message with timestamp. Once a
     message has been displayed once (converted to a string) it is marked as
     being expired.
-
     """
-    def __init__(self, msg, msrc="unknown", level="info"):
-        """Create a LogMsg object
+    def __init__(self, msg, msrc='unknown', level='info'):
+        """
+        Create a LogMsg object
         @param msg: the log message string
         @keyword msrc: Source of message
         @keyword level: Priority of the message
-
         """
         assert isinstance(msg, str)
         assert isinstance(msrc, str)
@@ -156,39 +159,54 @@ class LogMsg(object):
         self._ok = True
 
     def __eq__(self, other):
-        """Define the equal to operation"""
+        """
+        Define the equal to operation
+        """
         return self.TimeStamp == other.TimeStamp
 
     def __ge__(self, other):
-        """Define the greater than or equal to operation"""
+        """
+        Define the greater than or equal to operation
+        """
         return self.TimeStamp >= other.TimeStamp
 
     def __gt__(self, other):
-        """Define the greater than operation"""
+        """
+        Define the greater than operation
+        """
         return self.TimeStamp > other.TimeStamp
 
     def __le__(self, other):
-        """Define the less than or equal to operation"""
+        """
+        Define the less than or equal to operation
+        """
         return self.TimeStamp <= other.TimeStamp
 
     def __lt__(self, other):
-        """Define the less than operation"""
+        """
+        Define the less than operation
+        """
         return self.TimeStamp < other.TimeStamp
 
     def __repr__(self):
-        """String representation of the object"""
+        """
+        String representation of the object
+        """
         return '<LogMsg %s:%d>' % (self._msg['lvl'], self._msg['tstamp'])
 
     def __str__(self):
-        """Returns a nice formatted string version of the message"""
-        s_lst = ["[%s][%s][%s]%s" % (self.ClockTime, self.Origin,
-                                      self.Type, msg.rstrip()) 
-                 for msg in self.Value.split("\n")
+        """
+        Returns a nice formatted string version of the message
+        """
+        s_lst = ['[%s][%s][%s]%s' % (self.ClockTime, self.Origin,
+                                     self.Type, msg.rstrip())
+                 for msg in self.Value.split('\n')
                  if len(msg.strip())]
         try:
             sys_enc = sys.getfilesystemencoding()
-            out = os.linesep.join([val.encode(sys_enc, 'replace') 
-                                   for val in s_lst])
+            # out = os.linesep.join([val.encode(sys_enc, 'replace')
+            #                        for val in s_lst])
+            out = os.linesep.join(s_lst)
         except UnicodeEncodeError:
             out = repr(self)
 
@@ -198,8 +216,10 @@ class LogMsg(object):
         return out
 
     def __unicode__(self):
-        """Convert to unicode"""
-        rval = ""
+        """
+        Convert to unicode
+        """
+        rval = ''
         try:
             sval = str(self)
             rval = sval.decode(sys.getfilesystemencoding(), 'replace')
@@ -209,59 +229,75 @@ class LogMsg(object):
 
     @property
     def ClockTime(self):
-        """Formatted timestring of the messages timestamp"""
+        """
+        Formatted timestring of the messages timestamp
+        """
         ltime = time.localtime(self._msg['tstamp'])
-        tstamp = "%s:%s:%s" % (str(ltime[3]).zfill(2),
+        tstamp = '%s:%s:%s' % (str(ltime[3]).zfill(2),
                                 str(ltime[4]).zfill(2),
                                 str(ltime[5]).zfill(2))
         return tstamp
 
     @property
     def Expired(self):
-        """Has this message already been retrieved"""
+        """
+        Has this message already been retrieved
+        """
         return not self._ok
 
     @property
     def Origin(self):
-        """Where the message came from"""
+        """
+        Where the message came from
+        """
         return self._msg['msrc']
 
     @property
     def TimeStamp(self):
-        """Property for accessing timestamp"""
+        """
+        Property for accessing timestamp
+        """
         return self._msg['tstamp']
 
     @property
     def Type(self):
-        """The messages level type"""
+        """
+        The messages level type
+        """
         return self._msg['lvl']
 
     @property
     def Value(self):
-        """Returns the message part of the log string"""
+        """
+        Returns the message part of the log string
+        """
         return self._msg['mstr']
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------
+
 
 class EdLogFile(LogFile):
-    """Transient log file object"""
+    """
+    Transient log file object
+    """
     def __init__(self):
-        super(EdLogFile, self).__init__("editra")
+        super(EdLogFile, self).__init__('editra')
 
     def PurgeOldLogs(self, days):
         try:
             super(EdLogFile, self).PurgeOldLogs(days)
         except OSError as msg:
-            DEBUGP("[dev_tool][err] PurgeOldLogs: %s" % msg)
+            DEBUGP('[dev_tool][err] PurgeOldLogs: %s' % msg)
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------
+
 
 def DecodeString(string, encoding=None):
-    """Decode the given string to Unicode using the provided
+    """
+    Decode the given string to Unicode using the provided
     encoding or the DEFAULT_ENCODING if None is provided.
     @param string: string to decode
     @keyword encoding: encoding to decode string with
-
     """
     if encoding is None:
         encoding = DEFAULT_ENCODING
@@ -276,56 +312,66 @@ def DecodeString(string, encoding=None):
         # The string is already Unicode so just return it
         return string
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------
+
 
 class EdErrorDialog(eclib.ErrorDialog):
-    """Error reporter dialog"""
+    """
+    Error reporter dialog
+    """
     def __init__(self, msg):
-        super(EdErrorDialog, self).__init__(None, title="Error Report",
+        super(EdErrorDialog, self).__init__(None, title='Error Report',
                                             message=msg)
 
         # Setup
-        self.SetDescriptionLabel(_("Error: Something unexpected hapend\n"
-                                   "Help improve Editra by clicking on "
-                                   "Report Error\nto send the Error "
-                                   "Traceback shown below."))
+        self.SetDescriptionLabel(_('Error: Something unexpected hapend\n'
+                                   'Help improve Editra by clicking on '
+                                   'Report Error\nto send the Error '
+                                   'Traceback shown below.'))
 
     def Abort(self):
-        """Abort the application"""
+        """
+        Abort the application
+        """
         # Try a nice shutdown first time through
         wx.CallLater(500, wx.GetApp().OnExit, 
                      wx.MenuEvent(wx.wxEVT_MENU_OPEN, ed_glob.ID_EXIT),
                      True)
 
     def GetProgramName(self):
-        """Get the program name to display in error report"""
-        return "%s Version: %s" % (ed_glob.PROG_NAME, ed_glob.VERSION)
+        """
+        Get the program name to display in error report
+        """
+        return '%s Version: %s' % (ed_glob.PROG_NAME, ed_glob.VERSION)
 
     def Send(self):
-        """Send the error report"""
-        msg = "mailto:%s?subject=Error Report&body=%s"
-        addr = "bugs@%s" % (ed_glob.HOME_PAGE.replace("http://", '', 1))
+        """
+        Send the error report
+        """
+        msg = 'mailto:%s?subject=Error Report&body=%s'
+        addr = 'bugs@%s' % (ed_glob.HOME_PAGE.replace('http://', '', 1))
         if wx.Platform != '__WXMAC__':
             body = urllib.parse.quote(self.err_msg)
         else:
             body = self.err_msg
         msg = msg % (addr, body)
-        msg = msg.replace("'", '')
+        msg = msg.replace('\'', '')
         webbrowser.open(msg)
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------
+
 
 def ExceptionHook(exctype, value, trace):
-    """Handler for all unhandled exceptions
+    """
+    Handler for all unhandled exceptions
     @param exctype: Exception Type
     @param value: Error Value
     @param trace: Trace back info
-
     """
     # Format the traceback
     exc = traceback.format_exception(exctype, value, trace)
-    exc.insert(0, "*** %s ***%s" % (eclib.TimeStamp(), os.linesep))
-    ftrace = "".join(exc)
+    exc.insert(0, '*** %s ***%s' % (eclib.TimeStamp(), os.linesep))
+    ftrace = ''.join(exc)
 
     # Ensure that error gets raised to console as well
     print(ftrace)
@@ -340,4 +386,4 @@ def ExceptionHook(exctype, value, trace):
         dlg.ShowModal()
         dlg.Destroy()
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------

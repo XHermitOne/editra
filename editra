@@ -14,14 +14,13 @@ local path and if it is not there it tries to import the Main method
 from where Editra would be installed if it was installed using disutils
 
 @summary: Editra's main launch script
-
 """
 
-__author__ = "Cody Precord <cprecord@editra.org>"
-__svnid__ = "$Id: Exp $"
-__revision__ = "$Revision:  $"
+__author__ = 'Cody Precord <cprecord@editra.org>'
+__svnid__ = '$Id: Exp $'
+__revision__ = '$Revision:  $'
 
-#--------------------------------------------------------------------------#
+# --------------------------------------------------------------------------
 # Dependencies
 import sys
 import os
@@ -34,14 +33,15 @@ except ImportError:
         import Editra as esrc
         IS_LOCAL = False
     except ImportError as msg:
-        print("There was an error while tring to import Editra")
-        print("Make sure that Editra is on your PYTHONPATH and that "
-              "you have wxPython installed.")
-        print("ERROR MSG: ")
+        print('There was an error while tring to import Editra')
+        print('Make sure that Editra is on your PYTHONPATH and that '
+              'you have wxPython installed.')
+        print('ERROR MSG: ')
         print(str(msg))
         os._exit(1)
 
-#--------------------------------------------------------------------------#
+
+# --------------------------------------------------------------------------#
 # There are currently some necessary hacks for launching editra from this
 # script that will hopefully be removed in the not so distance future once
 # the plugin managers meta registry is redesigned.
@@ -62,8 +62,8 @@ def main():
     # manager currently registers the class objects metadata by using
     # the classes module signature for identification.
     if not IS_LOCAL:
-        torem = [ key for key in sys.modules.keys()
-                  if key.startswith('Editra') ]
+        torem = [key for key in sys.modules.keys()
+                 if key.startswith('Editra')]
         for key in torem:
             del sys.modules[key]
     else:

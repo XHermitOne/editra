@@ -8,19 +8,18 @@
 
 """
 @summary: wx Compatibility helper module
-
 """
 
-__author__ = "Cody Precord <cprecord@editra.org>"
-__svnid__ = "$Id: wxcompat.py 68998 2011-09-03 22:03:32Z CJP $"
-__revision__ = "$Revision: 68998 $"
+__author__ = 'Cody Precord <cprecord@editra.org>'
+__svnid__ = '$Id: wxcompat.py 68998 2011-09-03 22:03:32Z CJP $'
+__revision__ = '$Revision: 68998 $'
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------
 # Imports
 import os
 import wx
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------
 
 if wx.Platform == '__WXMAC__':
     # MacThemeColour is defined in wxPython2.9 but does not exist in 2.8
@@ -30,7 +29,6 @@ if wx.Platform == '__WXMAC__':
             """Get a specified Mac theme colour
             @param theme_id: Carbon theme id
             @return: wx.Colour
-
             """
             brush = wx.Brush(wx.BLACK)
             brush.MacSetTheme(theme_id)
@@ -38,7 +36,7 @@ if wx.Platform == '__WXMAC__':
 
         wx.MacThemeColour = MacThemeColour
 
-    wx.SystemOptions.SetOptionInt("mac.textcontrol-use-spell-checker", 1)
+    wx.SystemOptions.SetOptionInt('mac.textcontrol-use-spell-checker', 1)
 
 elif wx.Platform == '__WXGTK__':
     os.environ['LIBOVERLAY_SCROLLBAR'] = '0'

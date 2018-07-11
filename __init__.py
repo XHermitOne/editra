@@ -6,8 +6,10 @@
 # Licence: wxWindows Licence                                                  #
 ###############################################################################
 
-"""Main package initializer"""
+"""
+Main package initializer
+"""
 
-__author__ = "Cody Precord <cprecord@editra.org>"
-__svnid__ = "$Id: __init__.py 49807 2007-11-10 07:08:33Z CJP $"
-__revision__ = "$Revision: 49807 $"
+__author__ = 'Cody Precord <cprecord@editra.org>'
+__svnid__ = '$Id: __init__.py 49807 2007-11-10 07:08:33Z CJP $'
+__revision__ = '$Revision: 49807 $'
