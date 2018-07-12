@@ -6,16 +6,16 @@
 # License: wxWindows License                                                  #
 ###############################################################################
 
-"""This file is an image data file that provides some of the base icons
+"""
+This file is an image data file that provides some of the base icons
 @note: image data generated with img2py
-
 """
 
-__author__ = "Cody Precord <cprecord@editra.org>"
-__svnid__ = "$Id: edimage.py 54209 2008-06-14 04:57:51Z CJP $"
-__revision__ = "$Revision: 54209 $"
+__author__ = 'Cody Precord <cprecord@editra.org>'
+__svnid__ = '$Id: edimage.py 54209 2008-06-14 04:57:51Z CJP $'
+__revision__ = '$Revision: 54209 $'
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------
 from .extern.embeddedimage import PyEmbeddedImage
 
 catalog = {}

@@ -16,6 +16,7 @@ import base64
 import io
 import wx
 
+
 class PyEmbeddedImage(object):
     """
     PyEmbeddedImage is primarily intended to be used by code generated
@@ -54,7 +55,7 @@ class PyEmbeddedImage(object):
         data = self.data
         if self.isBase64:
             data = base64.b64decode(self.data)
-        stream = io.BytesIO(data) #io.StringIO(data)
+        stream = io.BytesIO(data)   # io.StringIO(data)
         # return wx.ImageFromStream(stream)
         return wx.Image(stream)
 

@@ -41,7 +41,7 @@ class MainPanel(eclib.ControlBox):
         super(MainPanel, self).__init__(parent)
 
         # Attributes
-        self.nb = ed_pages.EdPages(self)
+        self.nb = ed_pages.EdPages(parent=self)
         self._bars = dict()
 
         # Layout

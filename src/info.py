@@ -18,7 +18,7 @@ __revision__ = '$Revision: 73347 $'
 
 AUTHOR = 'Cody Precord'
 VERSION = '0.8.1'
-PROG_NAME = 'Editra_Phoenix'
+PROG_NAME = 'EditraPhoenix'
 HOME_PAGE = 'http://editra.org'
 I18N_PAGE = 'https://translations.launchpad.net/editra/trunk/+pots/editra'
 CONTACT_MAIL = 'staff@editra.org'

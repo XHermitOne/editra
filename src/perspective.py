@@ -91,7 +91,7 @@ class PerspectiveManager(object):
             self.AddPerspectiveMenuEntry(name)
 
         # Restore the managed windows previous position preference if available.
-        pos = Profile_Get('WPOS', "size_tuple", False)
+        pos = Profile_Get('WPOS', 'size_tuple', False)
         if Profile_Get('SET_WPOS') and pos:
             # Ensure window is on screen
             if not self.IsPositionOnScreen(pos):
@@ -101,7 +101,7 @@ class PerspectiveManager(object):
         # Event Handlers
         self.Bind(wx.EVT_MENU, self.OnPerspectiveMenu)
 
-    #---- Properties ----#
+    # ---- Properties ----
     PanelMgr = property(lambda self: self._mgr)
 
     def AddPerspective(self, name, p_data=None):
@@ -275,7 +275,7 @@ class PerspectiveManager(object):
         """
         e_id = evt.GetId()
         if e_id == ID_SAVE_PERSPECTIVE:
-            name = wx.GetTextFromUser(_('Perspective Name'), \
+            name = wx.GetTextFromUser(_('Perspective Name'),
                                       _('Save Perspective'))
             if name:
                 self.AddPerspective(name, p_data=None)
@@ -290,8 +290,8 @@ class PerspectiveManager(object):
                     mainw.AddPerspective(name, self._viewset[name])
 
         elif e_id == ID_DELETE_PERSPECTIVE:
-            views = [ view for view in list(self._viewset.keys())
-                      if view != AUTO_PERSPECTIVE ]
+            views = [view for view in list(self._viewset.keys())
+                     if view != AUTO_PERSPECTIVE]
             name = wx.GetSingleChoice(_('Perspective to Delete'),
                                       _('Delete Perspective'), views)
 

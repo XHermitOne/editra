@@ -81,7 +81,7 @@ class MainWindow(wx.Frame, viewmgr.PerspectiveManager):
 
         # Attributes
         self._loaded = False
-        self._initialized = False # for GTK OnActivate HACK
+        self._initialized = False   # for GTK OnActivate HACK
         self._mlock = ebmlib.CallLock()
         self._last_save = ''
         self.LOG = wx.GetApp().GetLog()
@@ -98,7 +98,8 @@ class MainWindow(wx.Frame, viewmgr.PerspectiveManager):
 
         # ---- Notebook that contains the editing buffers ----
         self._mpane = ed_mpane.MainPanel(self)
-        self.nb = self._mpane.GetWindow()
+        # self.nb = self._mpane.GetWindow()
+        self.nb = self._mpane.GetNotebook()
         self.PanelMgr.AddPane(self._mpane, ed_fmgr.EdPaneInfo(). \
                               Name('EditPane').Center().Layer(1).Dockable(False). \
                               CloseButton(False).MaximizeButton(False). \
@@ -123,9 +124,10 @@ class MainWindow(wx.Frame, viewmgr.PerspectiveManager):
 
         # Todo this should not be hard coded
         menbar.GetMenuByName('view').InsertMenu(5, ID_PERSPECTIVES,
-                             _('Perspectives'), self.GetPerspectiveControls())
+                                                _('Perspectives'),
+                                                self.GetPerspectiveControls())
 
-        ## Setup additional menu items
+        # Setup additional menu items
         self.filehistory.UseMenu(menbar.GetMenuByName('filehistory'))
 
         # On mac, do this to make help menu appear in correct location
@@ -140,7 +142,7 @@ class MainWindow(wx.Frame, viewmgr.PerspectiveManager):
         # ---- Actions to take on menu events ----
 
         # Collect Menu Event handler pairs
-        self._handlers['menu'].extend([# File Menu
+        self._handlers['menu'].extend([     # File Menu
                                        (ID_NEW, self.OnNew),
                                        (ID_OPEN, self.OnOpen),
                                        (ID_CLOSE, self.OnClosePage),
@@ -208,7 +210,7 @@ class MainWindow(wx.Frame, viewmgr.PerspectiveManager):
                   id=wx.ID_FILE1, id2=wx.ID_FILE9)
 
         # Update UI Handlers
-        self._handlers['ui'].extend([# File Menu
+        self._handlers['ui'].extend([   # File Menu
                                      (ID_REVERT_FILE, self.OnUpdateFileUI),
                                      (ID_RELOAD_ENC, self.OnUpdateFileUI),
                                      # Edit Menu
@@ -238,13 +240,13 @@ class MainWindow(wx.Frame, viewmgr.PerspectiveManager):
 
         # View Menu
         self._handlers['ui'].extend([(m_id, self.OnUpdateViewUI)
-                                      for m_id in [ID_ZOOM_NORMAL, ID_ZOOM_IN,
-                                                   ID_ZOOM_OUT, ID_GOTO_MBRACE,
-                                                   ID_HLCARET_LINE, ID_SHOW_SB,
-                                                   ID_VIEW_TOOL, ID_SHOW_WS,
-                                                   ID_SHOW_EDGE, ID_SHOW_EOL,
-                                                   ID_SHOW_LN, ID_INDENT_GUIDES,
-                                                   ID_MAXIMIZE_EDITOR]])
+                                     for m_id in [ID_ZOOM_NORMAL, ID_ZOOM_IN,
+                                                  ID_ZOOM_OUT, ID_GOTO_MBRACE,
+                                                  ID_HLCARET_LINE, ID_SHOW_SB,
+                                                  ID_VIEW_TOOL, ID_SHOW_WS,
+                                                  ID_SHOW_EDGE, ID_SHOW_EOL,
+                                                  ID_SHOW_LN, ID_INDENT_GUIDES,
+                                                  ID_MAXIMIZE_EDITOR]])
 
         # Lexer Menu
         self._handlers['ui'].extend([(l_id, self.OnUpdateLexerUI)
